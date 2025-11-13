@@ -1,0 +1,43 @@
+package com.example.sennova.infrastructure.persistence.repositoryJpa;
+
+import com.example.sennova.infrastructure.persistence.entities.UserEntity;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntity, Long> {
+
+    @EntityGraph(attributePaths = {"sampleEntityList"})
+    List<TestRequestEntity> findAll();
+
+    @Query(nativeQuery = true, value = "SELECT \n" +
+            "    s.matrix AS sample,\n" +
+            "    p.analysis AS analysis,\n" +
+            "    p.price AS priceByAnalysis,\n" +
+            "    COUNT(*) AS quantityAnalysisBySample,\n" +
+            "    (p.price * COUNT(*)) AS total\n" +
+            "FROM sample s\n" +
+            "INNER JOIN sample_product_analysis spa ON spa.sample_id = s.sample_id\n" +
+            "INNER JOIN product p ON p.product_id = spa.product_id\n" +
+            "WHERE s.test_request_id = :testRequestId\n" +
+            "GROUP BY s.matrix, p.analysis, p.price\n" +
+            "ORDER BY s.matrix, p.analysis;")
+    List<SampleInfoSummaryTestRequestProjection> findSamplesByTestRequest(@Param("testRequestId") Long testRequestId);
+
+    List<TestRequestEntity> findAllByState(String param);
+
+    List<TestRequestEntity> findAllByRequestCodeContainingIgnoreCase(String requestCode);
+
+    List<TestRequestEntity> findAllByIsApprovedTrue();
+
+
+
+    List<TestRequestEntity> findAllByDeliveryStatusContainingIgnoreCase(String state);
+
+    List<TestRequestEntity> findAllByCustomer_CustomerNameContainingIgnoreCase(@Param("customerName") String customerName);
+}

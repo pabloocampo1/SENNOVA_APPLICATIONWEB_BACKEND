@@ -1,0 +1,24 @@
+[
+  {
+    "id": "TASK_1",
+    "priority": "LOW",
+    "tags": [],
+    "title": "crear las entidades que faltan",
+    "description": "agregar la entidad de loan y usage",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 9,
+        "day": 1
+      },
+      "time": {
+        "hour": 15,
+        "minute": 42,
+        "second": 55,
+        "nano": 425251400
+      }
+    },
+    "isImported": false
+  }
+]
