@@ -38,6 +38,12 @@ public class TestRequestController {
         return new ResponseEntity<>(this.testRequestUseCase.getTestRequestById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/get-by-requestCode/{requestCode}")
+    public ResponseEntity<TestRequestModel> getByRequestCode(@PathVariable("requestCode") Long id){
+        return new ResponseEntity<>(this.testRequestUseCase.getTestRequestById(id), HttpStatus.OK);
+    }
+
+
     @PostMapping("/assign-members")
     public ResponseEntity<Void> assignMembers(@RequestBody Map<String, Object> object){
 
@@ -109,6 +115,12 @@ public class TestRequestController {
     @GetMapping("/get-all-info-summary-by-status/{status}")
     public ResponseEntity<List<TestRequestSummaryInfoResponse>> getTestRequestSummaryInfoByStatus(@PathVariable("status") String status){
         return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequestSummaryInfoByDeliveryState(status), HttpStatus.OK);
+    }
+
+    @PutMapping("/remove-member/{testRequestId}/{userId}")
+    public ResponseEntity<List<UserResponse>> removeMember(@PathVariable("userId") Long userId, @PathVariable("testRequestId") Long testRequestId){
+        this.testRequestUseCase.removeMember(userId, testRequestId);
+        return new ResponseEntity<>(this.testRequestUseCase.removeMember(userId, testRequestId), HttpStatus.OK);
     }
 
     // this method was created only for manual test

@@ -285,6 +285,11 @@ public class UserServiceImpl implements UserUseCase {
     }
 
     @Override
+    public Boolean existById(Long userUd) {
+        return this.userPersistencePort.existsById(userUd);
+    }
+
+    @Override
     public List<UserModel> findAllById(List<Long> listOfId) {
         return this.userPersistencePort.findAllById(listOfId);
     }

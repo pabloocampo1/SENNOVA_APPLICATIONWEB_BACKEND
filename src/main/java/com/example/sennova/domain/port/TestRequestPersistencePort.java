@@ -18,13 +18,14 @@ public interface TestRequestPersistencePort {
     void deleteById(Long testRequestId);
     Optional<TestRequestModel> findById(Long id);
     List<TestRequestModel> findAllByState(String state);
-
+    Optional<TestRequestModel> findByRequestCode(String requestCode);
     List<TestRequestModel> findAllByCustomerName(String customerName);
     List<TestRequestModel> findAllByRequestCode(String requestCode);
     List<TestRequestModel> findAllTestRequestAccepted();
     List<TestRequestModel> findAllByDeliveryState(String state);
     List<TestRequestModel> findAllTestRequestByRequestCode(String code);
-    void assignResponsible(TestRequestModel testRequestModel, List<UserModel> users);
+    void assignResponsible(Long testRequestId, List<UserModel> users);
+    void removeMember(Long userId, Long testRequestId);
 
 
 }

@@ -106,6 +106,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                  sampleModel.setDescription(sampleRequestRecord.description());
                  sampleModel.setSampleCode("M"+countSampleCode.getAndIncrement() + " - " + randomNum);
                  sampleModel.setTestRequest(testRequestSaved);
+                 sampleModel.setStatusReception(false);
 
                  // count hoy many anaylis there are for this sample
 
@@ -125,6 +126,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                          SampleAnalysisModel sampleAnalysisModel = new SampleAnalysisModel();
                          sampleAnalysisModel.setStateResult(false);
                          sampleAnalysisModel.setProduct(product);
+                         sampleAnalysisModel.setCode("Code-MR/ "+sampleModel.getSampleCode() + "-" + (i+1));
                          sampleAnalysisModel.setSample(sampleSaved);
                          this.sampleAnalysisUseCase.save(sampleAnalysisModel);
                      }
@@ -164,7 +166,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
         Notifications notification = new Notifications();
         notification.setMessage("Llego una nueva cotizacion de ensayo, codigo " + testRequestCode);
-        notification.setActorUser(customer.getCustomerName());
+        notification.setActorUser("Cliente - " + customer.getCustomerName());
         notification.setType(TypeNotifications.NEW_QUOTATION);
         notification.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYSIS));
         this.notificationsService.saveNotification(notification);
@@ -180,6 +182,12 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     public TestRequestModel getTestRequestById(@Valid Long id) {
         return this.testRequestPersistencePort.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo con ese id"));
+    }
+
+    @Override
+    public TestRequestModel getByRequestCode(@Valid  String requestCode) {
+        return this.testRequestPersistencePort.findByRequestCode(requestCode)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo cob codigo: " + requestCode));
     }
 
     @Override
@@ -299,14 +307,15 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     public void assignResponsible(List<Long> usersId, Long testRequestId) {
 
         // find the testRequest
-        TestRequestModel testRequest = this.testRequestPersistencePort.findById(testRequestId)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo. "));
+        if(!this.testRequestPersistencePort.existsById(testRequestId)){
+            throw  new EntityNotFoundException("La entidad no existe");
+        }
 
           // find all users available and assign to the test request
           List<UserModel> listOfUsers =  this.userUseCase.findAllById(usersId);
 
 
-       this.testRequestPersistencePort.assignResponsible(testRequest, listOfUsers);
+       this.testRequestPersistencePort.assignResponsible(testRequestId, listOfUsers);
 
     }
 
@@ -347,6 +356,22 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
         List<UserResponse> usersAssigned = this.userUseCase.usersAssignedTestRequest(testRequestId);
         return usersAssigned;
+    }
+
+    @Override
+    @Transactional
+    public List<UserResponse> removeMember(Long userId, Long testRequestId) {
+        // validate if the user exist
+         if(!this.userUseCase.existById(userId)) throw new EntityNotFoundException("No se pudo procesar este usuario.");
+
+
+         // validate if the test request exist.
+        if(!this.testRequestPersistencePort.existsById(testRequestId)) throw new EntityNotFoundException("No se pudo encontrar este ensayo.");
+         // remove the user
+
+        this.testRequestPersistencePort.removeMember(userId, testRequestId);
+
+        return this.userUseCase.getAllByTestRequest(testRequestId);
     }
 
 

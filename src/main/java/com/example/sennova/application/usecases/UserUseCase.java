@@ -33,6 +33,7 @@ public interface UserUseCase {
     void saveTheLastSession(LocalDateTime date, Long userId);
     Boolean deactiveAccount(String username);
     Boolean activeAccount(String username);
+    Boolean existById(Long userUd);
     List<UserModel> findAllById(List<Long> listOfId);
     List<UserResponse> usersAssignedTestRequest(Long testRequestId);
 }

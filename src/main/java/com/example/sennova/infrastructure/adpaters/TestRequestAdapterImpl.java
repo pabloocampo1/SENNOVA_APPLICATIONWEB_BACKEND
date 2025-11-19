@@ -11,11 +11,15 @@ import com.example.sennova.infrastructure.persistence.entities.UserEntity;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.TestRequestRepositoryJpa;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
+import com.example.sennova.web.exception.EntityNotFoundException;
 import org.antlr.v4.runtime.ListTokenSource;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class TestRequestAdapterImpl implements TestRequestPersistencePort {
@@ -38,7 +42,7 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
 
     @Override
     public List<TestRequestModel> getAll() {
-        List<TestRequestEntity> testRequestEntities = this.testRequestRepositoryJpa.findAll();
+        List<TestRequestEntity> testRequestEntities = this.testRequestRepositoryJpa.findAllByOrderByCreateAtDesc();
         return testRequestEntities.stream().map(this.testRequestMapperDbo::toModel).toList();
     }
 
@@ -71,6 +75,13 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     }
 
     @Override
+    public Optional<TestRequestModel> findByRequestCode(String requestCode) {
+        Optional<TestRequestEntity> testRequestEntity = this.testRequestRepositoryJpa.findByRequestCode(requestCode);
+        return testRequestEntity
+                .map(this.testRequestMapperDbo::toModel);
+    }
+
+    @Override
     public List<TestRequestModel> findAllByCustomerName(String customerName) {
         List<TestRequestEntity> testRequestEntities = this.testRequestRepositoryJpa.findAllByCustomer_CustomerNameContainingIgnoreCase(customerName);
         System.out.println("por cliente");
@@ -88,7 +99,7 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
 
     @Override
     public List<TestRequestModel> findAllTestRequestAccepted() {
-        List<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByIsApprovedTrue();
+        List<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByIsApprovedTrueOrderByCreateAtDesc();
         return entities.stream().map(this.testRequestMapperDbo::toModel).toList();
     }
 
@@ -105,16 +116,44 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     }
 
     @Override
-    public void assignResponsible(TestRequestModel testRequestModel, List<UserModel> users) {
-        TestRequestEntity testRequestEntity = this.testRequestMapperDbo.toEntity(testRequestModel);
-        List<UserEntity> userEntity = users.stream().map(this.userMapperDbo::toEntity).toList();
-        
-        testRequestEntity.setMembers(userEntity);
+    public void assignResponsible(Long testRequestId, List<UserModel> users) {
+        TestRequestEntity testRequestEntity = this.testRequestRepositoryJpa.findById(testRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo con id : " + testRequestId));
+
+        List<UserEntity> userAssignedBefore = testRequestEntity.getMembers();
+        List<UserEntity> usersToAdd = users.stream().map(this.userMapperDbo::toEntity).toList();
+
+        List<UserEntity> uniqueUsersToAdd = usersToAdd.stream()
+                .filter(newUser -> userAssignedBefore.stream()
+                        .noneMatch(existingUser -> existingUser.getUserId().equals(newUser.getUserId())))
+                .toList();
+
+        List<UserEntity> updatedMembers = new ArrayList<>(userAssignedBefore);
+        updatedMembers.addAll(uniqueUsersToAdd);
+
+
+      testRequestEntity.setMembers(updatedMembers);
 
         this.testRequestRepositoryJpa.save(testRequestEntity);
     }
 
+    @Override
+    public void removeMember(Long userId, Long testRequestId) {
+           TestRequestEntity testRequestEntity = this.testRequestRepositoryJpa.findById(testRequestId)
+                   .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo con id  :" + testRequestId));
 
+
+        testRequestEntity.setMembers(
+                testRequestEntity.getMembers()
+                        .stream()
+                        .filter(user -> !user.getUserId().equals(userId))
+                        .collect(Collectors.toList())
+        );
+
+
+
+        this.testRequestRepositoryJpa.save(testRequestEntity);
+    }
 
 
 }

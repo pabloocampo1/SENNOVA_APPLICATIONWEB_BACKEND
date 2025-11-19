@@ -1,6 +1,7 @@
 package com.example.sennova.domain.model.testRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,9 @@ public class SampleModel {
 
     private String description;
 
-     private LocalDate sampling_time;
+     private LocalDate sampleEntryDate;
 
-    private LocalDate sampling_date;
+    private LocalDate sampleReceptionDate;
 
     private String sampleCode;
 
@@ -28,9 +29,12 @@ public class SampleModel {
 
     private double temperature;
 
-    private String package_description;
+    private String packageDescription;
+    private String identificationSample;
 
-    private String storage_conditions;
+    private LocalDate createAt;
+
+    private String storageConditions;
 
     private String observations;
 

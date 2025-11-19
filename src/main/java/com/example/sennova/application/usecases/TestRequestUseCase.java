@@ -17,6 +17,7 @@ public interface TestRequestUseCase {
     TestRequestModel save(TestRequestRecord testRequestRecord);
     TestRequestModel update(TestRequestModel testRequestModel);
     TestRequestModel getTestRequestById(Long id);
+    TestRequestModel getByRequestCode(String requestCode);
     List<TestRequestModel> getAllTestRequestNoCheck();
     List<TestRequestModel> getAllByState(String state);
     List<TestRequestModel> getTestRequestByCode();
@@ -30,5 +31,6 @@ public interface TestRequestUseCase {
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByDeliveryState(String state);
     List<SampleModel> getSamples();
     List<UserResponse> usersAssignedTestRequest(Long testRequestId);
+    List<UserResponse> removeMember(Long userId, Long testRequestId);
 
 }

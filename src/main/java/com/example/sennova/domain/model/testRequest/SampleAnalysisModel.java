@@ -18,6 +18,8 @@ public class SampleAnalysisModel {
 
     private String notes;
 
+    private String code;
+
     private ProductModel product;
 
     private SampleModel sample;

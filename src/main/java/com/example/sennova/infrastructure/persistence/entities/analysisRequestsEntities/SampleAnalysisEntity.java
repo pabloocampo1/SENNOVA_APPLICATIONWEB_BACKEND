@@ -38,6 +38,8 @@ public class SampleAnalysisEntity {
 
     private boolean stateResult;
 
+    private String code;
+
     @CreatedDate
     private LocalDate createAt;
 

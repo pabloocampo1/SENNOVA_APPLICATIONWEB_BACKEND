@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class SampleAdapterImpl implements SamplePersistencePort {
@@ -40,5 +41,11 @@ public class SampleAdapterImpl implements SamplePersistencePort {
     @Override
     public void deleteById(Long sampleId) {
         this.sampleRepositoryJpa.deleteById(sampleId);
+    }
+
+    @Override
+    public Optional<SampleModel> findById(Long id) {
+        Optional<SampleEntity> sampleEntity = this.sampleRepositoryJpa.findById(id);
+        return sampleEntity.map(sample -> this.sampleMapperDbo.toModel(sample))  ;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,17 +32,19 @@ public class SampleEntity {
     @Column(nullable = false, unique = true)
     private String sampleCode;
 
-    private LocalDate sampling_time;
+    private LocalDate sampleEntryDate;
 
-    private LocalDate sampling_date;
+    private LocalDate sampleReceptionDate;
+
+    private String identificationSample;
 
     private double gross_weight;
 
     private double temperature;
 
-    private String package_description;
+    private String packageDescription;
 
-    private String storage_conditions;
+    private String storageConditions;
 
     private String observations;
 

@@ -9,11 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntity, Long> {
 
     @EntityGraph(attributePaths = {"sampleEntityList"})
-    List<TestRequestEntity> findAll();
+    List<TestRequestEntity> findAllByOrderByCreateAtDesc();
 
     @Query(nativeQuery = true, value = "SELECT \n" +
             "    s.matrix AS sample,\n" +
@@ -33,9 +34,9 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
 
     List<TestRequestEntity> findAllByRequestCodeContainingIgnoreCase(String requestCode);
 
-    List<TestRequestEntity> findAllByIsApprovedTrue();
+    List<TestRequestEntity> findAllByIsApprovedTrueOrderByCreateAtDesc();
 
-
+    Optional<TestRequestEntity> findByRequestCode(String requestCode);
 
     List<TestRequestEntity> findAllByDeliveryStatusContainingIgnoreCase(String state);
 
