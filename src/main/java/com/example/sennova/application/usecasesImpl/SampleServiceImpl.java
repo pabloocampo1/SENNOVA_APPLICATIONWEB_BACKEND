@@ -73,6 +73,21 @@ public class SampleServiceImpl implements SampleUseCase {
             }
         }
 
+
+        // Delete the previous reception image if it exists.
+        // If the sample already has a reception image and a new one arrives,
+        // remove the old image from Cloudinary to avoid leaving unused files.
+
+        if (sample.getSampleImage() != null && !sample.getSampleImage().isEmpty()) {
+            try {
+                this.cloudinaryService.deleteFileByUrl(sample.getSampleImage());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
         sample.setStatusReception(true);
         sample.setGross_weight(receptionInfoRequest.grossWeight());
         sample.setTemperature(receptionInfoRequest.temperature());
