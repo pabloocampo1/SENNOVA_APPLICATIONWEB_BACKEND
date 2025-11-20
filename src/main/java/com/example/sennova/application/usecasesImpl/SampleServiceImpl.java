@@ -3,11 +3,14 @@ package com.example.sennova.application.usecasesImpl;
 import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.usecases.SampleUseCase;
+import com.example.sennova.domain.event.DomainEventPublisher;
+import com.example.sennova.domain.event.SampleReceptionUpdateEvent;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
 import com.example.sennova.web.exception.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +22,12 @@ import java.util.Optional;
 public class SampleServiceImpl implements SampleUseCase {
 
     private final SamplePersistencePort samplePersistencePort;
+    private final DomainEventPublisher domainEventPublisher;
 
     @Autowired
-    public SampleServiceImpl(SamplePersistencePort samplePersistencePort) {
+    public SampleServiceImpl(SamplePersistencePort samplePersistencePort, DomainEventPublisher domainEventPublisher) {
         this.samplePersistencePort = samplePersistencePort;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Override
@@ -49,9 +54,9 @@ public class SampleServiceImpl implements SampleUseCase {
     }
 
     @Override
-    public SampleModel saveReception(ReceptionInfoRequest receptionInfoRequest, Long sampleId) {
+    public SampleModel saveReception(@Valid  ReceptionInfoRequest receptionInfoRequest, @Valid Long sampleId) {
         SampleModel sample = this.samplePersistencePort.findById(sampleId).orElseThrow(() -> new EntityNotFoundException("No se encontro la muestra con id : " + sampleId ));
-        
+
         sample.setStatusReception(true);
         sample.setGross_weight(receptionInfoRequest.grossWeight());
         sample.setTemperature(receptionInfoRequest.temperature());
@@ -61,13 +66,22 @@ public class SampleServiceImpl implements SampleUseCase {
         sample.setStorageConditions(receptionInfoRequest.storageConditions());
         sample.setSampleEntryDate(receptionInfoRequest.sampleEntryDate());
         sample.setPackageDescription(receptionInfoRequest.packageDescription());
-        return this.samplePersistencePort.save(sample);
+
+        
+        SampleModel sampleSaved =  this.samplePersistencePort.save(sample);
+
+        this.domainEventPublisher.publish(new SampleReceptionUpdateEvent(sampleSaved.getSampleId(), sampleSaved.getTestRequest().getTestRequestId()));
+
+        return sampleSaved;
     }
 
     @Override
     public List<SampleAnalysisModel> getAllAnalysisBySample(Long sampleId) {
         return List.of();
     }
+
+
+
 
 
 

@@ -374,6 +374,23 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         return this.userUseCase.getAllByTestRequest(testRequestId);
     }
 
+    @Override
+    public void changeStatusDelivery( Long testRequestId) {
+
+        TestRequestModel testRequest = this.testRequestPersistencePort.findById(testRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo con id: "+ testRequestId));
+
+        if(!testRequest.getSamples().isEmpty()){
+            Boolean allReady = testRequest.getSamples().stream().allMatch(SampleModel::getStatusReception);
+
+            if(allReady){
+                testRequest.setDeliveryStatus(TestRequestConstants.IN_PROGRESS);
+                this.testRequestPersistencePort.save(testRequest);
+            }
+        }
+
+    }
+
 
     public List<TestRequestSummaryInfoResponse> mapToSummaryResponses(List<TestRequestModel> testRequest){
         List<TestRequestSummaryInfoResponse> listToReturn  = new ArrayList<>();

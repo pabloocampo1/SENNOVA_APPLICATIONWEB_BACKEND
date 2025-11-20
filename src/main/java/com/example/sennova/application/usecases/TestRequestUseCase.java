@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.sennova.application.dto.UserDtos.UserResponse;
-import com.example.sennova.application.dto.testeRequest.CustomerResponse;
-import com.example.sennova.application.dto.testeRequest.SamplesByTestRequestDto;
-import com.example.sennova.application.dto.testeRequest.TestRequestRecord;
-import com.example.sennova.application.dto.testeRequest.TestRequestSummaryInfoResponse;
+import com.example.sennova.application.dto.testeRequest.*;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 
@@ -32,5 +29,6 @@ public interface TestRequestUseCase {
     List<SampleModel> getSamples();
     List<UserResponse> usersAssignedTestRequest(Long testRequestId);
     List<UserResponse> removeMember(Long userId, Long testRequestId);
+    void changeStatusDelivery( Long testRequestId);
 
 }
