@@ -46,7 +46,7 @@ public class EquipmentController {
         equipmentToSave.setImageUrl(null);
         EquipmentModel equipmentModelSaved = this.equipmentUseCase.save(
                 equipmentToSave,
-                equipmentRequestDto.responsibleId(),
+                equipmentRequestDto.responsibleId(),        
                 equipmentRequestDto.locationId(),
                 equipmentRequestDto.usageId()
         );

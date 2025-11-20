@@ -9,11 +9,13 @@ import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
+import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,11 +25,13 @@ public class SampleServiceImpl implements SampleUseCase {
 
     private final SamplePersistencePort samplePersistencePort;
     private final DomainEventPublisher domainEventPublisher;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public SampleServiceImpl(SamplePersistencePort samplePersistencePort, DomainEventPublisher domainEventPublisher) {
+    public SampleServiceImpl(SamplePersistencePort samplePersistencePort, DomainEventPublisher domainEventPublisher, CloudinaryService cloudinaryService) {
         this.samplePersistencePort = samplePersistencePort;
         this.domainEventPublisher = domainEventPublisher;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -54,8 +58,20 @@ public class SampleServiceImpl implements SampleUseCase {
     }
 
     @Override
-    public SampleModel saveReception(@Valid  ReceptionInfoRequest receptionInfoRequest, @Valid Long sampleId) {
+    @Transactional
+    public SampleModel saveReception(@Valid  ReceptionInfoRequest receptionInfoRequest, @Valid Long sampleId, MultipartFile file) {
         SampleModel sample = this.samplePersistencePort.findById(sampleId).orElseThrow(() -> new EntityNotFoundException("No se encontro la muestra con id : " + sampleId ));
+
+
+        // if have image upload
+        String imageUrl = "";
+        if(file != null){
+            try {
+                 imageUrl = this.cloudinaryService.uploadImage(file);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         sample.setStatusReception(true);
         sample.setGross_weight(receptionInfoRequest.grossWeight());
@@ -66,6 +82,7 @@ public class SampleServiceImpl implements SampleUseCase {
         sample.setStorageConditions(receptionInfoRequest.storageConditions());
         sample.setSampleEntryDate(receptionInfoRequest.sampleEntryDate());
         sample.setPackageDescription(receptionInfoRequest.packageDescription());
+        sample.setSampleImage(imageUrl);
 
         
         SampleModel sampleSaved =  this.samplePersistencePort.save(sample);

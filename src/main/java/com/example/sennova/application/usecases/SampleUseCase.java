@@ -4,6 +4,7 @@ import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,6 +13,6 @@ public interface SampleUseCase {
     List<SampleModel> getAllByTestRequest(Long testRequest);
     void deleteById(Long sampleId);
     SampleModel getById(Long id);
-    SampleModel saveReception(ReceptionInfoRequest receptionInfoRequest, Long sampleId);
+    SampleModel saveReception(ReceptionInfoRequest receptionInfoRequest, Long sampleId, MultipartFile file);
     List<SampleAnalysisModel> getAllAnalysisBySample(Long sampleId);
 }
