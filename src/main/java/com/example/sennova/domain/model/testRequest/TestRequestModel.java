@@ -3,6 +3,8 @@ package com.example.sennova.domain.model.testRequest;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.sennova.domain.model.UserModel;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -47,5 +49,8 @@ public class TestRequestModel {
     private CustomerModel customer;
 
     private List<SampleModel> samples;
+
+    @JsonIgnore
+    private List<UserModel> members;
 
 }
