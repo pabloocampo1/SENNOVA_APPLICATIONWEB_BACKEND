@@ -11,11 +11,14 @@ import com.example.sennova.domain.model.testRequest.TestRequestModel;
 public interface TestRequestUseCase {
     List<TestRequestModel> getAllTestRequest();
     List<TestRequestModel> getAllTestRequestAccepted();
+    void updateStatus(TestRequestModel testRequestModel);
     TestRequestModel save(TestRequestRecord testRequestRecord);
     TestRequestModel update(TestRequestModel testRequestModel);
     TestRequestModel getTestRequestById(Long id);
     TestRequestModel getByRequestCode(String requestCode);
     List<TestRequestModel> getAllTestRequestNoCheck();
+    List<TestRequestModel> getTestRequestsDueToday();
+    List<TestRequestModel> getTestRequestDueDateExpired();
     List<TestRequestModel> getAllByState(String state);
     List<TestRequestModel> getTestRequestByCode();
     Map<String, List<SamplesByTestRequestDto>> getSamplesByTestRequest(Long testRequestId);

@@ -71,6 +71,11 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     }
 
     @Override
+    public void updateStatus(TestRequestModel testRequestModel) {
+        this.testRequestPersistencePort.save(testRequestModel);
+    }
+
+    @Override
     @Transactional
     public TestRequestModel save(TestRequestRecord testRequestRecord) {
 
@@ -177,7 +182,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
     @Override
     public TestRequestModel update(TestRequestModel testRequestModel) {
-        return null;
+        return this.testRequestPersistencePort.save(testRequestModel);
     }
 
     @Override
@@ -195,6 +200,19 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     @Override
     public List<TestRequestModel> getAllTestRequestNoCheck() {
         return List.of();
+    }
+
+    @Override
+    public List<TestRequestModel> getTestRequestsDueToday() {
+        LocalDate today = LocalDate.now();
+        return this.testRequestPersistencePort.findAllByDueDate(today);
+    }
+
+    @Override
+    public List<TestRequestModel> getTestRequestDueDateExpired() {
+        LocalDate today = LocalDate.now();
+
+        return this.testRequestPersistencePort.findAllByDueDateExpired(today);
     }
 
     @Override
@@ -386,6 +404,9 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
             Boolean allReady = testRequest.getSamples().stream().allMatch(SampleModel::getStatusReception);
 
             if(allReady){
+                // if all samples are ready in reception, generate the due date.
+                testRequest.setDueDate(LocalDate.now().plusDays(15));
+                // change the status
                 testRequest.setDeliveryStatus(TestRequestConstants.IN_PROGRESS);
                 this.testRequestPersistencePort.save(testRequest);
             }

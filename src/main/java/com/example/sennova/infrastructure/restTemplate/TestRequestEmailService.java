@@ -1,5 +1,8 @@
 package com.example.sennova.infrastructure.restTemplate;
 
+import com.example.sennova.domain.model.UserModel;
+import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +10,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TestRequestEmailService {
@@ -55,4 +62,79 @@ public class TestRequestEmailService {
             throw new RuntimeException("Error enviando el correo de nueva cotización", e);
         }
     }
+
+    public void sendEmailTestRequestDueDate(List<TestRequestModel> testRequestModels, String to, String name) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("no-reply@sennova.com");
+            helper.setTo(to);
+            helper.setSubject("📄 Entrega de ensayo programada para hoy " + LocalDate.now());
+
+            // Construir HTML dinámico
+            StringBuilder htmlContent = new StringBuilder();
+
+            // Encabezado con text block y placeholder
+            htmlContent.append("<div style=\"font-family: Arial, sans-serif; color: #333;\">"
+                    + "<h2 style=\"color: #4CAF50;\">¡Hola " + name + "!</h2>"
+                    + "<p>Se ha generado una lista de <strong>ensayos programados para entregar hoy</strong>:</p>"
+                    + "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: collapse;\">"
+                    + "<thead>"
+                    + "<tr style=\"background-color: #e3f2fd;\">"
+                    + "<th style=\"border: 1px solid #ddd; text-align: left;\">Código del Ensayo</th>"
+                    + "<th style=\"border: 1px solid #ddd; text-align: left;\">Muestras</th>"
+                    + "</tr>"
+                    + "</thead>"
+                    + "<tbody>");
+
+
+            for (TestRequestModel testRequest : testRequestModels) {
+                htmlContent.append("<tr>");
+                htmlContent.append("<td style='border: 1px solid #ddd; vertical-align: top;'>")
+                        .append(testRequest.getRequestCode())
+                        .append("</td>");
+
+                htmlContent.append("<td style='border: 1px solid #ddd;'>");
+                htmlContent.append("<table width='100%' cellpadding='3' cellspacing='0' style='border-collapse: collapse;'>");
+                htmlContent.append("<thead><tr style='background-color: #f1f1f1;'>")
+                        .append("<th style='border: 1px solid #ddd;'>Código de la muestra</th>")
+                        .append("<th style='border: 1px solid #ddd;'>Nombre de la matriz</th>")
+                        .append("</tr></thead>");
+                htmlContent.append("<tbody>");
+
+                for (SampleModel sample : testRequest.getSamples()) {
+                    htmlContent.append("<tr>");
+                    htmlContent.append("<td style='border: 1px solid #ddd;'>")
+                            .append(sample.getSampleCode())
+                            .append("</td>");
+                    htmlContent.append("<td style='border: 1px solid #ddd;'>")
+                            .append(sample.getMatrix())
+                            .append("</td>");
+                    htmlContent.append("</tr>");
+                }
+
+                htmlContent.append("</tbody></table>");
+                htmlContent.append("</td>");
+                htmlContent.append("</tr>");
+            }
+
+            // Cierre del HTML
+            htmlContent.append("""
+                    </tbody>
+                </table>
+                <p style="margin-top: 20px;">Por favor, revise los ensayos y asegúrese de cumplir con las fechas de entrega.</p>
+                <p style="font-size: 12px; color: #888;">Este es un correo automático. No responda este mensaje.</p>
+            </div>
+            """);
+
+            helper.setText(htmlContent.toString(), true);
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }

@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.ListTokenSource;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -98,8 +99,20 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     }
 
     @Override
+    public List<TestRequestModel> findAllByDueDate(LocalDate today) {
+        List<TestRequestEntity> testRequestList = this.testRequestRepositoryJpa.findAllByDueDate(today);
+        return testRequestList.stream().map(this.testRequestMapperDbo::toModel).toList();
+    }
+
+    @Override
     public List<TestRequestModel> findAllTestRequestAccepted() {
         List<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByIsApprovedTrueOrderByCreateAtDesc();
+        return entities.stream().map(this.testRequestMapperDbo::toModel).toList();
+    }
+
+    @Override
+    public List<TestRequestModel> findAllByDueDateExpired(LocalDate today) {
+        List<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByDueDateBefore(today)  ;
         return entities.stream().map(this.testRequestMapperDbo::toModel).toList();
     }
 

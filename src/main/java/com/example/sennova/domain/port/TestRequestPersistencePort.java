@@ -7,6 +7,7 @@ import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,9 @@ public interface TestRequestPersistencePort {
     Optional<TestRequestModel> findByRequestCode(String requestCode);
     List<TestRequestModel> findAllByCustomerName(String customerName);
     List<TestRequestModel> findAllByRequestCode(String requestCode);
+    List<TestRequestModel> findAllByDueDate(LocalDate today);
     List<TestRequestModel> findAllTestRequestAccepted();
+    List<TestRequestModel> findAllByDueDateExpired(LocalDate today);
     List<TestRequestModel> findAllByDeliveryState(String state);
     List<TestRequestModel> findAllTestRequestByRequestCode(String code);
     void assignResponsible(Long testRequestId, List<UserModel> users);
