@@ -64,8 +64,6 @@ public class TestRequestController {
         return new ResponseEntity<>(this.testRequestUseCase.usersAssignedTestRequest(testRequest), HttpStatus.OK);
     }
 
-
-
     @GetMapping("/get-samples-by-testRequestId/{testRequestId}")
     public ResponseEntity<Map<String, List<SamplesByTestRequestDto>>> getSamplesByTestRequest(@PathVariable("testRequestId") Long testRequestId) {
         return new ResponseEntity<>(this.testRequestUseCase.getSamplesByTestRequest(testRequestId), HttpStatus.OK);

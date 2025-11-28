@@ -136,5 +136,34 @@ public class TestRequestEmailService {
         }
     }
 
+    public void sendNotificationTestRequestCompleted(String testRequestCode, String email, String userName) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("no-reply@sennova.com");
+            helper.setTo(email);
+            helper.setSubject("✅ Ensayo completado: " + testRequestCode);
+
+            // Contenido HTML
+            String htmlContent = """
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                    <h2 style="color: #4CAF50;">¡Hola %s!</h2>
+                    <p>El ensayo con código <strong>%s</strong> ha sido completado exitosamente.</p>
+                    <p>Por favor, revise los resultados y genere el informe correspondiente para enviarlo al cliente.</p>
+                    <p style="margin-top: 20px;">Gracias por su atención.</p>
+                    <p style="font-size: 12px; color: #888;">Este es un correo automático. No responda este mensaje.</p>
+                </div>
+                """.formatted(userName, testRequestCode);
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error enviando notificación de ensayo completado", e);
+        }
+    }
+
+
 
 }

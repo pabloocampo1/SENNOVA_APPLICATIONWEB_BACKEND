@@ -1,5 +1,6 @@
 package com.example.sennova.infrastructure.adpaters;
 
+import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.SampleAnalysisMapperDbo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort {
@@ -39,5 +41,31 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
     public SampleAnalysisModel save(SampleAnalysisModel sampleAnalysisModel) {
         SampleAnalysisEntity sampleAnalysisEntity = this.sampleAnalysisRepositoryJpa.save(this.sampleAnalysisMapperDbo.toEntity(sampleAnalysisModel));
         return this.sampleAnalysisMapperDbo.toModel(sampleAnalysisEntity);
+    }
+
+    @Override
+    public Optional<SampleAnalysisModel> findById(Long sampleAnalysisModelId) {
+        Optional<SampleAnalysisEntity> sampleAnalysisEntity = this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisModelId);
+        return sampleAnalysisEntity.map(this.sampleAnalysisMapperDbo::toModel);
+    }
+
+    @Override
+    public SampleAnalysisModel saveResult(SampleAnalysisRequestRecord sampleAnalysisRequestRecord) {
+
+        SampleAnalysisEntity analysis = this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisRequestRecord.sampleProductAnalysisId())
+                        .orElseThrow();
+
+        analysis.setResultFinal(sampleAnalysisRequestRecord.resultFinal());
+        analysis.setStateResult(true);
+        analysis.setAccreditationStatus(sampleAnalysisRequestRecord.accreditationStatus());
+        analysis.setPassStatus(sampleAnalysisRequestRecord.passStatus());
+        analysis.setStandards(sampleAnalysisRequestRecord.standards());
+        analysis.setUnit(sampleAnalysisRequestRecord.unit());
+        analysis.setNotes(sampleAnalysisRequestRecord.notes());
+        analysis.setResultDate(sampleAnalysisRequestRecord.resultDate());
+         analysis.setResultGeneratedBy(sampleAnalysisRequestRecord.resultGeneratedBy());
+
+        SampleAnalysisEntity analysisSaved = this.sampleAnalysisRepositoryJpa.save(analysis);
+        return this.sampleAnalysisMapperDbo.toModel(analysisSaved);
     }
 }

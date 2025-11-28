@@ -401,13 +401,14 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro el ensayo con id: "+ testRequestId));
 
         if(!testRequest.getSamples().isEmpty()){
-            Boolean allReady = testRequest.getSamples().stream().allMatch(SampleModel::getStatusReception);
+            Boolean allReadyReception = testRequest.getSamples().stream().allMatch(SampleModel::getStatusReception);
 
-            if(allReady){
+            if(allReadyReception){
                 // if all samples are ready in reception, generate the due date.
                 testRequest.setDueDate(LocalDate.now().plusDays(15));
                 // change the status
                 testRequest.setDeliveryStatus(TestRequestConstants.IN_PROGRESS);
+
                 this.testRequestPersistencePort.save(testRequest);
             }
         }

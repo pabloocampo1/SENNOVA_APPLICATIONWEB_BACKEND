@@ -11,4 +11,5 @@ public interface SamplePersistencePort {
     List<SampleModel> getAllByTestRequest(Long testRequest);
     void deleteById(Long sampleId);
     Optional<SampleModel> findById(Long id);
+    List<SampleModel> findAllByStatusReception();
 }

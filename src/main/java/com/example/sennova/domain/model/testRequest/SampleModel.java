@@ -38,6 +38,11 @@ public class SampleModel {
 
     private String observations;
 
+    // This due date is generated when the laboratory registers the reception.
+// It's slightly different from the test request due date, which is generated
+// when all samples have been received.
+    private LocalDate dueDate;
+
     private Boolean statusReception;
 
     private String sampleImage;

@@ -10,4 +10,6 @@ import java.util.List;
 public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
     @Query("SELECT s FROM SampleEntity s WHERE s.testRequest.testRequestId = :testRequestId")
     List<SampleEntity> findAllByTestRequest(@Param("testRequestId") Long testRequest);
+
+    List<SampleEntity> findAllByStatusReceptionTrue();
 }

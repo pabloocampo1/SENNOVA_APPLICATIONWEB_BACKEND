@@ -8,6 +8,8 @@ import com.example.sennova.infrastructure.persistence.repositoryJpa.SampleReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +48,19 @@ public class SampleAdapterImpl implements SamplePersistencePort {
     @Override
     public Optional<SampleModel> findById(Long id) {
         Optional<SampleEntity> sampleEntity = this.sampleRepositoryJpa.findById(id);
-        return sampleEntity.map(sample -> this.sampleMapperDbo.toModel(sample))  ;
+        return sampleEntity.map(this.sampleMapperDbo::toModel)  ;
+    }
+
+    @Override
+    public List<SampleModel> findAllByStatusReception() {
+        List<SampleEntity> samples = this.sampleRepositoryJpa.findAllByStatusReceptionTrue();
+
+        // return only the samples not expired
+        List<SampleEntity> samplesEntities = samples.stream()
+                .filter(s -> s.getDueDate().isAfter(LocalDate.now()) ||
+                        s.getDueDate().isEqual(LocalDate.now()))
+                .sorted(Comparator.comparing(SampleEntity::getDueDate))
+                .toList();
+        return samplesEntities.stream().map(this.sampleMapperDbo::toModel).toList();
     }
 }

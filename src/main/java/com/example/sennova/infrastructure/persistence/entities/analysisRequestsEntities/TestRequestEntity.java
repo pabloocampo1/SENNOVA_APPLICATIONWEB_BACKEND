@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "test_request")
@@ -65,7 +66,7 @@ public class TestRequestEntity {
     // relationships
 
     @OneToMany(mappedBy = "testRequest")
-    private List<SampleEntity> sampleEntityList;
+    private Set<SampleEntity> sampleEntityList;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id", nullable = false)

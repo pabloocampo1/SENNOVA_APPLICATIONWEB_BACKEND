@@ -42,6 +42,11 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     }
 
     @Override
+    public TestRequestEntity saveEntity(TestRequestEntity testRequestEntity) {
+        return this.testRequestRepositoryJpa.save(testRequestEntity);
+    }
+
+    @Override
     public List<TestRequestModel> getAll() {
         List<TestRequestEntity> testRequestEntities = this.testRequestRepositoryJpa.findAllByOrderByCreateAtDesc();
         return testRequestEntities.stream().map(this.testRequestMapperDbo::toModel).toList();
@@ -148,6 +153,11 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
       testRequestEntity.setMembers(updatedMembers);
 
         this.testRequestRepositoryJpa.save(testRequestEntity);
+    }
+
+    @Override
+    public Optional<TestRequestEntity> getWithSamplesAndAnalysis(String requestCode) {
+        return this.testRequestRepositoryJpa.getWithSamplesAndAnalysis(requestCode);
     }
 
     @Override

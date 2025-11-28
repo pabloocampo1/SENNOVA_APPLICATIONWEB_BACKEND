@@ -1,12 +1,16 @@
 package com.example.sennova.application.usecasesImpl;
 
 import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
+import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.usecases.SampleUseCase;
+import com.example.sennova.domain.constants.TestRequestConstants;
+import com.example.sennova.domain.event.AnalysisResultSavedEvent;
 import com.example.sennova.domain.event.DomainEventPublisher;
 import com.example.sennova.domain.event.SampleReceptionUpdateEvent;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
 import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +29,14 @@ import java.util.Optional;
 public class SampleServiceImpl implements SampleUseCase {
 
     private final SamplePersistencePort samplePersistencePort;
+    private final SampleAnalysisPersistencePort sampleAnalysisPersistencePort;
     private final DomainEventPublisher domainEventPublisher;
     private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public SampleServiceImpl(SamplePersistencePort samplePersistencePort, DomainEventPublisher domainEventPublisher, CloudinaryService cloudinaryService) {
+    public SampleServiceImpl(SamplePersistencePort samplePersistencePort, SampleAnalysisPersistencePort sampleAnalysisPersistencePort, DomainEventPublisher domainEventPublisher, CloudinaryService cloudinaryService) {
         this.samplePersistencePort = samplePersistencePort;
+        this.sampleAnalysisPersistencePort = sampleAnalysisPersistencePort;
         this.domainEventPublisher = domainEventPublisher;
         this.cloudinaryService = cloudinaryService;
     }
@@ -51,10 +58,30 @@ public class SampleServiceImpl implements SampleUseCase {
     }
 
     @Override
+    public List<SampleModel> getAllByStatusReception() {
+        return this.samplePersistencePort.findAllByStatusReception();
+    }
+
+    @Override
     public SampleModel getById(Long id) {
         SampleModel sample = this.samplePersistencePort.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro el id de la muestra : " + id));
         return sample;
+    }
+
+    @Override
+    public SampleAnalysisModel saveResult( SampleAnalysisRequestRecord sampleAnalysisRequestRecord, List<MultipartFile> files, String requestCode) {
+        // save the result first
+        if (sampleAnalysisRequestRecord.resultFinal().isEmpty() || sampleAnalysisRequestRecord.resultFinal().equals(" ")){
+                  throw  new IllegalArgumentException("No puedes guardar el analisis sin un resultado final");
+        }
+
+        // asve the files
+        SampleAnalysisModel sampleAnalysisModelSaved =  this.sampleAnalysisPersistencePort.saveResult(sampleAnalysisRequestRecord);
+
+        this.domainEventPublisher.publish(new AnalysisResultSavedEvent(requestCode));
+
+        return sampleAnalysisModelSaved;
     }
 
     @Override
@@ -98,6 +125,9 @@ public class SampleServiceImpl implements SampleUseCase {
         sample.setSampleEntryDate(receptionInfoRequest.sampleEntryDate());
         sample.setPackageDescription(receptionInfoRequest.packageDescription());
         sample.setSampleImage(imageUrl);
+
+        // generate the due date for this sample
+        sample.setDueDate(LocalDate.now().plusDays(15));
 
         
         SampleModel sampleSaved =  this.samplePersistencePort.save(sample);

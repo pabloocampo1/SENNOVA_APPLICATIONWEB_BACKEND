@@ -2,6 +2,8 @@ package com.example.sennova.infrastructure.persistence.entities.analysisRequests
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,6 +40,16 @@ public class SampleAnalysisEntity {
 
     private boolean stateResult;
 
+    private String unit;
+
+    private String passStatus;
+
+    private String accreditationStatus;
+
+    private String standards;
+
+    private String resultGeneratedBy;
+
     private String code;
 
     @CreatedDate
@@ -47,6 +59,7 @@ public class SampleAnalysisEntity {
     private LocalDate updateAt;
 
     @OneToMany(mappedBy = "sampleProductAnalysis")
+    @Fetch(FetchMode.SUBSELECT)
     private List<SampleProductDocumentResult> sampleProductDocumentResult;
 
 

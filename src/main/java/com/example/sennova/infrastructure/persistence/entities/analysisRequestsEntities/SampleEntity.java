@@ -54,6 +54,12 @@ public class SampleEntity {
 
     private String sampleImage;
 
+    // This due date is generated when the laboratory registers the reception.
+// It's slightly different from the test request due date, which is generated
+// when all samples have been received.
+    private LocalDate dueDate;
+
+
     @CreatedDate
     private LocalDate createAt;
 

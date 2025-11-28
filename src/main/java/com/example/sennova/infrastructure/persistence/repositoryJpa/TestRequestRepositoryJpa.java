@@ -46,4 +46,17 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
     List<TestRequestEntity> findAllByDeliveryStatusContainingIgnoreCase(String state);
 
     List<TestRequestEntity> findAllByCustomer_CustomerNameContainingIgnoreCase(@Param("customerName") String customerName);
+
+
+    // This method is used inside an asynchronous event listener that is triggered
+    // when a result is submitted. It validates whether all the analysis results
+    // of every sample in a test request are completed.
+    @Query("""
+       SELECT tr FROM TestRequestEntity tr
+       LEFT JOIN FETCH tr.sampleEntityList s
+       LEFT JOIN FETCH s.analysisEntities a
+       WHERE tr.requestCode = :requestCode
+       """)
+    Optional<TestRequestEntity> getWithSamplesAndAnalysis(String requestCode);
+
 }

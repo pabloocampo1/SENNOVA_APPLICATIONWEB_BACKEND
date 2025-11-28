@@ -11,6 +11,7 @@ public final class TypeNotifications {
     public static final  String NEW_QUOTATION = "Nueva cotizacion";
     public static final  String TEST_REQUEST_ACCEPTED = "Nuevo ensayo";
     public static final String DUE_DATE_TEST_REQUESTS = "Entrega de ensayo";
+    public static  final String TEST_REQUEST_COMPLETED = "Ensayo completado";
 
 
 }

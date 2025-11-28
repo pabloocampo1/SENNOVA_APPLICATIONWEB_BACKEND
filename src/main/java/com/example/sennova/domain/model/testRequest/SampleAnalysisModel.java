@@ -11,10 +11,19 @@ import lombok.Setter;
 public class SampleAnalysisModel {
     private Long SampleProductAnalysisId;
 
-
     private String resultFinal;
 
     private LocalDate resultDate;
+
+    private String unit;
+
+    private String passStatus;
+
+    private String accreditationStatus;
+
+    private String resultGeneratedBy;
+
+    private String standards;
 
     private String notes;
 
@@ -23,6 +32,7 @@ public class SampleAnalysisModel {
     private ProductModel product;
 
     private SampleModel sample;
+    
 
     private Boolean stateResult;
 }
