@@ -58,17 +58,30 @@ public class SchedulerEquipment {
                 });
 
 
-        equipments.stream().forEach(equipment -> {
-            Notifications notifications = new Notifications();
-            notifications.setMessage("EL equipo " + equipment.getEquipmentName() + " tiene mantenimiento hoy.");
-            notifications.setType(TypeNotifications.MAINTENANCE);
-            notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN));
-            notifications.setActorUser("Sistema");
-            notifications.setImageUser(null);
+        if(equipments.size() <= 5 ){
+            equipments.stream().forEach(equipment -> {
+                Notifications notifications = new Notifications();
+                notifications.setMessage("EL equipo " + equipment.getEquipmentName() + " tiene mantenimiento hoy.");
+                notifications.setType(TypeNotifications.MAINTENANCE);
+                notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN));
+                notifications.setActorUser("Sistema");
+                notifications.setImageUser(null);
 
-            this.notificationsService.saveNotification(notifications);
+                this.notificationsService.saveNotification(notifications);
 
-        });
+            });
+        }else {
+                Notifications notifications = new Notifications();
+                notifications.setMessage("Hay " + equipments.size() + " equipos con mantenimiento registrado para hoy.");
+                notifications.setType(TypeNotifications.MAINTENANCE);
+                notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN));
+                notifications.setActorUser("Sistema");
+                notifications.setImageUser(null);
+
+                this.notificationsService.saveNotification(notifications);
+
+
+        }
 
     }
 
