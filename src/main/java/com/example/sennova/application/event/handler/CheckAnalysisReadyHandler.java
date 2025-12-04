@@ -63,6 +63,7 @@ public class CheckAnalysisReadyHandler {
             testRequest.setDeliveryStatus(TestRequestConstants.COMPLETED);
             this.testRequestPersistencePort.saveEntity(testRequest);
 
+
             Notifications notifications = new Notifications();
             notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN));
             notifications.setType(TypeNotifications.TEST_REQUEST_COMPLETED);

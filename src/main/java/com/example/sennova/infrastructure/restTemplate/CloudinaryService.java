@@ -64,8 +64,13 @@ public class CloudinaryService {
                     ? originalFilename.replaceAll("\\.[^.]*$", "")
                     : "archivo";
 
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
 
-            String uniquePublicId = baseName + "_" + System.currentTimeMillis();
+
+            String uniquePublicId = baseName + "_" + System.currentTimeMillis() + extension;
 
             Map uploadResult = cloudinary.uploader().upload(
                     file.getBytes(),
@@ -79,7 +84,8 @@ public class CloudinaryService {
             mapResultDto.put("secure_url", uploadResult.get("secure_url").toString());
             mapResultDto.put("public_id", uploadResult.get("public_id").toString());
             mapResultDto.put("contentType", file.getContentType());
-            mapResultDto.put("originalFilename", originalFilename);
+            mapResultDto.put("originalFilename", originalFilename); 
+
             return mapResultDto;
 
         } catch (IOException e) {
@@ -87,7 +93,8 @@ public class CloudinaryService {
         }
     }
 
-    public void deleteFile(String publicId) {
+
+    public Map deleteFile(String publicId) {
         try {
 
             Map result = cloudinary.uploader().destroy(
@@ -101,6 +108,8 @@ public class CloudinaryService {
             if (!"ok".equals(result.get("result"))) {
                 throw new RuntimeException("No se pudo eliminar el archivo en Cloudinary: " + publicId);
             }
+
+            return result;
 
         } catch (IOException e) {
             throw new RuntimeException("Error al eliminar archivo en Cloudinary", e);

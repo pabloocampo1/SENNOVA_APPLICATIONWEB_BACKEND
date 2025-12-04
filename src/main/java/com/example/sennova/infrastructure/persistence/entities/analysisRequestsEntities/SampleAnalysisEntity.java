@@ -1,5 +1,6 @@
 package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
@@ -58,11 +59,12 @@ public class SampleAnalysisEntity {
     @LastModifiedDate
     private LocalDate updateAt;
 
-    @OneToMany(mappedBy = "sampleProductAnalysis")
+    @OneToMany(mappedBy = "sampleProductAnalysis",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
+    @JsonManagedReference
     private List<SampleProductDocumentResult> sampleProductDocumentResult;
-
-
 
 
 }

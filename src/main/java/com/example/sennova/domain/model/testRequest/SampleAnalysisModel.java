@@ -1,8 +1,10 @@
 package com.example.sennova.domain.model.testRequest;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.example.sennova.domain.model.ProductModel;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +34,8 @@ public class SampleAnalysisModel {
     private ProductModel product;
 
     private SampleModel sample;
-    
 
     private Boolean stateResult;
+
+    private List<SampleProductDocumentResult> sampleProductDocumentResult;
 }

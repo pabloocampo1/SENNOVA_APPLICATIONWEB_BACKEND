@@ -1,5 +1,6 @@
 package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,8 +18,13 @@ public class SampleProductDocumentResult {
     @Column(nullable = false)
     private String url;
 
+    private String nameFile;
+
+    private String publicId;
+
     @ManyToOne
     @JoinColumn(name = "sample_product_analysis", referencedColumnName = "sample_product_analysis_id")
+    @JsonBackReference
     private SampleAnalysisEntity sampleProductAnalysis;
 
 }

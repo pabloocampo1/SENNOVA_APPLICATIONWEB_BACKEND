@@ -13,6 +13,8 @@ import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
 import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -22,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -63,6 +67,25 @@ public class SampleServiceImpl implements SampleUseCase {
     }
 
     @Override
+    @Transactional
+    public void deleteFileResultAnalysis(Long sampleProductDocumentResultId) {
+          // find first the entity
+        SampleProductDocumentResult documentResult =  this.sampleAnalysisPersistencePort.findDocumentResult(sampleProductDocumentResultId)
+                .orElseThrow();
+
+        try{
+           Map resultDelete = this.cloudinaryService.deleteFile(documentResult.getPublicId());
+
+           if(resultDelete.get("result").equals("ok")){
+               this.sampleAnalysisPersistencePort.deleteAnalysisDocument(sampleProductDocumentResultId);
+           }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
     public SampleModel getById(Long id) {
         SampleModel sample = this.samplePersistencePort.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro el id de la muestra : " + id));
@@ -70,13 +93,12 @@ public class SampleServiceImpl implements SampleUseCase {
     }
 
     @Override
-    public SampleAnalysisModel saveResult( SampleAnalysisRequestRecord sampleAnalysisRequestRecord, List<MultipartFile> files, String requestCode) {
+    public SampleAnalysisModel saveResult( SampleAnalysisRequestRecord sampleAnalysisRequestRecord, String requestCode) {
         // save the result first
         if (sampleAnalysisRequestRecord.resultFinal().isEmpty() || sampleAnalysisRequestRecord.resultFinal().equals(" ")){
                   throw  new IllegalArgumentException("No puedes guardar el analisis sin un resultado final");
         }
 
-        // asve the files
         SampleAnalysisModel sampleAnalysisModelSaved =  this.sampleAnalysisPersistencePort.saveResult(sampleAnalysisRequestRecord);
 
         this.domainEventPublisher.publish(new AnalysisResultSavedEvent(requestCode));
@@ -142,9 +164,44 @@ public class SampleServiceImpl implements SampleUseCase {
         return List.of();
     }
 
+    @Override
+    @Transactional
+    public List<SampleProductDocumentResult> saveDocsResult(List<MultipartFile> docs, Long analysisResult) {
+
+        if(docs.isEmpty()){
+            throw  new IllegalArgumentException("No puedes realizar esta accion si no subes archivos.");
+        }
+
+        SampleAnalysisEntity sampleAnalysisEntity = this.sampleAnalysisPersistencePort.findEntityById(analysisResult)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el analysis en la base de datos."));
 
 
+        List<SampleProductDocumentResult> currentListDocs = sampleAnalysisEntity.getSampleProductDocumentResult();
 
+        for (MultipartFile file : docs){
+
+            Map<String, String> fileUpload = this.cloudinaryService.uploadFile(file);
+
+            String url = fileUpload.get("secure_url");
+            String nameFile = fileUpload.get("originalFilename");
+            String publicId = fileUpload.get("public_id");
+
+            SampleProductDocumentResult newDoc = new SampleProductDocumentResult();
+            newDoc.setUrl(url);
+            newDoc.setNameFile(nameFile);
+            newDoc.setPublicId(publicId);
+            newDoc.setSampleProductAnalysis(sampleAnalysisEntity);
+
+            currentListDocs.add(newDoc);
+
+        }
+
+        sampleAnalysisEntity.setSampleProductDocumentResult(currentListDocs);
+
+       SampleAnalysisModel analysisResultSaved = this.sampleAnalysisPersistencePort.saveEntity(sampleAnalysisEntity);
+
+        return analysisResultSaved.getSampleProductDocumentResult();
+    }
 
 
 }

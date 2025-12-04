@@ -6,6 +6,8 @@ import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.SampleAnalysisMapperDbo;
 import com.example.sennova.infrastructure.mapperDbo.SampleMapperDbo;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import com.example.sennova.infrastructure.persistence.repositoryJpa.AnalysisDocumentRepositoryJpa;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.SampleAnalysisRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,13 +20,14 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
 
     private final SampleAnalysisRepositoryJpa sampleAnalysisRepositoryJpa;
     private final SampleAnalysisMapperDbo sampleAnalysisMapperDbo;
+    private final AnalysisDocumentRepositoryJpa analysisDocumentRepositoryJpa;
 
     @Autowired
-    public SampleAnalysisAdapterImpl(SampleAnalysisRepositoryJpa sampleAnalysisRepositoryJpa, SampleAnalysisMapperDbo sampleAnalysisMapperDbo) {
+    public SampleAnalysisAdapterImpl(SampleAnalysisRepositoryJpa sampleAnalysisRepositoryJpa, SampleAnalysisMapperDbo sampleAnalysisMapperDbo, AnalysisDocumentRepositoryJpa analysisDocumentRepositoryJpa) {
         this.sampleAnalysisRepositoryJpa = sampleAnalysisRepositoryJpa;
         this.sampleAnalysisMapperDbo = sampleAnalysisMapperDbo;
+        this.analysisDocumentRepositoryJpa = analysisDocumentRepositoryJpa;
     }
-
 
     @Override
     public List<SampleAnalysisModel> findAllSamplesAnalysisBySample(Long sampleId) {
@@ -38,6 +41,11 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
     }
 
     @Override
+    public void deleteAnalysisDocument(Long sampleProductDocumentResultId) {
+        this.analysisDocumentRepositoryJpa.deleteById(sampleProductDocumentResultId);
+    }
+
+    @Override
     public SampleAnalysisModel save(SampleAnalysisModel sampleAnalysisModel) {
         SampleAnalysisEntity sampleAnalysisEntity = this.sampleAnalysisRepositoryJpa.save(this.sampleAnalysisMapperDbo.toEntity(sampleAnalysisModel));
         return this.sampleAnalysisMapperDbo.toModel(sampleAnalysisEntity);
@@ -47,6 +55,11 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
     public Optional<SampleAnalysisModel> findById(Long sampleAnalysisModelId) {
         Optional<SampleAnalysisEntity> sampleAnalysisEntity = this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisModelId);
         return sampleAnalysisEntity.map(this.sampleAnalysisMapperDbo::toModel);
+    }
+
+    @Override
+    public Optional<SampleAnalysisEntity> findEntityById(Long sampleAnalysisId) {
+        return  this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisId);
     }
 
     @Override
@@ -67,5 +80,17 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
 
         SampleAnalysisEntity analysisSaved = this.sampleAnalysisRepositoryJpa.save(analysis);
         return this.sampleAnalysisMapperDbo.toModel(analysisSaved);
+    }
+
+    @Override
+    public SampleAnalysisModel saveEntity(SampleAnalysisEntity sampleAnalysisEntity) {
+        return this.sampleAnalysisMapperDbo.toModel(
+                this.sampleAnalysisRepositoryJpa.save(
+                       sampleAnalysisEntity));
+    }
+
+    @Override
+    public Optional<SampleProductDocumentResult> findDocumentResult(Long sampleProductDocumentResultId) {
+        return this.analysisDocumentRepositoryJpa.findById(sampleProductDocumentResultId);
     }
 }

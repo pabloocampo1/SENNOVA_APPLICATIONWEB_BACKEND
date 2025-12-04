@@ -6,6 +6,7 @@ import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,10 +45,9 @@ public class SampleController {
     @PostMapping( value = "/save-result", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SampleAnalysisModel> saveResult(
             @RequestPart("dto") SampleAnalysisRequestRecord sampleAnalysisRequestRecord,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files ,
             @RequestPart("testRequestId") String requestCode
     ){
-        return  new ResponseEntity<>(this.sampleUseCase.saveResult(  sampleAnalysisRequestRecord,  files, requestCode), HttpStatus.OK);
+        return  new ResponseEntity<>(this.sampleUseCase.saveResult(  sampleAnalysisRequestRecord,  requestCode), HttpStatus.OK);
     }
 
     @PostMapping(value = "/save-reception",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,5 +57,19 @@ public class SampleController {
             @RequestParam("sampleId") Long sampleId )
     {
         return new ResponseEntity<>(this.sampleUseCase.saveReception(receptionInfoRequest, sampleId , file), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/save-document-analysis", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<SampleProductDocumentResult>> saveDocumentResult(
+            @RequestPart("docs") List<MultipartFile> docs,
+            @RequestParam("analysisResultId") Long analysisResultId
+    ){
+        return new ResponseEntity<>(this.sampleUseCase.saveDocsResult(docs, analysisResultId),HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete-file-result/{sampleProductDocumentResultId}")
+    public ResponseEntity<Void> deleteFile(@PathVariable("sampleProductDocumentResultId") Long sampleProductDocumentResultId){
+        this.sampleUseCase.deleteFileResultAnalysis(sampleProductDocumentResultId);
+           return new ResponseEntity<>( HttpStatus.OK);
     }
 }
