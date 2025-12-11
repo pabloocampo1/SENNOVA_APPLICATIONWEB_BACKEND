@@ -3,6 +3,7 @@ package com.example.sennova.application.usecasesImpl;
 import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.application.dto.testeRequest.SampleData;
+import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.event.AnalysisResultSavedEvent;
@@ -10,6 +11,7 @@ import com.example.sennova.domain.event.DomainEventPublisher;
 import com.example.sennova.domain.event.SampleReceptionUpdateEvent;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.domain.model.testRequest.SampleResults;
 import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
@@ -24,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SampleServiceImpl implements SampleUseCase {
@@ -202,6 +201,53 @@ public class SampleServiceImpl implements SampleUseCase {
 
         return analysisResultSaved.getSampleProductDocumentResult();
     }
+
+    @Override
+    public List<SampleInfoExecutionDto> getSamplesInfoExecution(List<Long> samplesId) {
+
+        List<SampleModel> samples = this.samplePersistencePort.findAllById(samplesId);
+
+        List<SampleInfoExecutionDto> samplesDto =  samples.stream().map(
+                sample -> {
+                    SampleInfoExecutionDto sampleInfoExecutionDto = new SampleInfoExecutionDto();
+
+
+                     sampleInfoExecutionDto.setTotalAnalysis(sample.getAnalysisEntities().size());
+                     sampleInfoExecutionDto.setTotalAnalysisFinished(countAnalysisMade(sample.getAnalysisEntities()));
+                     sampleInfoExecutionDto.setMatrix(sample.getMatrix());
+                     sampleInfoExecutionDto.setSampleId(sample.getSampleId());
+
+                     sampleInfoExecutionDto.setTestRequestCode(sample.getTestRequest().getRequestCode());
+                     sampleInfoExecutionDto.setTestRequestDueDate(sample.getTestRequest().getDueDate());
+
+                     String customerName = sample.getTestRequest().getCustomer().getCustomerName();
+                     String customerEmail = sample.getTestRequest().getCustomer().getEmail();
+
+                     sampleInfoExecutionDto.setCustomerName(customerName);
+                     sampleInfoExecutionDto.setCustomerEmail(customerEmail);
+
+                     List<SampleResults> results = getResults(sample.getAnalysisEntities());
+                    sampleInfoExecutionDto.setResults(results);
+
+                    return sampleInfoExecutionDto;
+                }
+        ).toList();
+
+
+        return samplesDto;
+    }
+
+    public Integer countAnalysisMade(List<SampleAnalysisModel> analysisModels) {
+        return (int) analysisModels.stream().filter(SampleAnalysisModel::getStateResult).count();
+    }
+
+    public  List<SampleResults> getResults(List<SampleAnalysisModel> analysisModels) {
+        List<SampleResults> results = new ArrayList<>();
+        analysisModels.forEach(a -> results.add(new SampleResults(a.getProduct().getAnalysis(), a.getResultFinal())));
+
+        return results;
+    }
+
 
 
 }

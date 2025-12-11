@@ -3,6 +3,7 @@ package com.example.sennova.web.controllers;
 import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.application.dto.testeRequest.SampleData;
+import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
@@ -71,5 +72,12 @@ public class SampleController {
     public ResponseEntity<Void> deleteFile(@PathVariable("sampleProductDocumentResultId") Long sampleProductDocumentResultId){
         this.sampleUseCase.deleteFileResultAnalysis(sampleProductDocumentResultId);
            return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @GetMapping("/get-sample-info-execution")
+    public ResponseEntity<List<SampleInfoExecutionDto>> getSamplesInfoExecution(
+            @RequestParam List<Long> samplesId
+    ){
+       return new ResponseEntity<>(this.sampleUseCase.getSamplesInfoExecution(samplesId), HttpStatus.OK);
     }
 }

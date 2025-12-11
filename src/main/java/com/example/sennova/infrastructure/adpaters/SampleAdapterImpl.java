@@ -63,4 +63,10 @@ public class SampleAdapterImpl implements SamplePersistencePort {
                 .toList();
         return samplesEntities.stream().map(this.sampleMapperDbo::toModel).toList();
     }
+
+    @Override
+    public List<SampleModel> findAllById(List<Long> samples) {
+        List<SampleEntity> sampleEntities = this.sampleRepositoryJpa.findAllById(samples);
+        return sampleEntities.stream().map(this.sampleMapperDbo::toModel).toList();
+    }
 }
