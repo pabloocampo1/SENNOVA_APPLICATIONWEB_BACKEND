@@ -34,6 +34,8 @@ public class SampleModel {
 
     private LocalDate createAt;
 
+
+
     private String storageConditions;
 
     private String observations;

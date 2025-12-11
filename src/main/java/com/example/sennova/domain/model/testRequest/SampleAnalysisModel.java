@@ -35,6 +35,8 @@ public class SampleAnalysisModel {
 
     private SampleModel sample;
 
+    private LocalDate updateAt;
+
     private Boolean stateResult;
 
     private List<SampleProductDocumentResult> sampleProductDocumentResult;
