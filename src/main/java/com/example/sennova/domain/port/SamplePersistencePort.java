@@ -19,4 +19,5 @@ public interface SamplePersistencePort {
     List<SampleModel> findAllById(List<Long> samples);
     List<SampleModel> findAllByStatusDeliveryIsExpired(LocalDate now);
     Page<SampleModel> findAllSamplesDeliveredTrue(Pageable pageable);
+    Page<SampleModel> findAllWithoutReception(Pageable pageable);
 }

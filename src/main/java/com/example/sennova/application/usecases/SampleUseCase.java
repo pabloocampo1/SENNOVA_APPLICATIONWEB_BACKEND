@@ -5,6 +5,7 @@ import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRec
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
+import com.example.sennova.application.dto.testeRequest.sample.SampleWithoutReceptionResponse;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
@@ -29,4 +30,5 @@ public interface SampleUseCase {
     List<SampleInfoExecutionDto> getSamplesInfoExecution(List<Long> samplesId);
     List<SampleModel> getAllByStatusExpired();
     Page<SampleDeliveredResponse> getAllSamplesDelivered(Pageable pageable);
+    Page<SampleWithoutReceptionResponse> getAllSamplesWithoutReception(Pageable pageable);
 }

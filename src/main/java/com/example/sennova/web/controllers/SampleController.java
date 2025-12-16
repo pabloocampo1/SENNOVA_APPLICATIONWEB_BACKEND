@@ -5,6 +5,7 @@ import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRec
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
+import com.example.sennova.application.dto.testeRequest.sample.SampleWithoutReceptionResponse;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
@@ -43,12 +44,18 @@ public class SampleController {
          return new ResponseEntity<>(this.sampleUseCase.getAllByStatusReception(), HttpStatus.OK);
     }
 
+
     @GetMapping("/get-all-delivered")
     public ResponseEntity<Page<SampleDeliveredResponse>> getAllSamplesDelivered(@RequestParam(defaultValue = "0") int page, @RequestParam( defaultValue = "20") int elements){
         Pageable pageable = PageRequest.of(page, elements, Sort.by("deliveryDate").descending());
         return new ResponseEntity<>(this.sampleUseCase.getAllSamplesDelivered(pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/get-all-without-reception")
+    public ResponseEntity<Page<SampleWithoutReceptionResponse>> getAllSamplesWithoutReception(@RequestParam(defaultValue = "0") int page, @RequestParam( defaultValue = "20") int elements){
+        Pageable pageable = PageRequest.of(page, elements, Sort.by("dueDate").descending());
+        return new ResponseEntity<>(this.sampleUseCase.getAllSamplesWithoutReception(pageable), HttpStatus.OK);
+    }
 
     @GetMapping("/get-all-status-expired")
     public ResponseEntity<List<SampleModel>> getAllSamplesExpired(){

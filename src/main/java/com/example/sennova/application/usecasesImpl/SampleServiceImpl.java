@@ -5,6 +5,7 @@ import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRec
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
+import com.example.sennova.application.dto.testeRequest.sample.SampleWithoutReceptionResponse;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.event.AnalysisResultSavedEvent;
@@ -261,6 +262,23 @@ public class SampleServiceImpl implements SampleUseCase {
             sampleDeliveredResponse.setDeliveryDate(sample.getDeliveryDate());
 
             return sampleDeliveredResponse;
+        });
+    }
+
+    @Override
+    public Page<SampleWithoutReceptionResponse> getAllSamplesWithoutReception(Pageable pageable) {
+        Page<SampleModel> samples = this.samplePersistencePort.findAllWithoutReception(pageable);
+        return samples.map(sample -> {
+            return  new SampleWithoutReceptionResponse(
+                 sample.getSampleId(),
+                 sample.getSampleCode(),
+                 sample.getMatrix(),
+                 sample.getAnalysisEntities().size(),
+                 sample.getTestRequest().getDeliveryStatus(),
+                 sample.getTestRequest().getCustomer().getCustomerName(),
+                 sample.getTestRequest().getRequestCode(),
+                 sample.getTestRequest().getTestRequestId()
+            );
         });
     }
 

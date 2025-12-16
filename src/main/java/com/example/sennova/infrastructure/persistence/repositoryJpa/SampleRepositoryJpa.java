@@ -20,4 +20,6 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
     List<SampleEntity> findAllByDueDateExpired(@Param("currentDate") LocalDate currentDate);
 
     Page<SampleEntity> findAllByIsDeliveredTrue(Pageable pageable);
+
+    Page<SampleEntity> findAllByStatusReceptionFalse(Pageable pageable);
 }

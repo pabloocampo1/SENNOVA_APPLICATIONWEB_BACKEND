@@ -83,4 +83,10 @@ public class SampleAdapterImpl implements SamplePersistencePort {
         Page<SampleEntity> samples = this.sampleRepositoryJpa.findAllByIsDeliveredTrue(pageable);
         return samples.map(this.sampleMapperDbo::toModel);
     }
+
+    @Override
+    public Page<SampleModel> findAllWithoutReception(Pageable pageable) {
+        Page<SampleEntity> samples = this.sampleRepositoryJpa.findAllByStatusReceptionFalse(pageable);
+        return samples.map(this.sampleMapperDbo::toModel);
+    }
 }
