@@ -4,6 +4,7 @@ import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
+import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.event.AnalysisResultSavedEvent;
@@ -21,6 +22,8 @@ import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -235,6 +238,30 @@ public class SampleServiceImpl implements SampleUseCase {
 
 
         return samplesDto;
+    }
+
+    @Override
+    public List<SampleModel> getAllByStatusExpired() {
+        LocalDate now = LocalDate.now();
+        return this.samplePersistencePort.findAllByStatusDeliveryIsExpired(now) ;
+    }
+
+    @Override
+    public Page<SampleDeliveredResponse> getAllSamplesDelivered(Pageable pageable) {
+        Page<SampleModel> samples = this.samplePersistencePort.findAllSamplesDeliveredTrue(pageable);
+        return samples.map(sample -> {
+            SampleDeliveredResponse sampleDeliveredResponse = new SampleDeliveredResponse();
+            sampleDeliveredResponse.setSampleCode(sample.getSampleCode());
+            sampleDeliveredResponse.setSampleId(sample.getSampleId());
+            sampleDeliveredResponse.setMatrix(sample.getMatrix());
+            sampleDeliveredResponse.setTestRequestCode(sample.getTestRequest().getRequestCode());
+            sampleDeliveredResponse.setTestRequestId(sample.getTestRequest().getTestRequestId());
+            sampleDeliveredResponse.setCustomerEmail(sample.getTestRequest().getCustomer().getEmail());
+            sampleDeliveredResponse.setCustomerName(sample.getTestRequest().getCustomer().getCustomerName());
+            sampleDeliveredResponse.setDeliveryDate(sample.getDeliveryDate());
+
+            return sampleDeliveredResponse;
+        });
     }
 
     public Integer countAnalysisMade(List<SampleAnalysisModel> analysisModels) {

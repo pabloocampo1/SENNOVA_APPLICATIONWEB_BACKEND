@@ -6,6 +6,8 @@ import com.example.sennova.infrastructure.mapperDbo.SampleMapperDbo;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.SampleRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -68,5 +70,17 @@ public class SampleAdapterImpl implements SamplePersistencePort {
     public List<SampleModel> findAllById(List<Long> samples) {
         List<SampleEntity> sampleEntities = this.sampleRepositoryJpa.findAllById(samples);
         return sampleEntities.stream().map(this.sampleMapperDbo::toModel).toList();
+    }
+
+    @Override
+    public List<SampleModel> findAllByStatusDeliveryIsExpired(LocalDate now) {
+        List<SampleEntity> samples = this.sampleRepositoryJpa.findAllByDueDateExpired(now);
+        return samples.stream().map(this.sampleMapperDbo::toModel).toList();
+    }
+
+    @Override
+    public Page<SampleModel> findAllSamplesDeliveredTrue(Pageable pageable) {
+        Page<SampleEntity> samples = this.sampleRepositoryJpa.findAllByIsDeliveredTrue(pageable);
+        return samples.map(this.sampleMapperDbo::toModel);
     }
 }

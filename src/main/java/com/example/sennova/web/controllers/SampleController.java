@@ -4,11 +4,17 @@ import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
+import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +43,18 @@ public class SampleController {
          return new ResponseEntity<>(this.sampleUseCase.getAllByStatusReception(), HttpStatus.OK);
     }
 
-    @GetMapping("/get-expired")
-    public ResponseEntity<List<SampleModel>> getAllExpired(){
-        return  new ResponseEntity<>(this.sampleUseCase.getAllByStatusReception(), HttpStatus.OK);
+    @GetMapping("/get-all-delivered")
+    public ResponseEntity<Page<SampleDeliveredResponse>> getAllSamplesDelivered(@RequestParam(defaultValue = "0") int page, @RequestParam( defaultValue = "20") int elements){
+        Pageable pageable = PageRequest.of(page, elements, Sort.by("deliveryDate").descending());
+        return new ResponseEntity<>(this.sampleUseCase.getAllSamplesDelivered(pageable), HttpStatus.OK);
     }
 
+
+    @GetMapping("/get-all-status-expired")
+    public ResponseEntity<List<SampleModel>> getAllSamplesExpired(){
+        return new ResponseEntity<>(this.sampleUseCase.getAllByStatusExpired(), HttpStatus.OK);
+    }
+    
 
     @PostMapping( value = "/save-result", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SampleAnalysisModel> saveResult(

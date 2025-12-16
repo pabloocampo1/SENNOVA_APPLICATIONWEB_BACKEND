@@ -19,6 +19,10 @@ public class SampleModel {
 
     private String description;
 
+    private Boolean isDelivered;
+    
+    private LocalDate deliveryDate;
+
      private LocalDate sampleEntryDate;
 
     private LocalDate sampleReceptionDate;

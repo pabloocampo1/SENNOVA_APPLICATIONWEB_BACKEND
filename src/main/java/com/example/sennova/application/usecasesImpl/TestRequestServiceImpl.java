@@ -114,6 +114,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                  sampleModel.setSampleCode("M"+countSampleCode.getAndIncrement() + " - " + randomNum);
                  sampleModel.setTestRequest(testRequestSaved);
                  sampleModel.setStatusReception(false);
+                 sampleModel.setIsDelivered(false);
 
                  // count hoy many anaylis there are for this sample
 

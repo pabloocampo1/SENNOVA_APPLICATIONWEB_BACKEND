@@ -46,6 +46,10 @@ public class SampleEntity {
 
     private String storageConditions;
 
+    private Boolean isDelivered;
+
+    private LocalDate deliveryDate;
+
     private String observations;
 
     private Boolean statusReception;
@@ -55,8 +59,8 @@ public class SampleEntity {
     private String sampleImage;
 
     // This due date is generated when the laboratory registers the reception.
-// It's slightly different from the test request due date, which is generated
-// when all samples have been received.
+    // It's slightly different from the test request due date, which is generated
+    // when all samples have been received.
     private LocalDate dueDate;
 
 
