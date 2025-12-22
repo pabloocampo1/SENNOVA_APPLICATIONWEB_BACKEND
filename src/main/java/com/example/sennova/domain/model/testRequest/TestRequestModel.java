@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.example.sennova.domain.model.UserModel;
-import net.minidev.json.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 

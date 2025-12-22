@@ -1,4 +1,4 @@
-package com.example.sennova.application.dto.testeRequest;
+package com.example.sennova.application.dto.testeRequest.sample;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

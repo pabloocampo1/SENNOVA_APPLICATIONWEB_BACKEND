@@ -1,8 +1,9 @@
 package com.example.sennova.web.controllers;
 
 import com.example.sennova.application.dto.UserDtos.UserResponse;
+import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
-import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import com.example.sennova.application.usecases.TestRequestUseCase;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 
-import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/testRequest")
@@ -59,7 +57,7 @@ public class TestRequestController {
     }
 
     @GetMapping("/members/{testRequestId}")
-    public ResponseEntity<List<UserResponse>> getAllMembers(@PathVariable("testRequestId") Long testRequest){
+    public ResponseEntity<List<UserResponseMembersAssigned>> getAllMembers(@PathVariable("testRequestId") Long testRequest){
         return new ResponseEntity<>(this.testRequestUseCase.usersAssignedTestRequest(testRequest), HttpStatus.OK);
     }
 
@@ -115,7 +113,7 @@ public class TestRequestController {
     }
 
     @PutMapping("/remove-member/{testRequestId}/{userId}")
-    public ResponseEntity<List<UserResponse>> removeMember(@PathVariable("userId") Long userId, @PathVariable("testRequestId") Long testRequestId){
+    public ResponseEntity<List<UserResponseMembersAssigned>> removeMember(@PathVariable("userId") Long userId, @PathVariable("testRequestId") Long testRequestId){
         this.testRequestUseCase.removeMember(userId, testRequestId);
         return new ResponseEntity<>(this.testRequestUseCase.removeMember(userId, testRequestId), HttpStatus.OK);
     }

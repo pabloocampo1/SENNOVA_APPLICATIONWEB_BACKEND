@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.sennova.application.dto.UserDtos.UserResponse;
+import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
+import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 
@@ -30,8 +32,8 @@ public interface TestRequestUseCase {
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByCode(String code);
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByDeliveryState(String state);
     List<SampleModel> getSamples();
-    List<UserResponse> usersAssignedTestRequest(Long testRequestId);
-    List<UserResponse> removeMember(Long userId, Long testRequestId);
+    List<UserResponseMembersAssigned> usersAssignedTestRequest(Long testRequestId);
+    List<UserResponseMembersAssigned> removeMember(Long userId, Long testRequestId);
     void changeStatusDelivery( Long testRequestId);
 
 }

@@ -2,12 +2,10 @@ package com.example.sennova.application.usecasesImpl;
 
 import com.example.sennova.application.dto.testeRequest.ReceptionInfoRequest;
 import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
-import com.example.sennova.application.dto.testeRequest.SampleData;
 import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SampleWithoutReceptionResponse;
 import com.example.sennova.application.usecases.SampleUseCase;
-import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.event.AnalysisResultSavedEvent;
 import com.example.sennova.domain.event.DomainEventPublisher;
 import com.example.sennova.domain.event.SampleReceptionUpdateEvent;

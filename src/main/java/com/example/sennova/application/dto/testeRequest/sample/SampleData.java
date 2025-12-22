@@ -1,4 +1,4 @@
-package com.example.sennova.application.dto.testeRequest;
+package com.example.sennova.application.dto.testeRequest.sample;
 
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;

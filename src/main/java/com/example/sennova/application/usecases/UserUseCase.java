@@ -13,7 +13,7 @@ public interface UserUseCase {
     UserResponse saveModel(UserModel userModel);
     List<UserResponse> findAll();
     List<UserModel> findAllModels();
-    List<UserResponse> getAllByTestRequest(Long testRequestId);
+    List<UserResponseMembersAssigned> getAllByTestRequest(Long testRequestId);
     List<UserResponse> getAllAvailable();
     UserResponse findById(Long id);
     UserResponse update(Long userId, UserUpdateDto userUpdateDto, MultipartFile imageFile);

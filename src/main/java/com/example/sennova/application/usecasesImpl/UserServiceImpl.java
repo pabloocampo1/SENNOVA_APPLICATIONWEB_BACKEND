@@ -103,8 +103,16 @@ public class UserServiceImpl implements UserUseCase {
     }
 
     @Override
-    public List<UserResponse> getAllByTestRequest(Long testRequestId) {
-        return this.userPersistencePort.getAllByTestRequest(testRequestId).stream().map(this.userMapper::toResponse).toList();
+    public List<UserResponseMembersAssigned> getAllByTestRequest(Long testRequestId) {
+        return this.userPersistencePort.getAllByTestRequest(testRequestId).stream().map(userModel -> {
+            return new UserResponseMembersAssigned(
+                    userModel.getUserId(),
+                    userModel.getName(),
+                    userModel.getAvailable(),
+                    userModel.getImageProfile(),
+                    userModel.getEmail()
+            );
+        }).toList();
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.example.sennova.application.usecasesImpl;
 
 import com.example.sennova.application.dto.UserDtos.UserResponse;
+import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
+import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.*;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
@@ -17,18 +19,14 @@ import com.example.sennova.domain.port.TestRequestPersistencePort;
 import com.example.sennova.infrastructure.persistence.entities.Notifications;
 import com.example.sennova.infrastructure.restTemplate.TestRequestEmailService;
 import com.example.sennova.web.exception.EntityNotFoundException;
-import com.sun.jdi.LongValue;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Service
 public class TestRequestServiceImpl implements TestRequestUseCase {
@@ -370,18 +368,26 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     }
 
     @Override
-    public List<UserResponse> usersAssignedTestRequest(Long testRequestId) {
+    public List<UserResponseMembersAssigned> usersAssignedTestRequest(Long testRequestId) {
       if (!this.testRequestPersistencePort.existsById(testRequestId)){
            throw new EntityNotFoundException("No se encontro el ensayo con id : " + testRequestId);
       }
+        return  this.userUseCase.usersAssignedTestRequest(testRequestId).stream().map(u -> {
+            return new UserResponseMembersAssigned(
+                 u.userId(),
+                 u.name(),
+                 u.available(),
+                 u.imageProfile(),
+                 u.email()
+            );
 
-        List<UserResponse> usersAssigned = this.userUseCase.usersAssignedTestRequest(testRequestId);
-        return usersAssigned;
+        }).toList();
+
     }
 
     @Override
     @Transactional
-    public List<UserResponse> removeMember(Long userId, Long testRequestId) {
+    public List<UserResponseMembersAssigned> removeMember(Long userId, Long testRequestId) {
         // validate if the user exist
          if(!this.userUseCase.existById(userId)) throw new EntityNotFoundException("No se pudo procesar este usuario.");
 
@@ -438,7 +444,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
             }
             double percent = totalAnalysis == 0 ? 0 : ((double) totalAnalysisMade / totalAnalysis) * 100;
 
-            List<UserResponse> teamForThisTestRequest = this.userUseCase.getAllByTestRequest(test.getTestRequestId());
+            List<UserResponseMembersAssigned> teamForThisTestRequest = this.userUseCase.getAllByTestRequest(test.getTestRequestId());
 
             TestRequestSummaryInfoResponse testRequestSummaryInfoResponse = new TestRequestSummaryInfoResponse(
                     test.getTestRequestId(),
