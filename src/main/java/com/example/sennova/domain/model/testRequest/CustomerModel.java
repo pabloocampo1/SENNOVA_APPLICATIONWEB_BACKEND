@@ -33,8 +33,4 @@ public class CustomerModel {
    
     private String city;
 
-    
-    private LocalDate createAt;
-
-    private LocalDate updateAt;
 }

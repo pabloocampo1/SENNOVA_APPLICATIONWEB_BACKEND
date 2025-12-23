@@ -64,6 +64,11 @@ public class SecurityConfig {
                             request.requestMatchers(HttpMethod.PUT, "/api/v1/users/update/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN,  ROLE_ANALYST);
                             request.requestMatchers(HttpMethod.DELETE, "/api/v1/users/delete/**").hasAnyRole(ROLE_SUPERADMIN);
 
+
+                            // CUSTOMERS
+                            request.requestMatchers(HttpMethod.GET, "/api/v1/customers/**").hasRole(ROLE_SUPERADMIN);
+
+
                             // products
 
 
