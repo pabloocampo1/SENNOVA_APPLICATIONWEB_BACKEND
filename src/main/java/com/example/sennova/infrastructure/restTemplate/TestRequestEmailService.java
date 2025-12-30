@@ -1,6 +1,7 @@
 package com.example.sennova.infrastructure.restTemplate;
 
 import com.example.sennova.domain.model.UserModel;
+import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import jakarta.mail.MessagingException;
@@ -165,27 +166,13 @@ public class TestRequestEmailService {
         }
     }
 
-   /*
-    public void sendEmailFinishTestRequest( String to, MultipartFile attachment) throws MessagingException {
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setFrom("no-reply@sennova.com");
-        helper.setTo(to);
-        helper.setSubject("🛠️ Equipos que requieren mantenimiento — " + LocalDate.now());
+//    public void sendFinalReport(CustomerModel customer, MultipartFile signatureImage, List<MultipartFile> documents, String responsibleName, ) throws MessagingException {
+//
+//
+//    }
 
-        if (attachment != null && !attachment.isEmpty()) {
-            helper.addAttachment(
-                    attachment.getOriginalFilename(),
-                    attachment
-            );
-        }
 
-        helper.setText(htmlContent, true);
-        mailSender.send(message);
-
-    }
-
-    */
 
 
 

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.sennova.application.usecases.TestRequestUseCase;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
-
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
@@ -141,7 +141,33 @@ public class TestRequestController {
     @GetMapping("/pdf/preview")
     public ResponseEntity<byte[]> generatePdf() {
         try {
-            byte[] pdfBytes = pdfService.generatePdfFinalResultTestRequest();
+
+            // crear un servicio en sample donde retorne el pdf, este debe de recibir el sampleId para retornar soo el pdf de un sample, ademas de cargar los demas datos del ensayo y cliente
+
+            List<PdfService.ResultadoAnalisis> listaResultados = List.of(
+                    new PdfService.ResultadoAnalisis(1, "pH", "SM 4500", "7,35", "NA", "6,50 – 9,00", "2025-07-31"),
+                    new PdfService.ResultadoAnalisis(2, "Cloro residual", "SM 4500", "0,06 mg/L", "NA", "0,3 – 2,0 mg/L", "2025-07-31")
+            );
+
+            PdfService.DatosInformeDTO miInforme = new PdfService.DatosInformeDTO(
+                    "JUAN PEREZ",
+                    "EMBOTELLADORA POOL S.A.S",      
+                    "Calle 10 # 45-20, Medellín",
+                    "900.123.456-1",
+                    "contacto@pool.com.co",
+                    "COT-2025-089",
+                    "6041234567",
+                    "2025-07-31",
+                    "2025-08-04",
+                    "Jonathan Henao Valencia",
+                    listaResultados
+            );
+
+            byte[] pdfBytes = pdfService.generarInformePdf(
+                   miInforme,
+                    null
+
+            );
 
 
             return ResponseEntity.ok()
@@ -153,6 +179,29 @@ public class TestRequestController {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+    }
+
+    @PostMapping("/finish-test-request")
+    public ResponseEntity<Void>  sendResultTestRequest(
+            @RequestParam("testRequestId") Long testRequestId,
+            @RequestParam(value = "notes", required = false) String notes,
+            @RequestParam(value = "documents", required = false) List<MultipartFile> documents,
+            @RequestParam(value = "responsibleName") String responsibleName,
+            @RequestParam(value = "signature") MultipartFile signatureImage
+
+    ){
+        ResultExecutionFinalTestRequestDto finalReport = new ResultExecutionFinalTestRequestDto(
+               testRequestId,
+               notes,
+               documents,
+               responsibleName,
+               signatureImage
+        );
+
+        this.testRequestUseCase.sendFinalReport(finalReport);
+
+
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
 

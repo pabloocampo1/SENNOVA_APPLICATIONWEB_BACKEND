@@ -53,7 +53,9 @@ dependencies {
 
     implementation 'com.cloudinary:cloudinary-http44:1.33.0'
 
-    implementation 'com.itextpdf:itext7-core:7.2.5'
+
+    implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
+    implementation 'org.xhtmlrenderer:flying-saucer-pdf-openpdf:9.1.22'
 
 
 
