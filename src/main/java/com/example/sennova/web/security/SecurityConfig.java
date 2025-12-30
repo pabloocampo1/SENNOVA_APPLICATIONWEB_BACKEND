@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     private final String ROLE_ADMIN = RoleConstantsNotification.ROLE_ADMIN;
     private final String ROLE_SUPERADMIN = RoleConstantsNotification.ROLE_SUPERADMIN;
-    private final  String ROLE_ANALYST = RoleConstantsNotification.ROLE_ANALYSIS;
+    private final  String ROLE_ANALYST = RoleConstantsNotification.ROLE_ANALYST;
     private  JwtFilter jwtFilter;
     @Autowired
     private CorsConfig corsConfig;

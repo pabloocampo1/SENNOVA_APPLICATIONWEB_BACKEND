@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/getAll")
-    public ResponseEntity<List<UserResponse>> getAll() {
+    public ResponseEntity<List<UserListResponse>> getAll() {
         return new ResponseEntity<>(this.userUseCase.findAll(), HttpStatus.OK);
     }
 

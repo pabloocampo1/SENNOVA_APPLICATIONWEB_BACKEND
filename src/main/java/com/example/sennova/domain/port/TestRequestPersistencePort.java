@@ -7,6 +7,8 @@ import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.Optional;
 public interface TestRequestPersistencePort {
     TestRequestModel save(TestRequestModel testRequestModel);
     TestRequestEntity saveEntity(TestRequestEntity testRequestEntity);
-
+    Page<TestRequestModel> findAllPage(Pageable pageable);
     List<TestRequestModel> getAll();
     Boolean existsById(Long testRequestId);
     List<SampleInfoSummaryTestRequestProjection> findSamplesInfoByTestRequest(Long testRequestId);
@@ -27,6 +29,8 @@ public interface TestRequestPersistencePort {
     List<TestRequestModel> findAllByRequestCode(String requestCode);
     List<TestRequestModel> findAllByDueDate(LocalDate today);
     List<TestRequestModel> findAllTestRequestAccepted();
+    Page<TestRequestModel> findAllTestRequestAccepted(Pageable pageable);
+
     List<TestRequestModel> findAllByDueDateExpired(LocalDate today);
     List<TestRequestModel> findAllByDeliveryState(String state);
     List<TestRequestModel> findAllTestRequestByRequestCode(String code);

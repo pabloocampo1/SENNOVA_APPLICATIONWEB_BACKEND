@@ -49,7 +49,7 @@ public class SchedulerTestRequest {
                notifications.setMessage("Hay "+testRequest.size() + " Ensayos para entregar hoy");
                notifications.setActorUser("Sistema");
                notifications.setType(TypeNotifications.DUE_DATE_TEST_REQUESTS);
-               notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYSIS));
+               notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYST));
 
                this.notificationsService.saveNotification(notifications);
 

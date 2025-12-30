@@ -14,6 +14,8 @@ import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestReques
 import com.example.sennova.web.exception.EntityNotFoundException;
 import org.antlr.v4.runtime.ListTokenSource;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -44,6 +46,11 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     @Override
     public TestRequestEntity saveEntity(TestRequestEntity testRequestEntity) {
         return this.testRequestRepositoryJpa.save(testRequestEntity);
+    }
+
+    @Override
+    public Page<TestRequestModel> findAllPage(Pageable pageable) {
+        return this.testRequestRepositoryJpa.findAll(pageable).map(this.testRequestMapperDbo::toModel);
     }
 
     @Override
@@ -113,6 +120,12 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     public List<TestRequestModel> findAllTestRequestAccepted() {
         List<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByIsApprovedTrueOrderByCreateAtDesc();
         return entities.stream().map(this.testRequestMapperDbo::toModel).toList();
+    }
+
+    @Override
+    public Page<TestRequestModel> findAllTestRequestAccepted(Pageable pageable) {
+        Page<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByIsApprovedTrueOrderByCreateAtDesc(pageable);
+        return entities.map(this.testRequestMapperDbo::toModel);
     }
 
     @Override

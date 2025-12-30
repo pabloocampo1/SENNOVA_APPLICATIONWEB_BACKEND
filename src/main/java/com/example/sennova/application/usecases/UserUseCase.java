@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserUseCase {
     UserResponse save(UserSaveRequest userSaveRequest, MultipartFile multipartFile);
     UserResponse saveModel(UserModel userModel);
-    List<UserResponse> findAll();
+    List<UserListResponse> findAll();
     List<UserModel> findAllModels();
     List<UserResponseMembersAssigned> getAllByTestRequest(Long testRequestId);
     List<UserResponse> getAllAvailable();

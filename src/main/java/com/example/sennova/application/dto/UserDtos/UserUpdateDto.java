@@ -32,6 +32,6 @@ public record UserUpdateDto(
         String position,
 
         @NotBlank(message = "El rol es obligatorio")
-        String roleName
+        String role
 ) {}
 

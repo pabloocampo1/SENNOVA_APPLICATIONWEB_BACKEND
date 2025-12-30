@@ -221,7 +221,7 @@ public class ReagentServiceImpl implements ReagentUseCase {
         newNotification.setType(TypeNotifications.NEW_EQUIPMENT);
         newNotification.setActorUser("System");
         newNotification.setImageUser(null);
-        newNotification.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYSIS));
+        newNotification.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYST));
 
         this.notificationsService.saveNotification(newNotification);
     }

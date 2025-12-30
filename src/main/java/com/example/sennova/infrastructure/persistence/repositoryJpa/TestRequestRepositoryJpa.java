@@ -3,6 +3,8 @@ package com.example.sennova.infrastructure.persistence.repositoryJpa;
 import com.example.sennova.infrastructure.persistence.entities.UserEntity;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,6 +40,7 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
     List<TestRequestEntity> findAllByDueDate(LocalDate today);
 
     List<TestRequestEntity> findAllByIsApprovedTrueOrderByCreateAtDesc();
+    Page<TestRequestEntity> findAllByIsApprovedTrueOrderByCreateAtDesc(Pageable pageable);
 
     List<TestRequestEntity> findAllByDueDateBefore(LocalDate today);
 

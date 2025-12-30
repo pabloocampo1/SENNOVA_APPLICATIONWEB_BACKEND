@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -163,6 +164,29 @@ public class TestRequestEmailService {
             throw new RuntimeException("Error enviando notificación de ensayo completado", e);
         }
     }
+
+   /*
+    public void sendEmailFinishTestRequest( String to, MultipartFile attachment) throws MessagingException {
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom("no-reply@sennova.com");
+        helper.setTo(to);
+        helper.setSubject("🛠️ Equipos que requieren mantenimiento — " + LocalDate.now());
+
+        if (attachment != null && !attachment.isEmpty()) {
+            helper.addAttachment(
+                    attachment.getOriginalFilename(),
+                    attachment
+            );
+        }
+
+        helper.setText(htmlContent, true);
+        mailSender.send(message);
+
+    }
+
+    */
+
 
 
 

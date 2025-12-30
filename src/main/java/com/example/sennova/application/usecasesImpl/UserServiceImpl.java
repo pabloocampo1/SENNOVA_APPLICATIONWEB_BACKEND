@@ -93,8 +93,8 @@ public class UserServiceImpl implements UserUseCase {
     }
 
     @Override
-    public List<UserResponse> findAll() {
-        return this.userMapper.toResponse(this.userPersistencePort.findAll());
+    public List<UserListResponse> findAll() {
+        return this.userMapper.toResponseUserList(this.userPersistencePort.findAll());
     }
 
     @Override
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserUseCase {
         UserModel currentUserInfo = this.userPersistencePort.findById(userId);
         UserModel user = new UserModel();
 
-        RoleModel roleModel = this.rolePersistencePort.findByName(userUpdateDto.roleName());
+        RoleModel roleModel = this.rolePersistencePort.findByName(userUpdateDto.role());
 
         // add the role to the user
         user.setRole(roleModel);

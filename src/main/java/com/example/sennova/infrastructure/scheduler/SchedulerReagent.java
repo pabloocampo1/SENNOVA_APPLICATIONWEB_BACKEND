@@ -70,7 +70,7 @@ public class SchedulerReagent {
             Notifications notifications = new Notifications();
             notifications.setMessage("EL reactivo " + reagent.getReagentName() + " caduco hoy.");
             notifications.setType(TypeNotifications.EXPIRED);
-            notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYSIS));
+            notifications.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYST));
             notifications.setActorUser("Sistema");
             notifications.setImageUser(null);
 

@@ -1,8 +1,9 @@
 package com.example.sennova.application.usecasesImpl;
 
-import com.example.sennova.application.dto.UserDtos.UserResponse;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
+import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
+import com.example.sennova.application.dto.testeRequest.quotation.SampleQuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.*;
@@ -21,6 +22,9 @@ import com.example.sennova.infrastructure.restTemplate.TestRequestEmailService;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -61,6 +65,38 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         return this.testRequestPersistencePort.getAll();
     }
 
+    @Override
+    public Page<QuotationResponse> getAllQuotation(Pageable pageable) {
+        Page<TestRequestModel> testRequestModelPage = this.testRequestPersistencePort.findAllPage(pageable);
+        List<QuotationResponse> content =
+                testRequestModelPage.getContent()
+                .stream().map(t -> {
+
+                    List<SampleQuotationResponse> samples = t.getSamples()
+                            .stream()
+                            .map(s -> new SampleQuotationResponse(s.getMatrix(), s.getAnalysisEntities().size()))
+                            .toList();
+
+                    QuotationResponse quotationResponse =new QuotationResponse();
+                    quotationResponse.setTestRequestId(t.getTestRequestId());
+                    quotationResponse.setRequestCode(t.getRequestCode());
+                    quotationResponse.setState(t.getState());
+                    quotationResponse.setCustomerModel(t.getCustomer());
+                    quotationResponse.setPrice(t.getPrice());
+                    quotationResponse.setApprovalDate(t.getApprovalDate());
+                    quotationResponse.setDiscardDate(t.getDiscardDate());
+                    quotationResponse.setCreateAt(t.getCreateAt());
+                    quotationResponse.setIsApproved(t.getIsApproved());
+                    quotationResponse.setSamples(samples);
+
+                    return quotationResponse;
+                        }).toList();
+        return new PageImpl<>(
+                content,
+                pageable,
+                testRequestModelPage.getTotalElements()
+                );
+    }
 
 
     @Override
@@ -174,7 +210,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         notification.setMessage("Llego una nueva cotizacion de ensayo, codigo " + testRequestCode);
         notification.setActorUser("Cliente - " + customer.getCustomerName());
         notification.setType(TypeNotifications.NEW_QUOTATION);
-        notification.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYSIS));
+        notification.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN, RoleConstantsNotification.ROLE_ANALYST));
         this.notificationsService.saveNotification(notification);
 
     }
@@ -339,11 +375,62 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     }
 
     @Override
-    public List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo() {
-        List<TestRequestModel> testRequest = this.testRequestPersistencePort.findAllTestRequestAccepted();
-        List<TestRequestSummaryInfoResponse> testList = this.mapToSummaryResponses(testRequest);
-        return testList;
+    public Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable) {
+        Page<TestRequestModel> testRequests = this.testRequestPersistencePort.findAllTestRequestAccepted(pageable);
+        List<TestRequestSummaryInfoResponse> content =
+                testRequests.getContent().stream()
+                        .map(this::mapSingleTestRequest)
+                        .toList();
+
+        return new PageImpl<>(
+                content,
+                pageable,
+                testRequests.getTotalElements()
+        );
     }
+
+    private TestRequestSummaryInfoResponse mapSingleTestRequest(TestRequestModel test) {
+
+        int totalSamples = 0;
+        int totalAnalysis = 0;
+        int totalAnalysisMade = 0;
+
+        for (SampleModel sample : test.getSamples()) {
+            totalSamples++;
+            for (SampleAnalysisModel analysis : sample.getAnalysisEntities()) {
+                totalAnalysis++;
+                if (Boolean.TRUE.equals(analysis.getStateResult())) {
+                    totalAnalysisMade++;
+                }
+            }
+        }
+
+        double percent = totalAnalysis == 0
+                ? 0
+                : ((double) totalAnalysisMade / totalAnalysis) * 100;
+
+        List<UserResponseMembersAssigned> team =
+                userUseCase.getAllByTestRequest(test.getTestRequestId());
+
+        return new TestRequestSummaryInfoResponse(
+                test.getTestRequestId(),
+                test.getRequestCode(),
+                test.getDeliveryStatus(),
+                test.getIsFinished(),
+                test.getDueDate(),
+                test.getSubmissionDate(),
+                test.getApprovalDate(),
+                totalAnalysis,
+                totalSamples,
+                test.getPrice(),
+                percent,
+                team
+        );
+    }
+
+
+
+
 
     @Override
     public List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByCode(String code) {
@@ -398,6 +485,8 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
         this.testRequestPersistencePort.removeMember(userId, testRequestId);
 
+
+
         return this.userUseCase.getAllByTestRequest(testRequestId);
     }
 
@@ -421,6 +510,8 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         }
 
     }
+
+
 
 
     public List<TestRequestSummaryInfoResponse> mapToSummaryResponses(List<TestRequestModel> testRequest){

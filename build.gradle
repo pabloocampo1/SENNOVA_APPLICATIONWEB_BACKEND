@@ -53,6 +53,8 @@ dependencies {
 
     implementation 'com.cloudinary:cloudinary-http44:1.33.0'
 
+    implementation 'com.itextpdf:itext7-core:7.2.5'
+
 
 
 }

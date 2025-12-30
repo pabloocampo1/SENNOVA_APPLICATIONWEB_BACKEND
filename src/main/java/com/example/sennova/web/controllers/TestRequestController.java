@@ -1,16 +1,25 @@
 package com.example.sennova.web.controllers;
 
-import com.example.sennova.application.dto.UserDtos.UserResponse;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
+import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
+import com.example.sennova.application.usecasesImpl.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.sennova.application.usecases.TestRequestUseCase;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
+
+
 
 import java.util.List;
 import java.util.Map;
@@ -20,15 +29,21 @@ import java.util.Map;
 public class TestRequestController {
 
     private final TestRequestUseCase testRequestUseCase;
+    private final PdfService pdfService;
 
     @Autowired
-    public TestRequestController(TestRequestUseCase testRequestUseCase){
+    public TestRequestController(TestRequestUseCase testRequestUseCase, PdfService pdfService){
         this.testRequestUseCase = testRequestUseCase;
+        this.pdfService = pdfService;
     }
 
     @GetMapping("/get-all/quotation")
-    public ResponseEntity<List<TestRequestModel>> getAll(){
-        return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequest(), HttpStatus.OK);
+    public ResponseEntity<Page<QuotationResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int elements
+    ){
+        Pageable pageable = PageRequest.of(page, elements, Sort.by("createAt").descending());
+        return new ResponseEntity<>(this.testRequestUseCase.getAllQuotation(pageable), HttpStatus.OK);
     }
     
     @GetMapping("/get-by-id/{testRequestId}")
@@ -98,8 +113,12 @@ public class TestRequestController {
     }
 
     @GetMapping("/get-all-info-summary")
-    public ResponseEntity<List<TestRequestSummaryInfoResponse>> getTestRequestSummaryInfo(){
-           return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequestSummaryInfo(), HttpStatus.OK);
+    public ResponseEntity<Page<TestRequestSummaryInfoResponse>> getTestRequestSummaryInfo(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int elements
+    ){
+        Pageable pageable = PageRequest.of(page, elements);
+           return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequestSummaryInfo(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/get-all-info-summary-by-code/{requestCode}")
@@ -118,12 +137,24 @@ public class TestRequestController {
         return new ResponseEntity<>(this.testRequestUseCase.removeMember(userId, testRequestId), HttpStatus.OK);
     }
 
-    // this method was created only for manual test
-   /*
-    @GetMapping("/get-all-samples")
-    public ResponseEntity<List<SampleModel>> getSamples(){
-        return new ResponseEntity<>(this.testRequestUseCase.getSamples(), HttpStatus.OK);
-    } */
+
+    @GetMapping("/pdf/preview")
+    public ResponseEntity<byte[]> generatePdf() {
+        try {
+            byte[] pdfBytes = pdfService.generatePdfFinalResultTestRequest();
+
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=resultados.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
 
 
 

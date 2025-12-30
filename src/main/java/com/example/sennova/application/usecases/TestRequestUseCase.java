@@ -6,12 +6,16 @@ import java.util.Map;
 import com.example.sennova.application.dto.UserDtos.UserResponse;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
+import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TestRequestUseCase {
     List<TestRequestModel> getAllTestRequest();
+    Page<QuotationResponse> getAllQuotation(Pageable pageable);
     List<TestRequestModel> getAllTestRequestAccepted();
     void updateStatus(TestRequestModel testRequestModel);
     TestRequestModel save(TestRequestRecord testRequestRecord);
@@ -28,7 +32,7 @@ public interface TestRequestUseCase {
     TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer);
     List<TestRequestModel> getAllByOptionAndParam(String option, String param);
     void assignResponsible(List<Long> usersId, Long testRequestId);
-    List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo();
+    Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable);
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByCode(String code);
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByDeliveryState(String state);
     List<SampleModel> getSamples();
