@@ -52,6 +52,8 @@ public class SampleEntity {
 
     private String observations;
 
+    private String samplingLocation;
+
     private Boolean statusReception;
 
     private Integer totalAnalysis;

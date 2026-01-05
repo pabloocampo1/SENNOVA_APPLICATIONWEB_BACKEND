@@ -10,7 +10,8 @@ public record ReceptionInfoRequest(
         String packageDescription,
         String identificationSample,
         String storageConditions,
-        String observations
+        String observations,
+         String SamplingLocation
 ) {
 }
 

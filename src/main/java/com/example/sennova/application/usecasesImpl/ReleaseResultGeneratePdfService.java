@@ -1,236 +1,37 @@
 package com.example.sennova.application.usecasesImpl;
 
 
+import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
+import com.example.sennova.domain.model.testRequest.CustomerModel;
+import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
+import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
 import java.util.Base64;
-import java.util.List;
 
-
-
-
-
-
-// en este servicio se debe de cambiar los dto, pasar test request y sla lista de samples, adicionalemnte el cliente
 
 
 @Service
-public class PdfService {
-
-
-    public static class DatosInformeDTO {
-
-        public String solicitante;
-        public String empresa;
-        public String direccion;
-        public String cedulaNit;
-        public String correo;
-        public String noSolicitud;
-        public String telefono;
-
-
-        public String fechaIngreso;
-        public String fechaEmision;
-        public String nombreDirector;
-        public List<PdfService.ResultadoAnalisis> resultados;
+public class ReleaseResultGeneratePdfService {
 
 
 
 
-        public DatosInformeDTO(String solicitante, String empresa, String direccion, String cedulaNit, String correo, String noSolicitud, String telefono, String fechaIngreso, String fechaEmision, String nombreDirector, List<ResultadoAnalisis> resultados) {
-            this.solicitante = solicitante;
-            this.empresa = empresa;
-            this.direccion = direccion;
-            this.cedulaNit = cedulaNit;
-            this.correo = correo;
-            this.noSolicitud = noSolicitud;
-            this.telefono = telefono;
-            this.fechaIngreso = fechaIngreso;
-            this.fechaEmision = fechaEmision;
-            this.nombreDirector = nombreDirector;
-            this.resultados = resultados;
-        }
 
-        public String getSolicitante() {
-            return solicitante;
-        }
-
-        public void setSolicitante(String solicitante) {
-            this.solicitante = solicitante;
-        }
-
-        public String getEmpresa() {
-            return empresa;
-        }
-
-        public void setEmpresa(String empresa) {
-            this.empresa = empresa;
-        }
-
-        public String getDireccion() {
-            return direccion;
-        }
-
-        public void setDireccion(String direccion) {
-            this.direccion = direccion;
-        }
-
-        public String getCedulaNit() {
-            return cedulaNit;
-        }
-
-        public void setCedulaNit(String cedulaNit) {
-            this.cedulaNit = cedulaNit;
-        }
-
-        public String getCorreo() {
-            return correo;
-        }
-
-        public void setCorreo(String correo) {
-            this.correo = correo;
-        }
-
-        public String getNoSolicitud() {
-            return noSolicitud;
-        }
-
-        public void setNoSolicitud(String noSolicitud) {
-            this.noSolicitud = noSolicitud;
-        }
-
-        public String getTelefono() {
-            return telefono;
-        }
-
-        public void setTelefono(String telefono) {
-            this.telefono = telefono;
-        }
-
-        public String getFechaIngreso() {
-            return fechaIngreso;
-        }
-
-        public void setFechaIngreso(String fechaIngreso) {
-            this.fechaIngreso = fechaIngreso;
-        }
-
-        public String getFechaEmision() {
-            return fechaEmision;
-        }
-
-        public void setFechaEmision(String fechaEmision) {
-            this.fechaEmision = fechaEmision;
-        }
-
-        public String getNombreDirector() {
-            return nombreDirector;
-        }
-
-        public void setNombreDirector(String nombreDirector) {
-            this.nombreDirector = nombreDirector;
-        }
-
-        public List<ResultadoAnalisis> getResultados() {
-            return resultados;
-        }
-
-        public void setResultados(List<ResultadoAnalisis> resultados) {
-            this.resultados = resultados;
-        }
-    }
-
-
-    public static class ResultadoAnalisis {
-        public int item;
-        public String analisis;
-        public String metodo;
-        public String resultado;
-        public String incertidumbre;
-        public String valorReferencia;
-        public String fechaAnalisis;
-
-        public int getItem() {
-            return item;
-        }
-
-        public void setItem(int item) {
-            this.item = item;
-        }
-
-        public String getAnalisis() {
-            return analisis;
-        }
-
-        public void setAnalisis(String analisis) {
-            this.analisis = analisis;
-        }
-
-        public String getMetodo() {
-            return metodo;
-        }
-
-        public void setMetodo(String metodo) {
-            this.metodo = metodo;
-        }
-
-        public String getResultado() {
-            return resultado;
-        }
-
-        public void setResultado(String resultado) {
-            this.resultado = resultado;
-        }
-
-        public String getIncertidumbre() {
-            return incertidumbre;
-        }
-
-        public void setIncertidumbre(String incertidumbre) {
-            this.incertidumbre = incertidumbre;
-        }
-
-        public String getValorReferencia() {
-            return valorReferencia;
-        }
-
-        public void setValorReferencia(String valorReferencia) {
-            this.valorReferencia = valorReferencia;
-        }
-
-        public String getFechaAnalisis() {
-            return fechaAnalisis;
-        }
-
-        public void setFechaAnalisis(String fechaAnalisis) {
-            this.fechaAnalisis = fechaAnalisis;
-        }
-
-        public ResultadoAnalisis(int item, String analisis, String metodo, String resultado,
-                                 String incertidumbre, String valorReferencia, String fechaAnalisis) {
-            this.item = item;
-            this.analisis = analisis;
-            this.metodo = metodo;
-            this.resultado = resultado;
-            this.incertidumbre = incertidumbre;
-            this.valorReferencia = valorReferencia;
-            this.fechaAnalisis = fechaAnalisis;
-        }
-    }
-    
-
-    public byte[] generarInformePdf(
-            DatosInformeDTO datos, MultipartFile firmaFile
+    public byte[] generateReportBySample(
+           SampleModel sampleModel, CustomerModel customerModel, TestRequestModel testRequestModel, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult
     ) throws Exception {
 
         String imgHtml = "";
-        if (firmaFile != null && !firmaFile.isEmpty()) {
-            byte[] bytes = firmaFile.getBytes();
+        if (infoResponsiblePersonReleaseResult.getSignature() != null && !infoResponsiblePersonReleaseResult.getSignature().isEmpty()) {
+            byte[] bytes = infoResponsiblePersonReleaseResult.getSignature().getBytes();
             String base64 = Base64.getEncoder().encodeToString(bytes);
-            String extension = firmaFile.getContentType();
+            String extension = infoResponsiblePersonReleaseResult.getSignature().getContentType();
             String firmaBase64 = "data:" + extension + ";base64," + base64;
 
 
@@ -240,16 +41,17 @@ public class PdfService {
             imgHtml = "<div style='height: 40px;'></div>";
         }
 
+        int counter = 1;
         StringBuilder sbResultados = new StringBuilder();
-        for (ResultadoAnalisis r : datos.getResultados()) {
+        for (SampleAnalysisModel a : sampleModel.getAnalysisEntities()) {
             sbResultados.append("<tr>")
-                    .append("<td class='center'>").append(r.item).append("</td>")
-                    .append("<td>").append(escapeHtml(r.analisis)).append("</td>")
-                    .append("<td class='small-text'>").append(escapeHtml(r.metodo)).append("</td>")
-                    .append("<td class='center bold'>").append(escapeHtml(r.resultado)).append("</td>")
-                    .append("<td class='center'>").append(escapeHtml(r.incertidumbre)).append("</td>")
-                    .append("<td class='center'>").append(escapeHtml(r.valorReferencia)).append("</td>")
-                    .append("<td class='center small-text'>").append(escapeHtml(r.fechaAnalisis)).append("</td>")
+                    .append("<td class='center'>").append(counter++).append("</td>")
+                    .append("<td>").append(escapeHtml(a.getProduct().getAnalysis())).append("</td>")
+                    .append("<td class='small-text'>").append(escapeHtml(a.getProduct().getMethod())).append("</td>")
+                    .append("<td class='center bold'>").append(escapeHtml(a.getResultFinal())).append("</td>")
+                    .append("<td class='center'>").append(escapeHtml("NA")).append("</td>")
+                    .append("<td class='center'>").append(escapeHtml("NA")).append("</td>")
+                    .append("<td class='center small-text'>").append(escapeHtml(a.getResultDate() != null ? a.getResultDate().toString() : "NA" )).append("</td>")
                     .append("</tr>");
         }
 
@@ -427,7 +229,7 @@ public class PdfService {
                 </div>
             </div>
 
-            <div class="report-number">INFORME DE ENSAYO N ° M25-132</div>
+            <div class="report-number">INFORME DE ENSAYO N ° %s</div>
 
             <table>
                 <tr><th colspan="4" class="section-title">INFORMACIÓN GENERAL</th></tr>
@@ -448,14 +250,14 @@ public class PdfService {
                 <tr><th colspan="4" class="section-title">2. INFORMACIÓN DE LA MUESTRA</th></tr>
                 <tr>
                     <td class="label">Fecha ingreso:</td><td class="value">%s</td>
-                    <td class="label">Matriz:</td><td class="value">Agua tratada</td>
+                    <td class="label">Matriz:</td><td class="value">%s</td>
                 </tr>
                 <tr>
                     <td class="label">Fecha emisión:</td><td class="value">%s</td>
-                    <td class="label">Lugar de Recolección:</td><td class="value">Embotellada Pool</td>
+                    <td class="label">Lugar de Recolección:</td><td class="value">%s</td>
                 </tr>
                 <tr>
-                    <td class="label">Identificación Interna:</td><td class="value" colspan="3"><b>M25-133</b></td>
+                    <td class="label">Identificación Interna:</td><td class="value" colspan="3"><b>%s</b></td>
                 </tr>
                 <tr>
                     <td class="label">Especificaciones del cliente:</td>
@@ -476,13 +278,28 @@ public class PdfService {
             </div>
 
             <div style="font-weight: bold; font-size: 8pt; margin-top: 10px;">CONVENCIONES:</div>
-            <table class="convenciones-table">
-                <tr>
-                    <td><span class="conv-label">UFC:</span> Unidades Formadoras de Colonias</td>
-                    <td><span class="conv-label">NA:</span> No aplica</td>
-                    <td><span class="conv-label">ppb:</span> partes por billón (µg/L)</td>
-                </tr>
-            </table>
+                                 <table class="convenciones-table">
+                                     <tr>
+                                         <td><span class="conv-label">UFC:</span> Unidades Formadoras de Colonias</td>
+                                         <td><span class="conv-label">NA:</span> No aplica</td>
+                                         <td><span class="conv-label">ppb:</span> partes por billón (µg/L)</td>
+                                     </tr>
+                                     <tr>
+                                         <td><span class="conv-label">min:</span> minutos</td>
+                                         <td><span class="conv-label">(AA):</span> Análisis Acreditado</td>
+                                         <td><span class="conv-label">DNPC:</span> Demasiado numeroso para contar</td>
+                                     </tr>
+                                     <tr>
+                                         <td><span class="conv-label">ppm:</span> partes por millón (mg/L)</td>
+                                         <td><span class="conv-label">NTLEN:</span> No tiene límites establecidos</td>
+                                         <td><span class="conv-label">NMP:</span> Número más probable</td>
+                                     </tr>
+                                     <tr>
+                                         <td><span class="conv-label">NTU:</span> Unidades Nefelométricas</td>
+                                         <td><span class="conv-label">SM:</span> Standard Methods (Water/Wastewater)</td>
+                                         <td><span class="conv-label">NTC:</span> Norma Técnica Colombiana</td>
+                                     </tr>
+                                 </table>
 
             <table class="results-table">
                 <thead>
@@ -509,7 +326,7 @@ public class PdfService {
                 </div>
                 <div class="signature-line">
                     <span class="director-name">%s</span>
-                    <span class="director-charge">Director Técnico Laboratorio de Servicios Tecnológicos</span>
+                    <span class="director-charge">%s</span>
                     <span class="director-charge">C.R.N.R La Salada</span>
                 </div>
             </div>
@@ -518,22 +335,26 @@ public class PdfService {
         </html>
        """.formatted(
 
-                escapeHtml(datos.getSolicitante()),
-                escapeHtml(datos.getEmpresa()),
-                escapeHtml(datos.getDireccion()),
-                escapeHtml(datos.getCedulaNit()),
-                escapeHtml(datos.getCorreo()),
-                escapeHtml(datos.getNoSolicitud()),
-                escapeHtml(datos.getTelefono()),
+                escapeHtml(testRequestModel.getRequestCode()),
+                escapeHtml(customerModel.getCustomerName()),
+                escapeHtml("NA"),
+                escapeHtml(customerModel.getAddress() + " " + customerModel.getCity() ),
+                escapeHtml(customerModel.getDni()),
+                escapeHtml(customerModel.getEmail()),
+                escapeHtml("Cotizacion " + testRequestModel.getRequestCode()),
+                escapeHtml(String.valueOf(customerModel.getPhoneNumber())),
 
 
-                escapeHtml(datos.getFechaIngreso()),
-                escapeHtml(datos.getFechaEmision()),
-
-
+                escapeHtml(sampleModel.getSampleReceptionDate() != null ? sampleModel.getSampleReceptionDate().toString() : "null"),
+                escapeHtml(sampleModel.getMatrix()),
+                escapeHtml(LocalDate.now().toString()),
+                escapeHtml(sampleModel.getSamplingLocation() != null ? sampleModel.getSamplingLocation() : "null" ),
+                escapeHtml(sampleModel.getSampleCode()),
+                
                 sbResultados.toString(),
                 imgHtml,
-                escapeHtml(datos.getNombreDirector())
+                escapeHtml(infoResponsiblePersonReleaseResult.getName()),
+                escapeHtml(infoResponsiblePersonReleaseResult.getRole())
         );
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -554,6 +375,9 @@ public class PdfService {
                 .replace("'", "&#39;");
     }
 }
+
+
+
 
 
 

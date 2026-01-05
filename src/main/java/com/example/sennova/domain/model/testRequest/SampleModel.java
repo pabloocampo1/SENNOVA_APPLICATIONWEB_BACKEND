@@ -20,7 +20,7 @@ public class SampleModel {
     private String description;
 
     private Boolean isDelivered;
-    
+
     private LocalDate deliveryDate;
 
      private LocalDate sampleEntryDate;
@@ -34,7 +34,10 @@ public class SampleModel {
     private double temperature;
 
     private String packageDescription;
+
     private String identificationSample;
+
+    private String samplingLocation;
 
     private LocalDate createAt;
 

@@ -7,6 +7,7 @@ import com.example.sennova.application.dto.testeRequest.quotation.SampleQuotatio
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.*;
+import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.constants.TypeNotifications;
@@ -43,11 +44,11 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     private final TestRequestPersistencePort testRequestPersistencePort;
     private final NotificationsService  notificationsService;
     private final UserUseCase userUseCase;
-    private final PdfService pdfService;
+    private final ReleaseResultGeneratePdfService releaseResultGeneratePdfService;
     private final TestRequestEmailService testRequestEmailService;
 
     @Autowired
-    public TestRequestServiceImpl(CustomerMapper customerMapper, CustomerUseCase customerUseCase, SampleUseCase sampleUseCase, SampleAnalysisUseCase sampleAnalysisUseCase, ProductUseCase productUseCase, TestRequestPersistencePort testRequestPersistencePort, NotificationsService notificationsService, UserUseCase userUseCase, PdfService pdfService, TestRequestEmailService testRequestEmailService) {
+    public TestRequestServiceImpl(CustomerMapper customerMapper, CustomerUseCase customerUseCase, SampleUseCase sampleUseCase, SampleAnalysisUseCase sampleAnalysisUseCase, ProductUseCase productUseCase, TestRequestPersistencePort testRequestPersistencePort, NotificationsService notificationsService, UserUseCase userUseCase, ReleaseResultGeneratePdfService releaseResultGeneratePdfService, TestRequestEmailService testRequestEmailService) {
         this.customerMapper = customerMapper;
         this.customerUseCase = customerUseCase;
         this.sampleUseCase = sampleUseCase;
@@ -56,7 +57,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         this.testRequestPersistencePort = testRequestPersistencePort;
         this.notificationsService = notificationsService;
         this.userUseCase = userUseCase;
-        this.pdfService = pdfService;
+        this.releaseResultGeneratePdfService = releaseResultGeneratePdfService;
         this.testRequestEmailService = testRequestEmailService;
     }
 

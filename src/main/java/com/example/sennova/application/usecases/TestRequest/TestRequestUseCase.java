@@ -1,9 +1,8 @@
-package com.example.sennova.application.usecases;
+package com.example.sennova.application.usecases.TestRequest;
 
 import java.util.List;
 import java.util.Map;
 
-import com.example.sennova.application.dto.UserDtos.UserResponse;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
 import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;

@@ -2,9 +2,11 @@ package com.example.sennova.web.controllers;
 
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
+import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
 import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
-import com.example.sennova.application.usecasesImpl.PdfService;
+import com.example.sennova.application.usecases.TestRequest.TestRequestReleaseResultUseCase;
+import com.example.sennova.application.usecasesImpl.ReleaseResultGeneratePdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.sennova.application.usecases.TestRequestUseCase;
+import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,12 +31,12 @@ import java.util.Map;
 public class TestRequestController {
 
     private final TestRequestUseCase testRequestUseCase;
-    private final PdfService pdfService;
+    private final TestRequestReleaseResultUseCase testRequestReleaseResultUseCase;
 
     @Autowired
-    public TestRequestController(TestRequestUseCase testRequestUseCase, PdfService pdfService){
+    public TestRequestController(TestRequestUseCase testRequestUseCase, TestRequestReleaseResultUseCase testRequestReleaseResultUseCase) {
         this.testRequestUseCase = testRequestUseCase;
-        this.pdfService = pdfService;
+        this.testRequestReleaseResultUseCase = testRequestReleaseResultUseCase;
     }
 
     @GetMapping("/get-all/quotation")
@@ -138,42 +140,19 @@ public class TestRequestController {
     }
 
 
-    @GetMapping("/pdf/preview")
-    public ResponseEntity<byte[]> generatePdf() {
+    @PostMapping("/pdf/preview/{sampleId}")
+    public ResponseEntity<byte[]> generatePdf(
+            @RequestBody InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult,
+            @PathVariable("sampleId") Long sampleId
+            ) {
         try {
 
-            // crear un servicio en sample donde retorne el pdf, este debe de recibir el sampleId para retornar soo el pdf de un sample, ademas de cargar los demas datos del ensayo y cliente
-
-            List<PdfService.ResultadoAnalisis> listaResultados = List.of(
-                    new PdfService.ResultadoAnalisis(1, "pH", "SM 4500", "7,35", "NA", "6,50 – 9,00", "2025-07-31"),
-                    new PdfService.ResultadoAnalisis(2, "Cloro residual", "SM 4500", "0,06 mg/L", "NA", "0,3 – 2,0 mg/L", "2025-07-31")
-            );
-
-            PdfService.DatosInformeDTO miInforme = new PdfService.DatosInformeDTO(
-                    "JUAN PEREZ",
-                    "EMBOTELLADORA POOL S.A.S",      
-                    "Calle 10 # 45-20, Medellín",
-                    "900.123.456-1",
-                    "contacto@pool.com.co",
-                    "COT-2025-089",
-                    "6041234567",
-                    "2025-07-31",
-                    "2025-08-04",
-                    "Jonathan Henao Valencia",
-                    listaResultados
-            );
-
-            byte[] pdfBytes = pdfService.generarInformePdf(
-                   miInforme,
-                    null
-
-            );
-
+            byte[] releaseResult = this.testRequestReleaseResultUseCase.generateReleaseResultBySampleId(sampleId,infoResponsiblePersonReleaseResult);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=resultados.pdf")
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(pdfBytes);
+                    .body(releaseResult);
 
         } catch (Exception e) {
             e.printStackTrace();

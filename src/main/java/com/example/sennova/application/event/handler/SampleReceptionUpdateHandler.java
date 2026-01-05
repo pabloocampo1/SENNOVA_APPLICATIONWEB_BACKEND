@@ -1,6 +1,6 @@
 package com.example.sennova.application.event.handler;
 
-import com.example.sennova.application.usecases.TestRequestUseCase;
+import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
 import com.example.sennova.domain.event.SampleReceptionUpdateEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

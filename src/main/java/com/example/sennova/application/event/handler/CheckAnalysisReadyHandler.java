@@ -1,6 +1,5 @@
 package com.example.sennova.application.event.handler;
 
-import com.example.sennova.application.usecases.TestRequestUseCase;
 import com.example.sennova.application.usecases.UserUseCase;
 import com.example.sennova.application.usecasesImpl.NotificationsService;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
@@ -8,8 +7,6 @@ import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.constants.TypeNotifications;
 import com.example.sennova.domain.event.AnalysisResultSavedEvent;
 import com.example.sennova.domain.model.UserModel;
-import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
-import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.domain.port.TestRequestPersistencePort;
 import com.example.sennova.infrastructure.persistence.entities.Notifications;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
@@ -21,7 +18,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 // This handler is executed when an analysis result is recorded or issued

@@ -146,6 +146,7 @@ public class SampleServiceImpl implements SampleUseCase {
         sample.setSampleReceptionDate(receptionInfoRequest.sampleReceptionDate());
         sample.setStorageConditions(receptionInfoRequest.storageConditions());
         sample.setSampleEntryDate(receptionInfoRequest.sampleEntryDate());
+        sample.setSamplingLocation(receptionInfoRequest.SamplingLocation());
         sample.setPackageDescription(receptionInfoRequest.packageDescription());
         sample.setSampleImage(imageUrl);
 

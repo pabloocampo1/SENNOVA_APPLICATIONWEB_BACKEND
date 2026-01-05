@@ -1,6 +1,6 @@
 package com.example.sennova.infrastructure.scheduler;
 
-import com.example.sennova.application.usecases.TestRequestUseCase;
+import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
 import com.example.sennova.application.usecases.UserUseCase;
 import com.example.sennova.application.usecasesImpl.NotificationsService;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class SchedulerTestRequest {

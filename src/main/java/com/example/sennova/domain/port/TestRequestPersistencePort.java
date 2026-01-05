@@ -1,9 +1,6 @@
 package com.example.sennova.domain.port;
 
-import com.example.sennova.application.dto.testeRequest.CustomerResponse;
-import com.example.sennova.application.usecases.TestRequestUseCase;
 import com.example.sennova.domain.model.UserModel;
-import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
