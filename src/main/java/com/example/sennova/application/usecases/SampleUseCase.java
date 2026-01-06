@@ -29,4 +29,6 @@ public interface SampleUseCase {
     List<SampleModel> getAllByStatusExpired();
     Page<SampleDeliveredResponse> getAllSamplesDelivered(Pageable pageable);
     Page<SampleWithoutReceptionResponse> getAllSamplesWithoutReception(Pageable pageable);
+    List<SampleModel> getAllSamplesById(List<Long> samples);
+    boolean checkIfAllAnalyisisAreFinished(SampleModel sampleModel);
 }

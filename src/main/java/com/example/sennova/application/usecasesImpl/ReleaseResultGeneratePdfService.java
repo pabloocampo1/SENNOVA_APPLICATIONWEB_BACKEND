@@ -28,7 +28,7 @@ public class ReleaseResultGeneratePdfService {
     ) throws Exception {
 
         String imgHtml = "";
-        if (infoResponsiblePersonReleaseResult.getSignature() != null && !infoResponsiblePersonReleaseResult.getSignature().isEmpty()) {
+            if (infoResponsiblePersonReleaseResult.getSignature() != null && !infoResponsiblePersonReleaseResult.getSignature().isEmpty()) {
             byte[] bytes = infoResponsiblePersonReleaseResult.getSignature().getBytes();
             String base64 = Base64.getEncoder().encodeToString(bytes);
             String extension = infoResponsiblePersonReleaseResult.getSignature().getContentType();

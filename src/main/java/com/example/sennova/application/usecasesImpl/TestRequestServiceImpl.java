@@ -44,11 +44,10 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     private final TestRequestPersistencePort testRequestPersistencePort;
     private final NotificationsService  notificationsService;
     private final UserUseCase userUseCase;
-    private final ReleaseResultGeneratePdfService releaseResultGeneratePdfService;
     private final TestRequestEmailService testRequestEmailService;
 
     @Autowired
-    public TestRequestServiceImpl(CustomerMapper customerMapper, CustomerUseCase customerUseCase, SampleUseCase sampleUseCase, SampleAnalysisUseCase sampleAnalysisUseCase, ProductUseCase productUseCase, TestRequestPersistencePort testRequestPersistencePort, NotificationsService notificationsService, UserUseCase userUseCase, ReleaseResultGeneratePdfService releaseResultGeneratePdfService, TestRequestEmailService testRequestEmailService) {
+    public TestRequestServiceImpl(CustomerMapper customerMapper, CustomerUseCase customerUseCase, SampleUseCase sampleUseCase, SampleAnalysisUseCase sampleAnalysisUseCase, ProductUseCase productUseCase, TestRequestPersistencePort testRequestPersistencePort, NotificationsService notificationsService, UserUseCase userUseCase,  TestRequestEmailService testRequestEmailService) {
         this.customerMapper = customerMapper;
         this.customerUseCase = customerUseCase;
         this.sampleUseCase = sampleUseCase;
@@ -57,7 +56,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         this.testRequestPersistencePort = testRequestPersistencePort;
         this.notificationsService = notificationsService;
         this.userUseCase = userUseCase;
-        this.releaseResultGeneratePdfService = releaseResultGeneratePdfService;
+
         this.testRequestEmailService = testRequestEmailService;
     }
 
@@ -510,41 +509,6 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                 this.testRequestPersistencePort.save(testRequest);
             }
         }
-
-    }
-
-    @Override
-    @Transactional
-    public void sendFinalReport(ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto) {
-
-        if(resultExecutionFinalTestRequestDto.getDocuments().size() >= 3) throw  new IllegalArgumentException(("No puedes enviar mas de 2 documentos para el informe final del cliente"));
-
-        TestRequestModel testRequest = this.getTestRequestById(resultExecutionFinalTestRequestDto.getTestRequestId());
-
-        List<SampleModel> samples = this.getSamples();
-        CustomerModel customer = testRequest.getCustomer();
-
-
-        // validate if all result are complete
-        Boolean isCompleted = samples.stream().allMatch(
-                s -> s.getAnalysisEntities().stream()
-                        .allMatch(SampleAnalysisModel::getStateResult)
-        );
-
-        if(!isCompleted) throw new IllegalArgumentException(("No puedes emitir el reporte final sin todos los analisis del ensayo completados."));
-
-
-
-//        byte[] finalReport =  this.pdfService.generarInformePdf();
-
-        testRequest.setIsFinished(true);
-
-        this.testRequestPersistencePort.save(testRequest);
-
-//        this.testRequestEmailService.sendFinalReport()
-
-     
-
 
     }
 

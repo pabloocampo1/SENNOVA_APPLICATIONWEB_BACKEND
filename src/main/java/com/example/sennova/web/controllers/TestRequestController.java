@@ -3,10 +3,14 @@ package com.example.sennova.web.controllers;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
 import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
+import com.example.sennova.application.dto.testeRequest.ReleaaseResult.SendReportSamplesDto;
 import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.application.usecases.TestRequest.TestRequestReleaseResultUseCase;
 import com.example.sennova.application.usecasesImpl.ReleaseResultGeneratePdfService;
+import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -146,8 +150,9 @@ public class TestRequestController {
             @PathVariable("sampleId") Long sampleId
             ) {
         try {
-
-            byte[] releaseResult = this.testRequestReleaseResultUseCase.generateReleaseResultBySampleId(sampleId,infoResponsiblePersonReleaseResult);
+            // change this
+            SampleModel sampleModel = new SampleModel();
+            byte[] releaseResult = this.testRequestReleaseResultUseCase.generateReleaseResultBySampleId(sampleModel,infoResponsiblePersonReleaseResult);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=resultados.pdf")
@@ -158,6 +163,23 @@ public class TestRequestController {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+    }
+
+    @PostMapping("/send-report-samples")
+    public ResponseEntity<Void> sendReportSamples(
+            @RequestParam("samples") String samplesJson,
+            @RequestParam("signature") MultipartFile signature,
+            @RequestParam("name") String name,
+            @RequestParam("role") String role
+    ) throws Exception {
+        List<Long> samples = new ObjectMapper().readValue(samplesJson, new TypeReference<List<Long>>(){});
+        InfoResponsiblePersonReleaseResult info = new InfoResponsiblePersonReleaseResult();
+        info.setName(name);
+        info.setRole(role);
+        info.setSignature(signature);
+
+        testRequestReleaseResultUseCase.generateAndSendSampleReport(samples, info);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/finish-test-request")
@@ -177,7 +199,7 @@ public class TestRequestController {
                signatureImage
         );
 
-        this.testRequestUseCase.sendFinalReport(finalReport);
+
 
 
         return new ResponseEntity<>( HttpStatus.OK);

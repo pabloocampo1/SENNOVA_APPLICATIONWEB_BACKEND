@@ -21,7 +21,6 @@ public class SampleModel {
 
     private Boolean isDelivered;
 
-    private LocalDate deliveryDate;
 
      private LocalDate sampleEntryDate;
 

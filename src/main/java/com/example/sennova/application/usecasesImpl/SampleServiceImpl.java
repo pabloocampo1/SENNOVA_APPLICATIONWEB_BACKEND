@@ -258,7 +258,7 @@ public class SampleServiceImpl implements SampleUseCase {
             sampleDeliveredResponse.setTestRequestId(sample.getTestRequest().getTestRequestId());
             sampleDeliveredResponse.setCustomerEmail(sample.getTestRequest().getCustomer().getEmail());
             sampleDeliveredResponse.setCustomerName(sample.getTestRequest().getCustomer().getCustomerName());
-            sampleDeliveredResponse.setDeliveryDate(sample.getDeliveryDate());
+
 
             return sampleDeliveredResponse;
         });
@@ -279,6 +279,16 @@ public class SampleServiceImpl implements SampleUseCase {
                  sample.getTestRequest().getTestRequestId()
             );
         });
+    }
+
+    @Override
+    public List<SampleModel> getAllSamplesById(List<Long> samples) {
+        return this.samplePersistencePort.findAllById(samples);
+    }
+
+    @Override
+    public boolean checkIfAllAnalyisisAreFinished(SampleModel sampleModel) {
+        return sampleModel.getAnalysisEntities().stream().allMatch(SampleAnalysisModel::getStateResult);
     }
 
     public Integer countAnalysisMade(List<SampleAnalysisModel> analysisModels) {

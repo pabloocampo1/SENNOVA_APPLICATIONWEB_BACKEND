@@ -10,4 +10,10 @@ public class TestRequestConstants {
     public static final String IN_PROGRESS = "En proceso";
     public static final String COMPLETED = "Terminada";
     public static final String EXPIRED = "Vencida";
+
+    // delivery status
+    public static final String SENT = "Enviado";
+    public static final String FAILED = "Envio fallado";
+    public static final String PENDING_DELIVERY = "Pendiente de envio";
+
 }

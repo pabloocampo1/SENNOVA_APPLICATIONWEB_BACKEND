@@ -38,6 +38,6 @@ public interface TestRequestUseCase {
     List<UserResponseMembersAssigned> usersAssignedTestRequest(Long testRequestId);
     List<UserResponseMembersAssigned> removeMember(Long userId, Long testRequestId);
     void changeStatusDelivery( Long testRequestId);
-    void sendFinalReport(ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto);
+
 
 }

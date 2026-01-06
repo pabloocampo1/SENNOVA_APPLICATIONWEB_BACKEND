@@ -167,10 +167,43 @@ public class TestRequestEmailService {
     }
 
 
-//    public void sendFinalReport(CustomerModel customer, MultipartFile signatureImage, List<MultipartFile> documents, String responsibleName, ) throws MessagingException {
-//
-//
-//    }
+    /**
+     *
+     *
+     * @param customer
+     * @param pdfDocument
+     * @param responsibleName
+     * @param sampleCode
+     * @throws MessagingException 
+     */
+    public void sendSampleReport(
+            CustomerModel customer,
+            byte[] pdfDocument,
+            String responsibleName,
+            String sampleCode
+    ) throws MessagingException {
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+
+        helper.setTo(customer.getEmail());
+        helper.setFrom("no-reply@labsys.com");
+        helper.setSubject("Informe de resultado - Muestra " + sampleCode);
+
+
+        String htmlBody = "<p>Estimado/a " + customer.getCustomerName() + ",</p>"
+                + "<p>Adjunto encontrará el informe del resultado de su muestra.</p>"
+                + "<p>Atentamente,<br/>" + responsibleName + "</p>";
+
+        helper.setText(htmlBody, true);
+
+
+        helper.addAttachment("Informe_" + sampleCode + ".pdf", new org.springframework.core.io.ByteArrayResource(pdfDocument));
+
+        
+        mailSender.send(message);
+    }
 
 
 
