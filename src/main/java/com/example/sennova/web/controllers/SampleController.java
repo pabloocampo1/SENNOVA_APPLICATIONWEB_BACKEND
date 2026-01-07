@@ -37,14 +37,16 @@ public class SampleController {
          return new ResponseEntity<>( this.sampleUseCase.getById(sampleId), HttpStatus.OK);
     }
 
-    @GetMapping("/get-all-status-process")
-    public ResponseEntity<List<SampleModel>> getAllSamplesNoFinished(){
-         return new ResponseEntity<>(this.sampleUseCase.getAllByStatusReception(), HttpStatus.OK);
+    @GetMapping("/pending-delivery")
+    public ResponseEntity<List<SampleModel>> getAllSamplesNoFinishedAndReceptionTrue(){
+         return new ResponseEntity<>(this.sampleUseCase.findAllByStatusReceptionTrueAndNoExpiredAndIsDeliveredFalse(), HttpStatus.OK);
     }
 
 
     @GetMapping("/get-all-delivered")
-    public ResponseEntity<Page<SampleDeliveredResponse>> getAllSamplesDelivered(@RequestParam(defaultValue = "0") int page, @RequestParam( defaultValue = "20") int elements){
+    public ResponseEntity<Page<SampleDeliveredResponse>> getAllSamplesDelivered(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam( defaultValue = "40") int elements){
         Pageable pageable = PageRequest.of(page, elements, Sort.by("deliveryDate").descending());
         return new ResponseEntity<>(this.sampleUseCase.getAllSamplesDelivered(pageable), HttpStatus.OK);
     }

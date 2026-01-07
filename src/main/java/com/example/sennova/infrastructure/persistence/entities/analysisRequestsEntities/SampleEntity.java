@@ -48,6 +48,7 @@ public class SampleEntity {
 
     private Boolean isDelivered;
 
+    private LocalDateTime deliveryDate;
 
     private String observations;
 

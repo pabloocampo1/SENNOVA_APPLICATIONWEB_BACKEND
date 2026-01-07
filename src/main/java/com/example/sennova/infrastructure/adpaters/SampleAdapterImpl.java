@@ -54,8 +54,8 @@ public class SampleAdapterImpl implements SamplePersistencePort {
     }
 
     @Override
-    public List<SampleModel> findAllByStatusReception() {
-        List<SampleEntity> samples = this.sampleRepositoryJpa.findAllByStatusReceptionTrue();
+    public List<SampleModel> findAllByStatusReceptionTrueAndNoExpiredAndIsDeliveredFalse() {
+        List<SampleEntity> samples = this.sampleRepositoryJpa.findAllByStatusReceptionTrueAndIsDeliveredFalse();
 
         // return only the samples not expired
         List<SampleEntity> samplesEntities = samples.stream()
@@ -74,7 +74,7 @@ public class SampleAdapterImpl implements SamplePersistencePort {
 
     @Override
     public List<SampleModel> findAllByStatusDeliveryIsExpired(LocalDate now) {
-        List<SampleEntity> samples = this.sampleRepositoryJpa.findAllByDueDateExpired(now);
+        List<SampleEntity> samples = this.sampleRepositoryJpa.findAllExpiredAndNotDelivered(now);
         return samples.stream().map(this.sampleMapperDbo::toModel).toList();
     }
 

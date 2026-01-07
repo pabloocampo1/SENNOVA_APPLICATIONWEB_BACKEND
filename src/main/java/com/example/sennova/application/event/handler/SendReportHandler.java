@@ -61,6 +61,7 @@ public class SendReportHandler {
                // update the sample
 
                sample.setIsDelivered(true);
+               sample.setDeliveryDate(LocalDateTime.now());
                this.sampleUseCase.save(sample);
 
                // create event to verify if all samples in one test request are send, if is right, change the status

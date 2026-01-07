@@ -18,7 +18,7 @@ public interface SampleUseCase {
     SampleModel save(SampleModel sampleModel);
     List<SampleModel> getAllByTestRequest(Long testRequest);
     void deleteById(Long sampleId);
-    List<SampleModel> getAllByStatusReception();
+    List<SampleModel> findAllByStatusReceptionTrueAndNoExpiredAndIsDeliveredFalse();
     void deleteFileResultAnalysis(Long sampleProductDocumentResultId);
     SampleModel getById(Long id);
     SampleAnalysisModel saveResult( SampleAnalysisRequestRecord SampleAnalysisRequestRecord,  String requestCode);

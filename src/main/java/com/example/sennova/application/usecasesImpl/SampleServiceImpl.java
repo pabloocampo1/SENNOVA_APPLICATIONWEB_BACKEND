@@ -63,8 +63,8 @@ public class SampleServiceImpl implements SampleUseCase {
     }
 
     @Override
-    public List<SampleModel> getAllByStatusReception() {
-        return this.samplePersistencePort.findAllByStatusReception();
+    public List<SampleModel> findAllByStatusReceptionTrueAndNoExpiredAndIsDeliveredFalse() {
+        return this.samplePersistencePort.findAllByStatusReceptionTrueAndNoExpiredAndIsDeliveredFalse();
     }
 
     @Override
@@ -258,7 +258,7 @@ public class SampleServiceImpl implements SampleUseCase {
             sampleDeliveredResponse.setTestRequestId(sample.getTestRequest().getTestRequestId());
             sampleDeliveredResponse.setCustomerEmail(sample.getTestRequest().getCustomer().getEmail());
             sampleDeliveredResponse.setCustomerName(sample.getTestRequest().getCustomer().getCustomerName());
-
+            sampleDeliveredResponse.setDeliveryDate(sample.getDeliveryDate());
 
             return sampleDeliveredResponse;
         });

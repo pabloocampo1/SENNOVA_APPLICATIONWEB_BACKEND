@@ -14,10 +14,19 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
     @Query("SELECT s FROM SampleEntity s WHERE s.testRequest.testRequestId = :testRequestId")
     List<SampleEntity> findAllByTestRequest(@Param("testRequestId") Long testRequest);
 
-    List<SampleEntity> findAllByStatusReceptionTrue();
+    List<SampleEntity> findAllByStatusReceptionTrueAndIsDeliveredFalse();
 
-    @Query( value = "SELECT s FROM SampleEntity s WHERE s.dueDate < :currentDate ORDER BY s.createAt ASC")
-    List<SampleEntity> findAllByDueDateExpired(@Param("currentDate") LocalDate currentDate);
+    @Query("""
+    SELECT s
+    FROM SampleEntity s
+    WHERE (s.isDelivered = FALSE OR s.isDelivered IS NULL)
+      AND (s.dueDate IS NULL OR s.dueDate < :currentDate)
+    ORDER BY s.createAt ASC
+""")
+    List<SampleEntity> findAllExpiredAndNotDelivered(
+            @Param("currentDate") LocalDate currentDate
+    );
+
 
     Page<SampleEntity> findAllByIsDeliveredTrue(Pageable pageable);
 

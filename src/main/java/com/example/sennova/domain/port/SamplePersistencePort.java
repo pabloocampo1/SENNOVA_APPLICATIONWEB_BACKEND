@@ -15,7 +15,7 @@ public interface SamplePersistencePort {
     List<SampleModel> getAllByTestRequest(Long testRequest);
     void deleteById(Long sampleId);
     Optional<SampleModel> findById(Long id);
-    List<SampleModel> findAllByStatusReception();
+    List<SampleModel> findAllByStatusReceptionTrueAndNoExpiredAndIsDeliveredFalse();
     List<SampleModel> findAllById(List<Long> samples);
     List<SampleModel> findAllByStatusDeliveryIsExpired(LocalDate now);
     Page<SampleModel> findAllSamplesDeliveredTrue(Pageable pageable);
