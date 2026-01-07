@@ -46,6 +46,15 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
 
     Optional<TestRequestEntity> findByRequestCode(String requestCode);
 
+    @Query("""
+    SELECT COUNT(s) 
+    FROM SampleEntity s 
+    WHERE s.testRequest.testRequestId = :testRequestId 
+      AND s.isDelivered = false
+""")
+    long countNotDeliveredSamples(@Param("testRequestId") Long testRequestId);
+
+
     List<TestRequestEntity> findAllByDeliveryStatusContainingIgnoreCase(String state);
 
     List<TestRequestEntity> findAllByCustomer_CustomerNameContainingIgnoreCase(@Param("customerName") String customerName);

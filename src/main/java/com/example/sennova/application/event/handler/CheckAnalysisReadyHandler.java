@@ -56,6 +56,7 @@ public class CheckAnalysisReadyHandler {
                 );
 
         if(allAnalysisDone){
+            System.out.println("SE COMPLETO EL ESANYO COMO FINALIZADO");
             testRequest.setDeliveryStatus(TestRequestConstants.COMPLETED);
             this.testRequestPersistencePort.saveEntity(testRequest);
 
@@ -74,6 +75,8 @@ public class CheckAnalysisReadyHandler {
                     .filter(UserModel::getAvailable)
                     .filter(UserModel::isNotifyResults)
                     .forEach(user -> this.testRequestEmailService.sendNotificationTestRequestCompleted(testRequest.getRequestCode(), user.getEmail(), user.getName()));
+        } else {
+            System.out.println("noooooooooooooooo se COMPLETO EL ESANYO COMO FINALIZADO");
         }
         
     }

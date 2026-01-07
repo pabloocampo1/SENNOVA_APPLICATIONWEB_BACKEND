@@ -27,7 +27,7 @@ public interface TestRequestPersistencePort {
     List<TestRequestModel> findAllByDueDate(LocalDate today);
     List<TestRequestModel> findAllTestRequestAccepted();
     Page<TestRequestModel> findAllTestRequestAccepted(Pageable pageable);
-
+    long countNotDeliveredSamples(Long testRequestId);
     List<TestRequestModel> findAllByDueDateExpired(LocalDate today);
     List<TestRequestModel> findAllByDeliveryState(String state);
     List<TestRequestModel> findAllTestRequestByRequestCode(String code);

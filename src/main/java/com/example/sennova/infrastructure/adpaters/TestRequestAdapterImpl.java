@@ -129,6 +129,11 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     }
 
     @Override
+    public long countNotDeliveredSamples(Long testRequestId) {
+        return this.testRequestRepositoryJpa.countNotDeliveredSamples(testRequestId);
+    }
+
+    @Override
     public List<TestRequestModel> findAllByDueDateExpired(LocalDate today) {
         List<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllByDueDateBefore(today)  ;
         return entities.stream().map(this.testRequestMapperDbo::toModel).toList();

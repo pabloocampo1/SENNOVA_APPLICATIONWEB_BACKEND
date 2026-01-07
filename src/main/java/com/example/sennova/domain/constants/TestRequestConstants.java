@@ -15,5 +15,6 @@ public class TestRequestConstants {
     public static final String SENT = "Enviado";
     public static final String FAILED = "Envio fallado";
     public static final String PENDING_DELIVERY = "Pendiente de envio";
+    public static final String DELIVERED_AND_FINISHED = "COMPLETADO Y ENTREGADO";
 
 }

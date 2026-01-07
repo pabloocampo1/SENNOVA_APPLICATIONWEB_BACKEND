@@ -76,8 +76,11 @@ public class SchedulerTestRequest {
 
         if(!testRequestModels.isEmpty()){
             testRequestModels.forEach(test -> {
-                test.setDeliveryStatus(TestRequestConstants.EXPIRED);
-                this.testRequestUseCase.updateStatus(test);
+                // if the test request was delivered not change the status delivery
+               if(!test.getDeliveryStatus().equalsIgnoreCase(TestRequestConstants.DELIVERED_AND_FINISHED)){
+                   test.setDeliveryStatus(TestRequestConstants.EXPIRED);
+                   this.testRequestUseCase.updateStatus(test);
+               }
             });
         }
     }

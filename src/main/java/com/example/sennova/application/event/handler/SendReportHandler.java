@@ -2,7 +2,9 @@ package com.example.sennova.application.event.handler;
 
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.domain.constants.TestRequestConstants;
+import com.example.sennova.domain.event.DomainEventPublisher;
 import com.example.sennova.domain.event.SampleSendReportEvent;
+import com.example.sennova.domain.event.TestRequestDeliveredEvent;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.ReportDeliveryStatusRepositoryJpa;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 
 import java.time.LocalDateTime;
@@ -26,13 +30,15 @@ public class SendReportHandler {
     private final SampleUseCase sampleUseCase;
     private final TestRequestEmailService emailService;
     private final ReportDeliveryStatusRepositoryJpa reportDeliveryStatusRepositoryJpa;
+    private final DomainEventPublisher domainEventPublisher;
 
 
     @Autowired
-    public SendReportHandler(SampleUseCase sampleUseCase, TestRequestEmailService testRequestEmailService, ReportDeliveryStatusRepositoryJpa reportDeliveryStatusRepositoryJpa) {
+    public SendReportHandler(SampleUseCase sampleUseCase, TestRequestEmailService testRequestEmailService, ReportDeliveryStatusRepositoryJpa reportDeliveryStatusRepositoryJpa, DomainEventPublisher domainEventPublisher) {
         this.sampleUseCase = sampleUseCase;
         this.emailService = testRequestEmailService;
         this.reportDeliveryStatusRepositoryJpa = reportDeliveryStatusRepositoryJpa;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
 
@@ -65,7 +71,17 @@ public class SendReportHandler {
                this.sampleUseCase.save(sample);
 
                // create event to verify if all samples in one test request are send, if is right, change the status
-               
+            TransactionSynchronizationManager.registerSynchronization(
+                    new TransactionSynchronizationAdapter() {
+                        @Override
+                        public void afterCommit() {
+                            domainEventPublisher.publish(
+                                    new TestRequestDeliveredEvent(sample.getTestRequest().getTestRequestId())
+                            );
+                        }
+                    }
+            );
+                
            } catch (Exception e) {
 
                reportDeliverySample.setStatus(TestRequestConstants.FAILED);
@@ -78,3 +94,4 @@ public class SendReportHandler {
            }
     }
 }
+
