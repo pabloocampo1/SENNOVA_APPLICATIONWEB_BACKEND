@@ -7,10 +7,15 @@ import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.ReportDeliveryStatusRepositoryJpa;
 import com.example.sennova.infrastructure.restTemplate.TestRequestEmailService;
+import com.example.sennova.web.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 
 import java.time.LocalDateTime;
@@ -32,36 +37,41 @@ public class SendReportHandler {
 
 
     @Async
-   @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handle(SampleSendReportEvent event) {
-           try{
+        SampleModel sample = this.sampleUseCase.getById(event.getSampleId());
+        ReportDeliverySample reportDeliverySample = this.reportDeliveryStatusRepositoryJpa.findById(event.getReportDeliverySampleId())
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el registro"));
+
+        try{
+
                this.emailService.sendSampleReport(
-                       event.getSampleModel().getTestRequest().getCustomer(),
+                       sample.getTestRequest().getCustomer(),
                        event.getPdfDocument(),
                        event.getInfoResponsiblePersonReleaseResult().getName(),
-                       event.getSampleModel().getSampleCode()
+                       sample.getSampleCode()
                );
 
-               ReportDeliverySample delivery = event.getReportDeliverySample();
-               delivery.setStatus(TestRequestConstants.SENT);
-               delivery.setSentAt(LocalDateTime.now());
-               reportDeliveryStatusRepositoryJpa.save(delivery);
+
+               reportDeliverySample.setStatus(TestRequestConstants.SENT);
+               reportDeliverySample.setSentAt(LocalDateTime.now());
+               reportDeliveryStatusRepositoryJpa.save(reportDeliverySample);
 
                // update the sample
 
-               SampleModel sampleModel = event.getSampleModel();
-               sampleModel.setIsDelivered(true);
-               this.sampleUseCase.save(sampleModel);
+               sample.setIsDelivered(true);
+               this.sampleUseCase.save(sample);
+
+               // create event to verify if all samples in one test request are send, if is right, change the status
                
            } catch (Exception e) {
-               ReportDeliverySample delivery = event.getReportDeliverySample();
-               delivery.setStatus(TestRequestConstants.FAILED);
-               reportDeliveryStatusRepositoryJpa.save(delivery);
 
-               SampleModel sampleModel = event.getSampleModel();
-               sampleModel.setIsDelivered(false
-               );
-               this.sampleUseCase.save(sampleModel);
+               reportDeliverySample.setStatus(TestRequestConstants.FAILED);
+               reportDeliveryStatusRepositoryJpa.save(reportDeliverySample);
+
+               sample.setIsDelivered(false);
+               this.sampleUseCase.save(sample);
 
                e.printStackTrace();
            }

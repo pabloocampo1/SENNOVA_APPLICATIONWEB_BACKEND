@@ -14,6 +14,7 @@ import com.example.sennova.infrastructure.persistence.entities.analysisRequestsE
 import com.example.sennova.infrastructure.persistence.repositoryJpa.ReportDeliveryStatusRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
 
 
     @Override
+    @Transactional
     public void generateAndSendSampleReport(List<Long> samples, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult) {
         List<SampleModel> samplesListModels =  this.sampleUseCase.getAllSamplesById(samples);
 
@@ -81,7 +83,7 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
 
            ReportDeliverySample reportSaved = this.reportDeliveryStatusRepositoryJpa.save(reportDeliverySample);
 
-           this.domainEventPublisher.publish(new SampleSendReportEvent(s, infoResponsiblePersonReleaseResult , reportPdf, reportSaved  ));
+           this.domainEventPublisher.publish(new SampleSendReportEvent(s.getSampleId(), infoResponsiblePersonReleaseResult , reportPdf, reportSaved.getId() ));
 
                }
 

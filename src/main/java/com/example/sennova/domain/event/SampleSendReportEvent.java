@@ -5,21 +5,20 @@ import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
 
 public class SampleSendReportEvent {
-    private SampleModel sampleModel;
+    private Long sampleId;
     private InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult;
     private byte[] pdfDocument;
-    private ReportDeliverySample reportDeliverySample;
+    private Long reportDeliverySampleId;
 
-
-    public SampleSendReportEvent(SampleModel sampleModel, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult, byte[] pdfDocument, ReportDeliverySample reportDeliverySample) {
-        this.sampleModel = sampleModel;
+    public SampleSendReportEvent(Long sampleId, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult, byte[] pdfDocument, Long reportDeliverySampleId) {
+        this.sampleId = sampleId;
         this.infoResponsiblePersonReleaseResult = infoResponsiblePersonReleaseResult;
         this.pdfDocument = pdfDocument;
-        this.reportDeliverySample = reportDeliverySample;
+        this.reportDeliverySampleId = reportDeliverySampleId;
     }
 
-    public SampleModel getSampleModel() {
-        return sampleModel;
+    public Long getSampleId() {
+        return sampleId;
     }
 
     public InfoResponsiblePersonReleaseResult getInfoResponsiblePersonReleaseResult() {
@@ -30,7 +29,7 @@ public class SampleSendReportEvent {
         return pdfDocument;
     }
 
-    public ReportDeliverySample getReportDeliverySample() {
-        return reportDeliverySample;
+    public Long getReportDeliverySampleId() {
+        return reportDeliverySampleId;
     }
 }
