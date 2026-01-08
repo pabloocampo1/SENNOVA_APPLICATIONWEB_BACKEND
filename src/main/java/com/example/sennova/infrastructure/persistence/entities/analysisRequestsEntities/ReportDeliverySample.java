@@ -13,7 +13,14 @@ import java.time.LocalDateTime;
 @Table(
         name = "report_delivery_sample",
         indexes = {
-                @Index(name = "idx_report_delivery_sample_sample_id", columnList = "sample_id")
+                @Index(
+                        name = "idx_report_delivery_sample_sample_id",
+                        columnList = "sample_id"
+                ),
+                @Index(
+                        name = "idx_report_delivery_sample_request_code",
+                        columnList = "request_code"
+                )
         }
 )
 @Getter

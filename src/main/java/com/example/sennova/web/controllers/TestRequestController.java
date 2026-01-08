@@ -9,6 +9,7 @@ import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequ
 import com.example.sennova.application.usecases.TestRequest.TestRequestReleaseResultUseCase;
 import com.example.sennova.application.usecasesImpl.ReleaseResultGeneratePdfService;
 import com.example.sennova.domain.model.testRequest.SampleModel;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,6 +204,11 @@ public class TestRequestController {
 
 
         return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @GetMapping("/delivery-history/{requestCode}")
+    public ResponseEntity<List<ReportDeliverySample>> getDeliveryHistoryByRequestCode(@PathVariable("requestCode") String requestCode){
+        return new ResponseEntity<>(this.testRequestReleaseResultUseCase.getHistoryDeliveryByRequestCode(requestCode), HttpStatus.OK);
     }
 
 
