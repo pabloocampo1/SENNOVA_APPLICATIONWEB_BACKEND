@@ -16,6 +16,7 @@ import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
 import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
 import com.example.sennova.web.exception.EntityNotFoundException;
@@ -102,7 +103,12 @@ public class SampleServiceImpl implements SampleUseCase {
 
         SampleAnalysisModel sampleAnalysisModelSaved =  this.sampleAnalysisPersistencePort.saveResult(sampleAnalysisRequestRecord);
 
-        this.domainEventPublisher.publish(new AnalysisResultSavedEvent(requestCode));
+        // crear metodo para traer el test request code
+
+        String codeTestRequest = this.sampleAnalysisPersistencePort.findRequestCodeByAnalysis(sampleAnalysisModelSaved.getSampleProductAnalysisId());
+        System.out.println(codeTestRequest);
+
+        this.domainEventPublisher.publish(new AnalysisResultSavedEvent(codeTestRequest));
 
         return sampleAnalysisModelSaved;
     }

@@ -7,7 +7,7 @@ import com.example.sennova.infrastructure.persistence.entities.analysisRequestsE
 import java.util.List;
 
 public interface TestRequestReleaseResultUseCase {
-
+    byte[] generateReleaseResultBySampleIdPreview(Long sampleId);
     byte[] generateReleaseResultBySampleId(SampleModel sampleModel, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult);
     List<byte[]> generateReleaseResultByTestRequest(Long testRequestId);
 

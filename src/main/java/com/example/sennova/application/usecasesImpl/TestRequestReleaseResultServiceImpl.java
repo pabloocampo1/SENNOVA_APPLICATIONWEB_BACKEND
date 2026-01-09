@@ -38,6 +38,25 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
     }
 
     @Override
+    public byte[] generateReleaseResultBySampleIdPreview(Long sampleId) {
+        try {
+
+            InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult = new InfoResponsiblePersonReleaseResult(
+                    "Vista previa",
+                    "Vista previa",
+                    null
+            );
+
+            SampleModel sample = this.sampleUseCase.getById(sampleId);
+
+            return this.generateReleaseResultBySampleId(sample, infoResponsiblePersonReleaseResult);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public byte[] generateReleaseResultBySampleId(SampleModel sample, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult) {
         try {
             CustomerModel customerModel = sample.getTestRequest().getCustomer();
@@ -48,6 +67,8 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
             throw new RuntimeException(e);
         }
        }
+
+
 
     @Override
     public List<byte[]> generateReleaseResultByTestRequest(Long testRequestId) {

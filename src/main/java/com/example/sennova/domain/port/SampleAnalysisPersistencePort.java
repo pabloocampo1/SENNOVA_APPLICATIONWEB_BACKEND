@@ -3,6 +3,7 @@ package com.example.sennova.domain.port;
 import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
 
 import java.util.List;
@@ -18,4 +19,5 @@ public interface SampleAnalysisPersistencePort {
     SampleAnalysisModel saveResult(SampleAnalysisRequestRecord sampleAnalysisRequestRecord) ;
     SampleAnalysisModel saveEntity(SampleAnalysisEntity sampleAnalysisEntity);
     Optional<SampleProductDocumentResult> findDocumentResult(Long sampleProductDocumentResultId);
+    String findRequestCodeByAnalysis(Long sampleProductAnalysisId);
 }

@@ -44,6 +44,8 @@ public class CheckAnalysisReadyHandler {
     @Async
     @EventListener
     public void handle(AnalysisResultSavedEvent analysisResultSavedEvent){
+
+        System.out.println("se ejecuto el evento para revisar");
         // get the test requests
         TestRequestEntity testRequest = this.testRequestPersistencePort.getWithSamplesAndAnalysis(analysisResultSavedEvent.getRequestCode())
                 .orElseThrow();
@@ -56,7 +58,7 @@ public class CheckAnalysisReadyHandler {
                 );
 
         if(allAnalysisDone){
-            System.out.println("SE COMPLETO EL ESANYO COMO FINALIZADO");
+
             testRequest.setDeliveryStatus(TestRequestConstants.COMPLETED);
             this.testRequestPersistencePort.saveEntity(testRequest);
 
@@ -75,8 +77,6 @@ public class CheckAnalysisReadyHandler {
                     .filter(UserModel::getAvailable)
                     .filter(UserModel::isNotifyResults)
                     .forEach(user -> this.testRequestEmailService.sendNotificationTestRequestCompleted(testRequest.getRequestCode(), user.getEmail(), user.getName()));
-        } else {
-            System.out.println("noooooooooooooooo se COMPLETO EL ESANYO COMO FINALIZADO");
         }
         
     }

@@ -19,13 +19,11 @@ import java.util.Base64;
 @Service
 public class ReleaseResultGeneratePdfService {
 
-
-
-
-
     public byte[] generateReportBySample(
            SampleModel sampleModel, CustomerModel customerModel, TestRequestModel testRequestModel, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult
     ) throws Exception {
+
+
 
         String imgHtml = "";
             if (infoResponsiblePersonReleaseResult.getSignature() != null && !infoResponsiblePersonReleaseResult.getSignature().isEmpty()) {

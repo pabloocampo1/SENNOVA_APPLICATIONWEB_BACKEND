@@ -6,6 +6,7 @@ import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.SampleAnalysisMapperDbo;
 import com.example.sennova.infrastructure.mapperDbo.SampleMapperDbo;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.AnalysisDocumentRepositoryJpa;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.SampleAnalysisRepositoryJpa;
@@ -64,6 +65,7 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
 
     @Override
     public SampleAnalysisModel saveResult(SampleAnalysisRequestRecord sampleAnalysisRequestRecord) {
+        System.out.println(" se guardo e analisis");
 
         SampleAnalysisEntity analysis = this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisRequestRecord.sampleProductAnalysisId())
                         .orElseThrow();
@@ -92,5 +94,10 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
     @Override
     public Optional<SampleProductDocumentResult> findDocumentResult(Long sampleProductDocumentResultId) {
         return this.analysisDocumentRepositoryJpa.findById(sampleProductDocumentResultId);
+    }
+
+    @Override
+    public String findRequestCodeByAnalysis(Long sampleProductAnalysisId) {
+        return this.sampleAnalysisRepositoryJpa.findSample(sampleProductAnalysisId);
     }
 }

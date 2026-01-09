@@ -147,17 +147,16 @@ public class TestRequestController {
 
     @PostMapping("/pdf/preview/{sampleId}")
     public ResponseEntity<byte[]> generatePdf(
-            @RequestBody InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult,
             @PathVariable("sampleId") Long sampleId
             ) {
         try {
-            // change this
-            SampleModel sampleModel = new SampleModel();
-            byte[] releaseResult = this.testRequestReleaseResultUseCase.generateReleaseResultBySampleId(sampleModel,infoResponsiblePersonReleaseResult);
+            
+            byte[] releaseResult = this.testRequestReleaseResultUseCase.generateReleaseResultBySampleIdPreview(sampleId);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=resultados.pdf")
                     .contentType(MediaType.APPLICATION_PDF)
+                    
                     .body(releaseResult);
 
         } catch (Exception e) {
