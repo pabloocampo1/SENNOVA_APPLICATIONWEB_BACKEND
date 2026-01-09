@@ -183,26 +183,27 @@ public class TestRequestController {
     }
 
     @PostMapping("/finish-test-request")
-    public ResponseEntity<Void>  sendResultTestRequest(
-            @RequestParam("testRequestId") Long testRequestId,
+    public ResponseEntity<List<byte[]>>  sendResultTestRequest(
+            @RequestParam(value = "requestCode", required = true) String requestCode,
             @RequestParam(value = "notes", required = false) String notes,
             @RequestParam(value = "documents", required = false) List<MultipartFile> documents,
-            @RequestParam(value = "responsibleName") String responsibleName,
-            @RequestParam(value = "signature") MultipartFile signatureImage
+            @RequestParam(value = "responsibleName", required = true) String responsibleName,
+            @RequestParam(value = "role", required = true) String role,
+            @RequestParam(value = "signature", required = false) MultipartFile signatureImage
 
     ){
-        ResultExecutionFinalTestRequestDto finalReport = new ResultExecutionFinalTestRequestDto(
-               testRequestId,
+        ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto = new ResultExecutionFinalTestRequestDto(
+                requestCode,
                notes,
                documents,
                responsibleName,
-               signatureImage
+               signatureImage  ,
+                role
         );
 
+        List<byte[]> documentsGenerated = this.testRequestReleaseResultUseCase.generateAndSendTestRequestReport(resultExecutionFinalTestRequestDto);
 
-
-
-        return new ResponseEntity<>( HttpStatus.OK);
+        return new ResponseEntity<>(documentsGenerated, HttpStatus.OK);
     }
 
     @GetMapping("/delivery-history/{requestCode}")

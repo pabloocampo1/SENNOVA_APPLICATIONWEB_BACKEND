@@ -12,8 +12,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ResultExecutionFinalTestRequestDto {
-    @NotNull(message = "El id de la solicitud es obligatorio")
-    private Long testRequestId;
+    @NotBlank(message = "El codigo de la solicitud es obligatorio")
+    private String requestCode;
 
     private String notes;
 
@@ -23,5 +23,7 @@ public class ResultExecutionFinalTestRequestDto {
     private String responsibleName;
 
     private MultipartFile signatureImage;
+
+    private String role;
 
 }

@@ -14,7 +14,15 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "test_request")
+@Table(
+        name = "test_request",
+        indexes = {
+                @Index(
+                        name = "idx_test_request_request_code",
+                        columnList = "request_code"
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -65,7 +73,11 @@ public class TestRequestEntity {
 
     // relationships
 
-    @OneToMany(mappedBy = "testRequest")
+    @OneToMany(
+            mappedBy = "testRequest",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<SampleEntity> sampleEntityList;
 
     @ManyToOne(fetch = FetchType.EAGER)
