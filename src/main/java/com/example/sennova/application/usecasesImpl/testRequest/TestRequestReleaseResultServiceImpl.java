@@ -1,15 +1,15 @@
-package com.example.sennova.application.usecasesImpl;
+package com.example.sennova.application.usecasesImpl.testRequest;
 
 import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
 import com.example.sennova.application.dto.testeRequest.ResultExecutionFinalTestRequestDto;
 import com.example.sennova.application.usecases.SampleUseCase;
 import com.example.sennova.application.usecases.TestRequest.TestRequestReleaseResultUseCase;
 import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
+import com.example.sennova.application.usecases.TestRequest.TestRequestValidatorUseCase;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.event.DomainEventPublisher;
 import com.example.sennova.domain.event.SampleSendReportEvent;
 import com.example.sennova.domain.model.testRequest.CustomerModel;
-import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
@@ -31,9 +31,11 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
     private final ReleaseResultGeneratePdfService releaseResultGeneratePdfService;
     private final DomainEventPublisher domainEventPublisher;
     private final ReportDeliveryStatusRepositoryJpa reportDeliveryStatusRepositoryJpa;
+    private final TestRequestValidatorUseCase testRequestValidatorUseCase;
+
 
     @Autowired
-    public TestRequestReleaseResultServiceImpl(TestRequestUseCase testRequestUseCase, TestRequestEmailService testRequestEmailService, SampleUseCase sampleUseCase, ReleaseResultGeneratePdfService releaseResultGeneratePdfService, DomainEventPublisher domainEventPublisher, ReportDeliveryStatusRepositoryJpa reportDeliveryStatusRepositoryJpa) {
+    public TestRequestReleaseResultServiceImpl(TestRequestUseCase testRequestUseCase, TestRequestEmailService testRequestEmailService, SampleUseCase sampleUseCase, ReleaseResultGeneratePdfService releaseResultGeneratePdfService, DomainEventPublisher domainEventPublisher, ReportDeliveryStatusRepositoryJpa reportDeliveryStatusRepositoryJpa, TestRequestValidatorUseCase testRequestValidatorUseCase) {
         this.testRequestUseCase = testRequestUseCase;
         this.testRequestEmailService = testRequestEmailService;
         this.sampleUseCase = sampleUseCase;
@@ -41,6 +43,7 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
         this.releaseResultGeneratePdfService = releaseResultGeneratePdfService;
         this.domainEventPublisher = domainEventPublisher;
         this.reportDeliveryStatusRepositoryJpa = reportDeliveryStatusRepositoryJpa;
+        this.testRequestValidatorUseCase = testRequestValidatorUseCase;
     }
 
     @Override
@@ -112,81 +115,90 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
 
     }
 
-//    esto metodo permite finalizar y enviar los resultados finales de un ensayo al cliente
 
+    // Finalizes the test request flow: Validates business rules, generates PDF reports,
+    // logs delivery history, and triggers the email dispatch synchronously.
+    // NOTE: Updates delivery status to FAILED within the catch block to ensure traceability
+    // in case of SMTP or network errors.
     @Override
     @Transactional
-    public List<byte[]> generateAndSendTestRequestReport(ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto) {
+    public void generateAndSendTestRequestReport(ResultExecutionFinalTestRequestDto dto) {
 
+        // 1.  init validations
+        this.testRequestValidatorUseCase.validateDocumentsCount(dto.getDocuments());
+        TestRequestModel testRequest = testRequestUseCase.getByRequestCode(dto.getRequestCode());
+        this.testRequestValidatorUseCase.validateAllAnalysisComplete(testRequest.getSamples());
 
-        if (resultExecutionFinalTestRequestDto.getDocuments() != null
-                && resultExecutionFinalTestRequestDto.getDocuments().size() >= 3) {
-            throw new IllegalArgumentException(
-                    "No puedes enviar más de 2 documentos para el informe final del cliente"
-            );
-        }
+        // 2. build the responsible info
+        InfoResponsiblePersonReleaseResult responsible = new InfoResponsiblePersonReleaseResult(
+                dto.getResponsibleName(), dto.getRole(), dto.getSignatureImage());
 
+        // 3. generate reports
+        List<byte[]> listGeneratedReports = testRequest.getSamples().stream()
+                .map(s -> generateReleaseResultBySampleId(s, responsible))
+                .toList();
 
-        try{
-            TestRequestModel testRequest = this.testRequestUseCase.getByRequestCode(resultExecutionFinalTestRequestDto.getRequestCode());
-
-            List<SampleModel> samples = testRequest.getSamples();
-
-            // validate if all result are complete
-            Boolean isCompleted = samples.stream().allMatch(
-                    s -> s.getAnalysisEntities().stream()
-                            .allMatch(SampleAnalysisModel::getStateResult)
-            );
-
-            if(!isCompleted) throw new IllegalArgumentException(("No puedes emitir el reporte final sin todos los analisis del ensayo completados."));
-
-            InfoResponsiblePersonReleaseResult responsible = new InfoResponsiblePersonReleaseResult(
-                    resultExecutionFinalTestRequestDto.getResponsibleName(),
-                    resultExecutionFinalTestRequestDto.getRole(),
-                    resultExecutionFinalTestRequestDto.getSignatureImage()
-            );
-
-
-            // generate all de documents
-            List<byte[]> listGeneratedReports = samples.stream().map(s -> this.generateReleaseResultBySampleId(
-                    s,
-                    responsible)).toList();
-
-            // change the status of each sample to delivered = true
-            testRequest.getSamples().forEach(s -> {
-                s.setDeliveryDate(LocalDateTime.now());
-                s.setIsDelivered(true);
-
-                // create also the register of history send
-            });
-
-
-            // change the status delivered of the request to completed and delivereed
-
-            testRequest.setDeliveryStatus(TestRequestConstants.DELIVERED_AND_FINISHED);
+        // 4. update and create the history of delivery (database)
+        List<ReportDeliverySample> history =
+                testRequest.getSamples()
+                        .stream()
+                        .map(s -> ReportDeliverySample.builder()
+                                .sampleId(s.getSampleId())
+                                .sampleCode(s.getSampleCode())
+                                .matrixSample(s.getMatrix())
+                                .totalAnalysis(s.getAnalysisEntities().size())
+                                .customerName(s.getTestRequest().getCustomer().getCustomerName())
+                                .customerEmail(s.getTestRequest().getCustomer().getEmail())
+                                .requestCode(s.getTestRequest().getRequestCode())
+                                .responsibleName(responsible.getName())
+                                .status(TestRequestConstants.PENDING_DELIVERY)
+                                .build()  )
+                        .toList();
 
 
 
-            // sent the email
-            // crear el event para poder guardar
+        this.reportDeliveryStatusRepositoryJpa.saveAll(history);
+
+
+        // 5. Send email
+        try {
             this.testRequestEmailService.sendFinalReport(
                     testRequest.getCustomer(),
                     testRequest.getRequestCode(),
                     listGeneratedReports,
-                    resultExecutionFinalTestRequestDto.getDocuments(),
-                    resultExecutionFinalTestRequestDto.getNotes(),
-                    resultExecutionFinalTestRequestDto.getResponsibleName(),
-                    resultExecutionFinalTestRequestDto.getRole()
+                    dto.getDocuments(),
+                    dto.getNotes(),
+                    dto.getResponsibleName(),
+                    dto.getRole()
             );
+
+            // update history report to SENT
+            history.forEach(h -> {
+                h.setSentAt(LocalDateTime.now());
+                h.setStatus(TestRequestConstants.SENT);
+            });
+            this.reportDeliveryStatusRepositoryJpa.saveAll(history);
+
+            testRequest.setDeliveryStatus(TestRequestConstants.DELIVERED_AND_FINISHED);
+
+            // update the samples, mark as a delivered
+            LocalDateTime currentTime = LocalDateTime.now();
+            testRequest.getSamples().forEach(s -> {
+                s.setIsDelivered(true);
+                s.setDeliveryDate(currentTime);
+            });
             this.testRequestUseCase.update(testRequest);
-            return listGeneratedReports;
+
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
+            history.forEach(h -> h.setStatus(TestRequestConstants.FAILED));
+            this.reportDeliveryStatusRepositoryJpa.saveAll(history);
+
+            throw new RuntimeException("Reportes generados pero el envío falló: " + e.getMessage());
         }
 
-
-
+       
     }
 
     @Override

@@ -38,7 +38,7 @@ public class SampleModel {
 
     private String samplingLocation;
 
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 
 
 

@@ -3,12 +3,9 @@ package com.example.sennova.web.controllers;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
 import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
-import com.example.sennova.application.dto.testeRequest.ReleaaseResult.SendReportSamplesDto;
 import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.application.usecases.TestRequest.TestRequestReleaseResultUseCase;
-import com.example.sennova.application.usecasesImpl.ReleaseResultGeneratePdfService;
-import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -183,7 +180,7 @@ public class TestRequestController {
     }
 
     @PostMapping("/finish-test-request")
-    public ResponseEntity<List<byte[]>>  sendResultTestRequest(
+    public ResponseEntity<Void>  sendResultTestRequest(
             @RequestParam(value = "requestCode", required = true) String requestCode,
             @RequestParam(value = "notes", required = false) String notes,
             @RequestParam(value = "documents", required = false) List<MultipartFile> documents,
@@ -201,9 +198,9 @@ public class TestRequestController {
                 role
         );
 
-        List<byte[]> documentsGenerated = this.testRequestReleaseResultUseCase.generateAndSendTestRequestReport(resultExecutionFinalTestRequestDto);
+       this.testRequestReleaseResultUseCase.generateAndSendTestRequestReport(resultExecutionFinalTestRequestDto);
 
-        return new ResponseEntity<>(documentsGenerated, HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @GetMapping("/delivery-history/{requestCode}")

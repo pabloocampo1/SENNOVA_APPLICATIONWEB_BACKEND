@@ -13,7 +13,7 @@ public interface TestRequestReleaseResultUseCase {
 
 
     void generateAndSendSampleReport(List<Long> samples, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult);
-    List<byte[]> generateAndSendTestRequestReport(ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto);
+    void generateAndSendTestRequestReport(ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto);
 
     List<ReportDeliverySample> getHistoryDeliveryByRequestCode(String requestCode);
 }

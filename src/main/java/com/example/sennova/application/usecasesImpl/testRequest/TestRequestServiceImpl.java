@@ -1,4 +1,4 @@
-package com.example.sennova.application.usecasesImpl;
+package com.example.sennova.application.usecasesImpl.testRequest;
 
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
@@ -8,6 +8,7 @@ import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequ
 import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.*;
 import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
+import com.example.sennova.application.usecasesImpl.NotificationsService;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.constants.TypeNotifications;
@@ -42,7 +43,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     private final SampleAnalysisUseCase sampleAnalysisUseCase;
     private final ProductUseCase productUseCase;
     private final TestRequestPersistencePort testRequestPersistencePort;
-    private final NotificationsService  notificationsService;
+    private final NotificationsService notificationsService;
     private final UserUseCase userUseCase;
     private final TestRequestEmailService testRequestEmailService;
 

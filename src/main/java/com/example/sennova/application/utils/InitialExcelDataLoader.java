@@ -1,7 +1,7 @@
 package com.example.sennova.application.utils;
 
 /**
- * ⚠Clase temporal para importar datos desde un Excel al iniciar la app.
+ * Clase temporal para importar datos desde un Excel al iniciar la app.
  * Una vez completada la importación, puedes eliminarla o comentar @Component.
  */
 // @Component

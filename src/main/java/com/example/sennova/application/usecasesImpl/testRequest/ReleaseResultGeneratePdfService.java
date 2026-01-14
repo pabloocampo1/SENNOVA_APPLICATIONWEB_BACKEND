@@ -1,4 +1,4 @@
-package com.example.sennova.application.usecasesImpl;
+package com.example.sennova.application.usecasesImpl.testRequest;
 
 
 import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
@@ -7,7 +7,6 @@ import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
@@ -26,17 +25,15 @@ public class ReleaseResultGeneratePdfService {
 
 
         String imgHtml = "";
-            if (infoResponsiblePersonReleaseResult.getSignature() != null && !infoResponsiblePersonReleaseResult.getSignature().isEmpty()) {
+        if (infoResponsiblePersonReleaseResult.getSignature() != null && !infoResponsiblePersonReleaseResult.getSignature().isEmpty()) {
             byte[] bytes = infoResponsiblePersonReleaseResult.getSignature().getBytes();
             String base64 = Base64.getEncoder().encodeToString(bytes);
             String extension = infoResponsiblePersonReleaseResult.getSignature().getContentType();
             String firmaBase64 = "data:" + extension + ";base64," + base64;
 
-
-            imgHtml = "<img src='" + firmaBase64 + "' class='signature-image' alt='Firma' />";
+            imgHtml = "<img src='" + firmaBase64 + "' class='signature-image' width='180' height='75' alt='Firma' />";
         } else {
-
-            imgHtml = "<div style='height: 40px;'></div>";
+            imgHtml = "<div style='height: 80px;'></div>"; 
         }
 
         int counter = 1;
@@ -185,12 +182,42 @@ public class ReleaseResultGeneratePdfService {
                 }
 
                 /* Signature Section */
-                .signature-container { margin-top: 30px; width: 300px; }
-                .signature-label { font-weight: bold; margin-bottom: 5px; display: block; }
-                .signature-line { border-top: 1px solid #000; margin-top: 5px; padding-top: 5px; }
-                .signature-image { max-height: 60px; margin-bottom: -10px; margin-left: 20px; }
-                .director-name { font-weight: bold; font-size: 9pt; display: block; }
-                .director-charge { font-size: 7.5pt; color: #555; display: block; }
+              /* Signature Section */
+                                                                                            .signature-container {\s
+                                                                                                margin-top: 20px;\s
+                                                                                                width: 220px; 
+                                                                                            }
+                                                                                            .signature-label {\s
+                                                                                                font-weight: bold;\s
+                                                                                                margin-bottom: 5px;\s
+                                                                                                display: block;\s
+                                                                                            }
+                                                                                            .signature-img-wrapper {
+                                                                                                height: 80px;
+                                                                                                display: block;
+                                                                                                vertical-align: bottom;
+                                                                                            }
+                                                                                            .signature-image {\s
+                                                                                                max-width: 180px; 
+                                                                                                max-height: 75px; 
+                                                                                                display: block;
+                                                                                            }
+                                                                                            .signature-line {\s
+                                                                                                border-top: 1px solid #000;\s
+                                                                                                margin-top: 2px;\s
+                                                                                                padding-top: 5px;\s
+                                                                                            }
+                                                                                            .director-name {\s
+                                                                                                font-weight: bold;\s
+                                                                                                font-size: 9pt;\s
+                                                                                                display: block;\s
+                                                                                                text-transform: uppercase;
+                                                                                            }
+                                                                                            .director-charge {\s
+                                                                                                font-size: 7.5pt;\s
+                                                                                                color: #555;\s
+                                                                                                display: block;\s
+                                                                                            }
             </style>
         </head>
         <body>

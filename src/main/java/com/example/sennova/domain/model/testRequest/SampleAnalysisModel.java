@@ -1,6 +1,7 @@
 package com.example.sennova.domain.model.testRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.sennova.domain.model.ProductModel;
@@ -35,7 +36,9 @@ public class SampleAnalysisModel {
 
     private SampleModel sample;
 
-    private LocalDate updateAt;
+    private LocalDateTime updateAt;
+
+    private LocalDateTime createAt;
 
     private Boolean stateResult;
 

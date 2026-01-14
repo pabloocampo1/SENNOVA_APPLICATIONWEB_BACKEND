@@ -2,6 +2,7 @@ package com.example.sennova.infrastructure.persistence.entities.analysisRequests
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -66,5 +67,6 @@ public class ReportDeliverySample {
 
    @LastModifiedDate
     private LocalDateTime updatedAt;
+
 
 }

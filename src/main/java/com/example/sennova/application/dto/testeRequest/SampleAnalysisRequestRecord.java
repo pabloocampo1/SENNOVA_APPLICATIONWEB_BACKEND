@@ -2,6 +2,7 @@ package com.example.sennova.application.dto.testeRequest;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.example.sennova.domain.model.ProductModel;
 
