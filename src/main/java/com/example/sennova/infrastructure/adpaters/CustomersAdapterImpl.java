@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CustomersAdapterImpl implements CustomerPersistencePort {
@@ -73,5 +74,11 @@ public class CustomersAdapterImpl implements CustomerPersistencePort {
     @Override
     public boolean existById(Long customerId) {
         return this.customersRepositoryJpa.existsById(customerId);
+    }
+
+    @Override
+    public Optional<CustomerModel> findById(Long customerId) {
+        Optional<CustomerEntity> customer = this.customersRepositoryJpa.findById(customerId);
+        return customer.map(this.customerMapperDbo::toModel);
     }
 }

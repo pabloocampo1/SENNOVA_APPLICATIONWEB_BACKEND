@@ -1,10 +1,15 @@
 package com.example.sennova.application.usecasesImpl;
 
+import com.example.sennova.application.dto.customer.CustomerEditDto;
 import com.example.sennova.application.dto.customer.CustomerResponseDto;
+import com.example.sennova.application.dto.testeRequest.CustomerRequestRecord;
+import com.example.sennova.application.dto.testeRequest.CustomerResponse;
+import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.CustomerUseCase;
 import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.port.CustomerPersistencePort;
 import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +22,11 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerUseCase {
 
     private final CustomerPersistencePort customerPersistencePort;
+    private final CustomerMapper customerMapper;
 
-    public CustomerServiceImpl(CustomerPersistencePort customerPersistencePort) {
+    public CustomerServiceImpl(CustomerPersistencePort customerPersistencePort, CustomerMapper customerMapper) {
         this.customerPersistencePort = customerPersistencePort;
+        this.customerMapper = customerMapper;
     }
 
     @Override
@@ -58,5 +65,17 @@ public class CustomerServiceImpl implements CustomerUseCase {
         }
         this.customerPersistencePort.delete(customerId);
           return null;
+    }
+
+    @Override
+    public CustomerResponse update(Long customerId, CustomerRequestRecord dto) {
+        CustomerModel customerModel = this.customerPersistencePort.findById(customerId).orElseThrow(() -> new EntityNotFoundException("No se encontro el cliente con id _  "+ customerId));
+        customerModel.setCustomerName(dto.customerName());
+        customerModel.setCity(dto.city());
+        customerModel.setEmail(dto.email());
+        customerModel.setPhoneNumber(dto.phoneNumber());
+        customerModel.setAddress(dto.address());
+        CustomerModel customerUpdated = this.save(customerModel);
+        return this.customerMapper.toResponse(customerUpdated);
     }
 }

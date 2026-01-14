@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerPersistencePort {
 
@@ -17,4 +18,5 @@ public interface CustomerPersistencePort {
     List<TestRequestEntity> findAllTestRequestByCustomerId(Long customerId);
      Void delete(Long customerId);
      boolean existById(Long customerId);
+     Optional<CustomerModel> findById(Long customerId);
 }

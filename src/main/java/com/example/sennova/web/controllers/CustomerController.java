@@ -1,6 +1,9 @@
 package com.example.sennova.web.controllers;
 
+import com.example.sennova.application.dto.customer.CustomerEditDto;
 import com.example.sennova.application.dto.customer.CustomerResponseDto;
+import com.example.sennova.application.dto.testeRequest.CustomerRequestRecord;
+import com.example.sennova.application.dto.testeRequest.CustomerResponse;
 import com.example.sennova.application.usecases.CustomerUseCase;
 import com.example.sennova.domain.port.CustomerPersistencePort;
 import com.example.sennova.infrastructure.persistence.entities.CustomerEntity;
@@ -39,5 +42,10 @@ public class CustomerController {
     @DeleteMapping("/delete/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("customerId") Long customerId){
         return new ResponseEntity<>(this.customerUseCase.delete(customerId), HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/{customerId}")
+    public ResponseEntity<CustomerResponse> update(@PathVariable("customerId") Long customerId, @RequestBody CustomerRequestRecord dto){
+        return new ResponseEntity<>(this.customerUseCase.update(customerId, dto), HttpStatus.OK);
     }
 }
