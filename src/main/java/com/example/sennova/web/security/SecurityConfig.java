@@ -54,6 +54,9 @@ public class SecurityConfig {
                             request.requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh/token").permitAll();
                             request.requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").permitAll();
                             request.requestMatchers(HttpMethod.POST, "/api/v1/auth/signIn/google").permitAll();
+                            request.requestMatchers(HttpMethod.POST, "/api/v1/auth/password/reset").permitAll();
+                            request.requestMatchers(HttpMethod.POST, "/api/v1/auth/password/reset-token").permitAll();
+                            request.requestMatchers(HttpMethod.GET, "/api/v1/auth/password/reset-token/**").permitAll();
 
                             // users
                             request.requestMatchers(HttpMethod.POST, "/api/v1/users/save").permitAll();

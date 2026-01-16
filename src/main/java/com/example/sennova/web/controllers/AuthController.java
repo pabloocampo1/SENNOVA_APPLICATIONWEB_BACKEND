@@ -1,9 +1,11 @@
 package com.example.sennova.web.controllers;
 
+import com.example.sennova.application.dto.authDto.ChangePasswordLoginDto;
 import com.example.sennova.application.dto.authDto.ChangePasswordRequest;
+import com.example.sennova.application.dto.authDto.GenerateTokenChangePasswordRequest;
 import com.example.sennova.application.dto.authDto.LoginRequestDto;
 import com.example.sennova.application.usecasesImpl.AuthServiceImpl;
-import com.example.sennova.infrastructure.restTemplate.EmailService;
+import com.example.sennova.infrastructure.restTemplate.AuthEmailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,14 +27,14 @@ public class AuthController {
 
 
     private final AuthServiceImpl authService;
-    private final EmailService emailService;
+
 
 
     @Autowired
-    public AuthController(AuthServiceImpl authService, EmailService emailService) {
+    public AuthController(AuthServiceImpl authService) {
         this.authService = authService;
 
-        this.emailService = emailService;
+
     }
 
     @PostMapping("/signIn")
@@ -81,11 +83,13 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, ((ResponseCookie) cookie).toString())
                     .body(response);
         } catch (BadCredentialsException e) {
-            throw new RuntimeException("Credenciales incorrectas");
+
+            throw e;
         } catch (UsernameNotFoundException e) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Credenciales inválidas");
+           
+            throw new BadCredentialsException("Credenciales inválidas");
         }
 
     }
@@ -126,11 +130,10 @@ public class AuthController {
             @PathVariable("newEmail") @Valid String newEmail
     ) {
         try {
-            Integer code = this.authService.generateTokenChangeEmail(currentEmail, newEmail);
+           this.authService.generateTokenChangeEmail(currentEmail, newEmail);
 
-            this.emailService.sendVerificationCode(newEmail, code);
 
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return new ResponseEntity<>( HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -151,16 +154,44 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(
+    
+    @PostMapping("/password")
+    public ResponseEntity<Void> changePassword(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid ChangePasswordRequest request) {
 
         String username = userDetails.getUsername();
 
         Boolean status = this.authService.changePassword(username, request);
-        return new ResponseEntity<>(status, HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
+
+    // this is used to change the password in the login page
+    @PostMapping("/password/reset")
+    public ResponseEntity<Void> resetPassword(
+            @RequestBody @Valid ChangePasswordLoginDto dto) {
+
+        authService.resetPassword(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/password/reset-token")
+    public ResponseEntity<Void> generateResetToken(
+            @RequestBody @Valid GenerateTokenChangePasswordRequest request) {
+
+        authService.generateResetToken(request.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+
+    @GetMapping("/password/reset-token/{token}")
+    public ResponseEntity<Void> validateResetToken(@PathVariable("token") String token) {
+
+        authService.validateAndGetToken(token);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 }

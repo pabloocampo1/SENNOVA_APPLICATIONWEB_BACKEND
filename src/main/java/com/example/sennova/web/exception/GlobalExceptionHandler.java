@@ -89,6 +89,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error inesperado en el servidor", errors),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -105,6 +116,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("credentials", "Usuario o contraseña incorrectos");
+
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Error de autenticación", errors),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException authenticationException){
+        Map<String, String> errors = new HashMap<>();
+        errors.put("general", "Error de autenticacion");
 
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Error de autenticación", errors),

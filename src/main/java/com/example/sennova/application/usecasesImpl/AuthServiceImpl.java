@@ -2,22 +2,29 @@ package com.example.sennova.application.usecasesImpl;
 
 import com.example.sennova.application.dto.UserDtos.UserPreferenceResponse;
 import com.example.sennova.application.dto.UserDtos.UserResponse;
-import com.example.sennova.application.dto.authDto.ChangePasswordRequest;
-import com.example.sennova.application.dto.authDto.LoginRequestDto;
-import com.example.sennova.application.dto.authDto.LoginResponseDto;
+import com.example.sennova.application.dto.authDto.*;
 import com.example.sennova.application.usecases.AuthUseCase;
 import com.example.sennova.application.usecases.UserUseCase;
 import com.example.sennova.domain.model.UserModel;
+import com.example.sennova.infrastructure.persistence.entities.PasswordResetToken;
 import com.example.sennova.infrastructure.persistence.entities.UserEntity;
 import com.example.sennova.infrastructure.persistence.entities.VerificationEmail;
+import com.example.sennova.infrastructure.persistence.repositoryJpa.PasswordResetTokenJpaRepository;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.VerificationEmailRepositoryJpa;
+import com.example.sennova.infrastructure.restTemplate.AuthEmailService;
+import com.example.sennova.web.exception.AuthenticationException;
+import com.example.sennova.web.exception.EntityNotFoundException;
 import com.example.sennova.web.security.GoogleAuthService;
 import com.example.sennova.web.security.JwtUtils;
 import com.example.sennova.web.security.UserServiceSecurity;
 import com.example.sennova.web.security.UserSystemUserDetails;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Email;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,9 +49,11 @@ public class AuthServiceImpl {
     private final GoogleAuthService googleAuthService;
     private final VerificationEmailRepositoryJpa verificationEmailRepositoryJpa;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenJpaRepository passwordResetTokenJpaRepository;
+    private final AuthEmailService emailService;
 
     @Autowired
-    public AuthServiceImpl(UserUseCase userUseCase, AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserServiceSecurity userServiceSecurity, GoogleAuthService googleAuthService, VerificationEmailRepositoryJpa verificationEmailRepositoryJpa, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(UserUseCase userUseCase, AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserServiceSecurity userServiceSecurity, GoogleAuthService googleAuthService, VerificationEmailRepositoryJpa verificationEmailRepositoryJpa, PasswordEncoder passwordEncoder, PasswordResetTokenJpaRepository passwordResetTokenJpaRepository, AuthEmailService emailService) {
         this.userUseCase = userUseCase;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
@@ -52,6 +61,8 @@ public class AuthServiceImpl {
         this.googleAuthService = googleAuthService;
         this.verificationEmailRepositoryJpa = verificationEmailRepositoryJpa;
         this.passwordEncoder = passwordEncoder;
+        this.passwordResetTokenJpaRepository = passwordResetTokenJpaRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -171,7 +182,7 @@ public class AuthServiceImpl {
 
 
     @Transactional
-    public Integer generateTokenChangeEmail(@Valid String currentEmail, @Valid String newEmail) {
+    public void generateTokenChangeEmail(@Valid String currentEmail, @Valid String newEmail) {
 
         if (this.userUseCase.existByEmail(newEmail)) {
             throw new IllegalArgumentException("El correo electronico no esta disponible. ");
@@ -221,7 +232,11 @@ public class AuthServiceImpl {
         VerificationEmail newVerification = new VerificationEmail(token, expiryDate, newEmail, userEntity);
         this.verificationEmailRepositoryJpa.save(newVerification);
 
-        return token;
+
+        // send the email
+        this.emailService.sendVerificationCode(newEmail, token);
+
+
     }
 
     @Transactional
@@ -264,5 +279,77 @@ public class AuthServiceImpl {
 
        return true;
     }
+
+    @Transactional
+    public void resetPassword(ChangePasswordLoginDto changePasswordLoginDto){
+
+        // validate the token  and get it
+        PasswordResetToken passwordResetToken = this.validateAndGetToken(changePasswordLoginDto.getToken());
+
+
+        // 2. get the user
+        UserModel user = this.userUseCase.getByEmail(passwordResetToken.getEmail());
+
+        System.out.println("paass : " + passwordResetToken);
+        // 3, change the password and update
+        String newPasswordEncode = passwordEncoder.encode(changePasswordLoginDto.getNewPassword());
+        System.out.println("pass : " + newPasswordEncode);
+        user.setPassword(newPasswordEncode);
+        this.userUseCase.saveModel(user);
+
+        // delete the token
+        this.passwordResetTokenJpaRepository.deleteById(passwordResetToken.getId());
+        System.out.println("llego aca mano esto es cuando se elimina eso");
+
+
+    }
+
+    public void generateResetToken(@Email String email) {
+
+        UserModel user = null;
+
+        try {
+            user = this.userUseCase.getByEmail(email);
+        } catch (Exception e) {
+
+        }
+
+        if (user != null) {
+
+
+            String token = UUID.randomUUID().toString();
+
+            String hashedToken = DigestUtils.sha256Hex(token);
+
+            PasswordResetToken passwordResetToken = new PasswordResetToken();
+            passwordResetToken.setToken(hashedToken);
+            passwordResetToken.setExpireDate(LocalDateTime.now().plusMinutes(2));
+            passwordResetToken.setUserId(user.getUserId());
+            passwordResetToken.setEmail(email);
+
+            this.passwordResetTokenJpaRepository.save(passwordResetToken);
+
+            this.emailService.sendAccessLink(email, token);
+        }
+
+    }
+
+
+    public PasswordResetToken validateAndGetToken(String token){
+         String tokenHashed = DigestUtils.sha256Hex(token);
+
+        Optional<PasswordResetToken> passwordResetToken = this.passwordResetTokenJpaRepository.findByToken(tokenHashed);
+         if(passwordResetToken.isEmpty()) throw new AuthenticationException("");
+
+         if(passwordResetToken.get().isExpired()) {
+
+             this.passwordResetTokenJpaRepository.deleteById(passwordResetToken.get().getId());
+             throw new AuthenticationException("");
+         }
+
+
+        return passwordResetToken.get();
+    }
+
 
 }
