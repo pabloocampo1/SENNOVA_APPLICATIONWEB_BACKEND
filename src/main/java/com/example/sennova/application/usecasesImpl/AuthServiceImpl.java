@@ -290,16 +290,16 @@ public class AuthServiceImpl {
         // 2. get the user
         UserModel user = this.userUseCase.getByEmail(passwordResetToken.getEmail());
 
-        System.out.println("paass : " + passwordResetToken);
+
         // 3, change the password and update
         String newPasswordEncode = passwordEncoder.encode(changePasswordLoginDto.getNewPassword());
-        System.out.println("pass : " + newPasswordEncode);
+
         user.setPassword(newPasswordEncode);
         this.userUseCase.saveModel(user);
 
         // delete the token
         this.passwordResetTokenJpaRepository.deleteById(passwordResetToken.getId());
-        System.out.println("llego aca mano esto es cuando se elimina eso");
+
 
 
     }
