@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserUseCase {
@@ -125,6 +126,35 @@ public class UserServiceImpl implements UserUseCase {
     public UserResponse findById(@Valid Long id) {
         UserModel userModel = this.userPersistencePort.findById(id);
         return this.userMapper.toResponse(userModel);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse getUserResponseByEmail(String email) {
+        return this.userMapper.toResponse(this.getByEmail(email));
+    }
+
+    @Override
+    public UserResponse updateUserProfile(UserUpdateProfileRequest dto) {
+        UserModel userModel = this.userPersistencePort.findById(dto.getUserId());
+
+        userModel.setName(dto.getName());
+        userModel.setPhoneNumber(dto.getPhoneNumber());
+        userModel.setPosition(dto.getJobPosition());
+
+      try{
+          if (!dto.getImage().isEmpty()){
+              String imageSaved = this.cloudinaryService.uploadImage(dto.getImage());
+              this.cloudinaryService.deleteFileByUrl(userModel.getImageProfile());
+              userModel.setImageProfile(imageSaved);
+          }
+      } catch (Exception e) {
+          throw new RuntimeException(e);
+      }
+
+      UserModel userUpdated = this.userPersistencePort.save(userModel);
+
+        return this.userMapper.toResponse(userUpdated);
     }
 
 

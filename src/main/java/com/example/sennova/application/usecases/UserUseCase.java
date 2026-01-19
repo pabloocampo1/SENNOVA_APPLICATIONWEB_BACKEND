@@ -16,6 +16,8 @@ public interface UserUseCase {
     List<UserResponseMembersAssigned> getAllByTestRequest(Long testRequestId);
     List<UserResponse> getAllAvailable();
     UserResponse findById(Long id);
+    UserResponse getUserResponseByEmail(String email);
+    UserResponse updateUserProfile(UserUpdateProfileRequest userUpdateProfileRequest);
     UserResponse update(Long userId, UserUpdateDto userUpdateDto, MultipartFile imageFile);
     void deleteUser(Long userId);
     List<UserResponse> findByName(String name);

@@ -41,6 +41,11 @@ public class UserController {
         return new ResponseEntity<>(this.userUseCase.findById(id), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/getByEmail/{email}")
+    public ResponseEntity<UserResponse> getByEmail(@PathVariable("email") @Valid String email) {
+        return new ResponseEntity<>(this.userUseCase.getUserResponseByEmail(email), HttpStatus.OK);
+    }
+    
     @GetMapping(path = "/getByName/{name}")
     public ResponseEntity<List<UserResponse>> findByName(@PathVariable("name") @Valid String name) {
         return new ResponseEntity<>(this.userUseCase.findByName(name), HttpStatus.OK);
@@ -70,6 +75,28 @@ public class UserController {
             @PathVariable("userId") Long userId) {
 
         return new ResponseEntity<>(this.userUseCase.update(userId, userUpdateDto, imageFile), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/updateProfile", consumes = {"multipart/form-data"})
+    public ResponseEntity<UserResponse> updatePersonalInfo(
+            @RequestParam("userId") Long userId,
+            @RequestParam("name") String name,
+            @RequestParam("jobPosition") String jobPosition,
+            @RequestParam("phoneNumber") Long phoneNumber,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
+
+        // 1. Create the dto
+        UserUpdateProfileRequest userUpdateProfileRequest = new UserUpdateProfileRequest();
+        userUpdateProfileRequest.setUserId(userId);
+        userUpdateProfileRequest.setName(name);
+        userUpdateProfileRequest.setJobPosition(jobPosition);
+        userUpdateProfileRequest.setPhoneNumber(phoneNumber);
+        userUpdateProfileRequest.setImage(image);
+
+       UserResponse updatedUser = this.userUseCase.updateUserProfile(userUpdateProfileRequest);
+
+
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/delete/{userId}")
