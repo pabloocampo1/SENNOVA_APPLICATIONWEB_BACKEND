@@ -15,7 +15,7 @@ public class QuotationResponse {
     private Double price;
     private LocalDate createAt;
     private Boolean isApproved;
-    private CustomerModel customerModel;
+    private CustomerModel customer;
     private LocalDate approvalDate;
     private LocalDate discardDate;
     private List<SampleQuotationResponse> samples;

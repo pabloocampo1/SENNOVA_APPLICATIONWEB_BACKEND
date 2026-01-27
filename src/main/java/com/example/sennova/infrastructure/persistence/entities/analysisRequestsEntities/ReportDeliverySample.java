@@ -42,6 +42,8 @@ public class ReportDeliverySample {
     @Column(name = "sample_code", length = 100)
     private String sampleCode;
 
+    private Long testRequestId;
+
     private String matrixSample;
 
     private int totalAnalysis;

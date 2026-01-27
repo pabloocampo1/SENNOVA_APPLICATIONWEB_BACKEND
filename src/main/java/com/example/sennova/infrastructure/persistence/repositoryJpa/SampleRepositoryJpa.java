@@ -16,13 +16,14 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
 
     List<SampleEntity> findAllByStatusReceptionTrueAndIsDeliveredFalse();
 
-    @Query("""
-    SELECT s
-    FROM SampleEntity s
-    WHERE (s.isDelivered = FALSE OR s.isDelivered IS NULL)
-      AND (s.dueDate IS NULL OR s.dueDate < :currentDate)
-    ORDER BY s.createAt ASC
-""")
+    @Query( value = """
+    SELECT *
+                    FROM sample s
+                    WHERE (s.is_delivered = FALSE OR s.is_delivered IS NULL)
+                    AND s.status_reception = true
+                      AND (s.due_date IS NULL OR s.due_date < current_date())
+                    ORDER BY s.create_at ASC;
+""", nativeQuery = true)
     List<SampleEntity> findAllExpiredAndNotDelivered(
             @Param("currentDate") LocalDate currentDate
     );

@@ -8,4 +8,6 @@ import java.util.List;
 public interface ReportDeliveryStatusRepositoryJpa extends JpaRepository<ReportDeliverySample, Long> {
 
     List<ReportDeliverySample> findAllByRequestCode(String requestCode);
+    List<ReportDeliverySample> findTop10ByOrderByCreatedAtDesc();
+
 }

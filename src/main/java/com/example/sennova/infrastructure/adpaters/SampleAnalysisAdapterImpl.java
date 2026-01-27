@@ -65,7 +65,7 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
 
     @Override
     public SampleAnalysisModel saveResult(SampleAnalysisRequestRecord sampleAnalysisRequestRecord) {
-        System.out.println(" se guardo e analisis");
+
 
         SampleAnalysisEntity analysis = this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisRequestRecord.sampleProductAnalysisId())
                         .orElseThrow();

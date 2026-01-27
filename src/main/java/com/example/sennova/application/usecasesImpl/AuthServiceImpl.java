@@ -206,8 +206,7 @@ public class AuthServiceImpl {
             } else {
                 this.verificationEmailRepositoryJpa.deleteByUser(userEntity.getUserId());
             }
-
-
+            
         }
 
         Integer token = null;

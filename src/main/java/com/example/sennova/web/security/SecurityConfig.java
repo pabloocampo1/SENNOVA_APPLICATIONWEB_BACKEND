@@ -97,6 +97,8 @@ public class SecurityConfig {
                             request.requestMatchers(HttpMethod.GET, "/api/v1/testRequest/**").permitAll();
 
 
+                    request.requestMatchers(HttpMethod.GET,"/api/v1/dashboard/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN, ROLE_ANALYST);
+
                             request.anyRequest().authenticated();
                         }
                 )

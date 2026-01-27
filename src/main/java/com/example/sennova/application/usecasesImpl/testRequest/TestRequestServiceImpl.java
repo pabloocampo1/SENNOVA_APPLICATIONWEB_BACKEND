@@ -83,7 +83,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                     quotationResponse.setTestRequestId(t.getTestRequestId());
                     quotationResponse.setRequestCode(t.getRequestCode());
                     quotationResponse.setState(t.getState());
-                    quotationResponse.setCustomerModel(t.getCustomer());
+                    quotationResponse.setCustomer(t.getCustomer());
                     quotationResponse.setPrice(t.getPrice());
                     quotationResponse.setApprovalDate(t.getApprovalDate());
                     quotationResponse.setDiscardDate(t.getDiscardDate());
@@ -256,6 +256,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     public List<TestRequestModel> getAllByState(@Valid String state) {
         if (!state.equalsIgnoreCase(TestRequestConstants.ACCEPTED) &&
                 !state.equalsIgnoreCase(TestRequestConstants.PENDING) &&
+                !state.equalsIgnoreCase(TestRequestConstants.DELIVERED_AND_FINISHED) &&
                 !state.equalsIgnoreCase(TestRequestConstants.REJECTED)) {
             return this.getAllTestRequest();
         }
