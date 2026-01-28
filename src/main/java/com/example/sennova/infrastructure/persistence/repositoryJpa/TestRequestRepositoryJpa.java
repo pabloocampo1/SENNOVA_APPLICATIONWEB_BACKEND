@@ -71,4 +71,11 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
        """)
     Optional<TestRequestEntity> getWithSamplesAndAnalysis(String requestCode);
 
+    @Query(value = "\n" +
+            "SELECT *\n" +
+            "FROM test_request t\n" +
+            "WHERE YEAR(t.create_at) = :year AND t.state = \"ACEPTADA\"\n" +
+            "ORDER BY t.create_at asc; ", nativeQuery = true)
+    List<TestRequestEntity> findAllByYear(@Param("year") String year);
+
 }

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -194,6 +195,18 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
 
 
         this.testRequestRepositoryJpa.save(testRequestEntity);
+    }
+
+    @Override
+    public List<TestRequestEntity> findAllByYear(String year) {
+
+        if (year == null || year.isEmpty()) {
+            int currentYear = LocalDate.now().getYear();
+            year = String.valueOf(currentYear);
+        }
+
+
+       return this.testRequestRepositoryJpa.findAllByYear(year);
     }
 
 

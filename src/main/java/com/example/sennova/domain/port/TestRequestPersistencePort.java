@@ -34,7 +34,7 @@ public interface TestRequestPersistencePort {
     void assignResponsible(Long testRequestId, List<UserModel> users);
     Optional<TestRequestEntity> getWithSamplesAndAnalysis(String requestCode);
     void removeMember(Long userId, Long testRequestId);
-
+    List<TestRequestEntity> findAllByYear(String year);
 
     // dashboard function
 
