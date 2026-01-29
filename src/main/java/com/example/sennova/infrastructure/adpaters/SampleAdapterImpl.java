@@ -89,4 +89,11 @@ public class SampleAdapterImpl implements SamplePersistencePort {
         Page<SampleEntity> samples = this.sampleRepositoryJpa.findAllByStatusReceptionFalse(pageable);
         return samples.map(this.sampleMapperDbo::toModel);
     }
+
+    @Override
+    public Optional<SampleModel> findSampleByAnalysisId(Long analysisId) {
+
+        Optional<SampleEntity> sampleEntity = this.sampleRepositoryJpa.findSampleByAnalysisId(analysisId);
+        return sampleEntity.map(this.sampleMapperDbo::toModel)  ;
+    }
 }

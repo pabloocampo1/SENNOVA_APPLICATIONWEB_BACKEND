@@ -22,4 +22,8 @@ public interface SampleAnalysisRepositoryJpa extends JpaRepository<SampleAnalysi
                 "    ON s.sample_id = a.sample_id\n" +
                 "WHERE a.sample_product_analysis_id = :analysisId\n", nativeQuery = true)
         String findSample(@Param("analysisId") Long analysisId);
+
+
+        @Query(value = "SELECT s.status_reception FROM sample s INNER JOIN sample_product_analysis a ON a.sample_id = s.sample_id WHERE a.sample_product_analysis_id = :analysisId", nativeQuery = true)
+        Boolean findStatusSampleReceptionByAnalysisId(@Param("analysisId") Long analysisId);
 }

@@ -38,7 +38,7 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
 
     @Override
     public void deleteById(Long id) {
-         this.sampleAnalysisRepositoryJpa.deleteById(id);
+        this.sampleAnalysisRepositoryJpa.deleteById(id);
     }
 
     @Override
@@ -63,32 +63,13 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
         return  this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisId);
     }
 
-    @Override
-    public SampleAnalysisModel saveResult(SampleAnalysisRequestRecord sampleAnalysisRequestRecord) {
 
-
-        SampleAnalysisEntity analysis = this.sampleAnalysisRepositoryJpa.findById(sampleAnalysisRequestRecord.sampleProductAnalysisId())
-                        .orElseThrow();
-
-        analysis.setResultFinal(sampleAnalysisRequestRecord.resultFinal());
-        analysis.setStateResult(true);
-        analysis.setAccreditationStatus(sampleAnalysisRequestRecord.accreditationStatus());
-        analysis.setPassStatus(sampleAnalysisRequestRecord.passStatus());
-        analysis.setStandards(sampleAnalysisRequestRecord.standards());
-        analysis.setUnit(sampleAnalysisRequestRecord.unit());
-        analysis.setNotes(sampleAnalysisRequestRecord.notes());
-        analysis.setResultDate(sampleAnalysisRequestRecord.resultDate());
-         analysis.setResultGeneratedBy(sampleAnalysisRequestRecord.resultGeneratedBy());
-
-        SampleAnalysisEntity analysisSaved = this.sampleAnalysisRepositoryJpa.save(analysis);
-        return this.sampleAnalysisMapperDbo.toModel(analysisSaved);
-    }
 
     @Override
     public SampleAnalysisModel saveEntity(SampleAnalysisEntity sampleAnalysisEntity) {
         return this.sampleAnalysisMapperDbo.toModel(
                 this.sampleAnalysisRepositoryJpa.save(
-                       sampleAnalysisEntity));
+                        sampleAnalysisEntity));
     }
 
     @Override
@@ -99,5 +80,10 @@ public class SampleAnalysisAdapterImpl implements SampleAnalysisPersistencePort 
     @Override
     public String findRequestCodeByAnalysis(Long sampleProductAnalysisId) {
         return this.sampleAnalysisRepositoryJpa.findSample(sampleProductAnalysisId);
+    }
+
+    @Override
+    public Boolean findSampleReceptionByAnalysisId(Long sampleAnalysisId) {
+        return this.sampleAnalysisRepositoryJpa.findStatusSampleReceptionByAnalysisId(sampleAnalysisId);
     }
 }

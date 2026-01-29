@@ -60,7 +60,7 @@ public class SampleServiceImpl implements SampleUseCase {
     @Override
     @Transactional
     public void deleteById(Long sampleId) {
-         this.samplePersistencePort.deleteById(sampleId);
+        this.samplePersistencePort.deleteById(sampleId);
     }
 
     @Override
@@ -71,16 +71,16 @@ public class SampleServiceImpl implements SampleUseCase {
     @Override
     @Transactional
     public void deleteFileResultAnalysis(Long sampleProductDocumentResultId) {
-          // find first the entity
+        // find first the entity
         SampleProductDocumentResult documentResult =  this.sampleAnalysisPersistencePort.findDocumentResult(sampleProductDocumentResultId)
                 .orElseThrow();
 
         try{
-           Map resultDelete = this.cloudinaryService.deleteFile(documentResult.getPublicId());
+            Map resultDelete = this.cloudinaryService.deleteFile(documentResult.getPublicId());
 
-           if(resultDelete.get("result").equals("ok")){
-               this.sampleAnalysisPersistencePort.deleteAnalysisDocument(sampleProductDocumentResultId);
-           }
+            if(resultDelete.get("result").equals("ok")){
+                this.sampleAnalysisPersistencePort.deleteAnalysisDocument(sampleProductDocumentResultId);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,21 +96,40 @@ public class SampleServiceImpl implements SampleUseCase {
 
     @Override
     public SampleAnalysisModel saveResult( SampleAnalysisRequestRecord sampleAnalysisRequestRecord, String requestCode) {
-        // save the result first
-        if (sampleAnalysisRequestRecord.resultFinal().isEmpty() || sampleAnalysisRequestRecord.resultFinal().equals(" ")){
-                  throw  new IllegalArgumentException("No puedes guardar el analisis sin un resultado final");
+
+        // check if reception is already
+        if(!this.sampleAnalysisPersistencePort.findSampleReceptionByAnalysisId(sampleAnalysisRequestRecord.sampleProductAnalysisId())) {
+            throw  new IllegalArgumentException("No puedes guardar un resultado sin recepcion de la muestra");
         }
 
-        SampleAnalysisModel sampleAnalysisModelSaved =  this.sampleAnalysisPersistencePort.saveResult(sampleAnalysisRequestRecord);
+        if (sampleAnalysisRequestRecord.resultFinal().isEmpty() || sampleAnalysisRequestRecord.resultFinal().equals(" ")){
+            throw  new IllegalArgumentException("No puedes guardar el analisis sin un resultado final");
+        }
 
-        // crear metodo para traer el test request code
 
-        String codeTestRequest = this.sampleAnalysisPersistencePort.findRequestCodeByAnalysis(sampleAnalysisModelSaved.getSampleProductAnalysisId());
-        System.out.println(codeTestRequest);
+        SampleAnalysisModel analysis = this.sampleAnalysisPersistencePort.findById(sampleAnalysisRequestRecord.sampleProductAnalysisId())
+                .orElseThrow();
 
+
+        analysis.setResultFinal(sampleAnalysisRequestRecord.resultFinal());
+        analysis.setStateResult(true);
+        analysis.setAccreditationStatus(sampleAnalysisRequestRecord.accreditationStatus());
+        analysis.setPassStatus(sampleAnalysisRequestRecord.passStatus());
+        analysis.setStandards(sampleAnalysisRequestRecord.standards());
+        analysis.setUnit(sampleAnalysisRequestRecord.unit());
+        analysis.setNotes(sampleAnalysisRequestRecord.notes());
+        analysis.setResultDate(sampleAnalysisRequestRecord.resultDate());
+        analysis.setResultGeneratedBy(sampleAnalysisRequestRecord.resultGeneratedBy());
+        analysis.setSample(this.samplePersistencePort.findSampleByAnalysisId(sampleAnalysisRequestRecord.sampleProductAnalysisId()).orElseThrow());
+
+        SampleAnalysisModel analysisSaved = this.sampleAnalysisPersistencePort.save(analysis);
+
+        // Event to check antoher analysis and if all analysis are finished so, change the status of the test request
+
+        String codeTestRequest = this.sampleAnalysisPersistencePort.findRequestCodeByAnalysis(analysisSaved.getSampleProductAnalysisId());
         this.domainEventPublisher.publish(new AnalysisResultSavedEvent(codeTestRequest));
 
-        return sampleAnalysisModelSaved;
+       return analysisSaved;
     }
 
     @Override
@@ -123,7 +142,7 @@ public class SampleServiceImpl implements SampleUseCase {
         String imageUrl = "";
         if(file != null){
             try {
-                 imageUrl = this.cloudinaryService.uploadImage(file);
+                imageUrl = this.cloudinaryService.uploadImage(file);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -159,7 +178,7 @@ public class SampleServiceImpl implements SampleUseCase {
         // generate the due date for this sample
         sample.setDueDate(LocalDate.now().plusDays(15));
 
-        
+
         SampleModel sampleSaved =  this.samplePersistencePort.save(sample);
 
         this.domainEventPublisher.publish(new SampleReceptionUpdateEvent(sampleSaved.getSampleId(), sampleSaved.getTestRequest().getTestRequestId()));
@@ -206,7 +225,7 @@ public class SampleServiceImpl implements SampleUseCase {
 
         sampleAnalysisEntity.setSampleProductDocumentResult(currentListDocs);
 
-       SampleAnalysisModel analysisResultSaved = this.sampleAnalysisPersistencePort.saveEntity(sampleAnalysisEntity);
+        SampleAnalysisModel analysisResultSaved = this.sampleAnalysisPersistencePort.saveEntity(sampleAnalysisEntity);
 
         return analysisResultSaved.getSampleProductDocumentResult();
     }
@@ -221,21 +240,21 @@ public class SampleServiceImpl implements SampleUseCase {
                     SampleInfoExecutionDto sampleInfoExecutionDto = new SampleInfoExecutionDto();
 
 
-                     sampleInfoExecutionDto.setTotalAnalysis(sample.getAnalysisEntities().size());
-                     sampleInfoExecutionDto.setTotalAnalysisFinished(countAnalysisMade(sample.getAnalysisEntities()));
-                     sampleInfoExecutionDto.setMatrix(sample.getMatrix());
-                     sampleInfoExecutionDto.setSampleId(sample.getSampleId());
+                    sampleInfoExecutionDto.setTotalAnalysis(sample.getAnalysisEntities().size());
+                    sampleInfoExecutionDto.setTotalAnalysisFinished(countAnalysisMade(sample.getAnalysisEntities()));
+                    sampleInfoExecutionDto.setMatrix(sample.getMatrix());
+                    sampleInfoExecutionDto.setSampleId(sample.getSampleId());
 
-                     sampleInfoExecutionDto.setTestRequestCode(sample.getTestRequest().getRequestCode());
-                     sampleInfoExecutionDto.setTestRequestDueDate(sample.getTestRequest().getDueDate());
+                    sampleInfoExecutionDto.setTestRequestCode(sample.getTestRequest().getRequestCode());
+                    sampleInfoExecutionDto.setTestRequestDueDate(sample.getTestRequest().getDueDate());
 
-                     String customerName = sample.getTestRequest().getCustomer().getCustomerName();
-                     String customerEmail = sample.getTestRequest().getCustomer().getEmail();
+                    String customerName = sample.getTestRequest().getCustomer().getCustomerName();
+                    String customerEmail = sample.getTestRequest().getCustomer().getEmail();
 
-                     sampleInfoExecutionDto.setCustomerName(customerName);
-                     sampleInfoExecutionDto.setCustomerEmail(customerEmail);
+                    sampleInfoExecutionDto.setCustomerName(customerName);
+                    sampleInfoExecutionDto.setCustomerEmail(customerEmail);
 
-                     List<SampleResults> results = getResults(sample.getAnalysisEntities());
+                    List<SampleResults> results = getResults(sample.getAnalysisEntities());
                     sampleInfoExecutionDto.setResults(results);
 
                     return sampleInfoExecutionDto;
@@ -275,14 +294,14 @@ public class SampleServiceImpl implements SampleUseCase {
         Page<SampleModel> samples = this.samplePersistencePort.findAllWithoutReception(pageable);
         return samples.map(sample -> {
             return  new SampleWithoutReceptionResponse(
-                 sample.getSampleId(),
-                 sample.getSampleCode(),
-                 sample.getMatrix(),
-                 sample.getAnalysisEntities().size(),
-                 sample.getTestRequest().getDeliveryStatus(),
-                 sample.getTestRequest().getCustomer().getCustomerName(),
-                 sample.getTestRequest().getRequestCode(),
-                 sample.getTestRequest().getTestRequestId()
+                    sample.getSampleId(),
+                    sample.getSampleCode(),
+                    sample.getMatrix(),
+                    sample.getAnalysisEntities().size(),
+                    sample.getTestRequest().getDeliveryStatus(),
+                    sample.getTestRequest().getCustomer().getCustomerName(),
+                    sample.getTestRequest().getRequestCode(),
+                    sample.getTestRequest().getTestRequestId()
             );
         });
     }

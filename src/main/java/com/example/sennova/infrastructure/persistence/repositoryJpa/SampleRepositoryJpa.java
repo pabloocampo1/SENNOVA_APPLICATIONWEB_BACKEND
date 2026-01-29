@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
     @Query("SELECT s FROM SampleEntity s WHERE s.testRequest.testRequestId = :testRequestId")
@@ -32,4 +33,17 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
     Page<SampleEntity> findAllByIsDeliveredTrue(Pageable pageable);
 
     Page<SampleEntity> findAllByStatusReceptionFalse(Pageable pageable);
+
+   @Query(
+            value = """
+        SELECT s.*
+        FROM sample s
+        INNER JOIN sample_product_analysis a
+            ON a.sample_id = s.sample_id
+        WHERE a.sample_product_analysis_id = :id
+    """,
+            nativeQuery = true
+    )
+   Optional<SampleEntity>  findSampleByAnalysisId(@Param("id") Long id);
+
 }

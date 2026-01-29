@@ -45,12 +45,12 @@ public class CheckAnalysisReadyHandler {
     @EventListener
     public void handle(AnalysisResultSavedEvent analysisResultSavedEvent){
 
-        System.out.println("se ejecuto el evento para revisar");
+
         // get the test requests
         TestRequestEntity testRequest = this.testRequestPersistencePort.getWithSamplesAndAnalysis(analysisResultSavedEvent.getRequestCode())
                 .orElseThrow();
 
-        // recorremos la lista para el conteo
+
         boolean allAnalysisDone = testRequest.getSampleEntityList().stream()
                 .allMatch(sample ->
                         sample.getAnalysisEntities().stream()
