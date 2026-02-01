@@ -168,30 +168,31 @@ public class UserServiceImpl implements UserUseCase {
 
 
         UserModel currentUserInfo = this.userPersistencePort.findById(userId);
-        UserModel user = new UserModel();
+
 
         RoleModel roleModel = this.rolePersistencePort.findByName(userUpdateDto.role());
 
         // add the role to the user
-        user.setRole(roleModel);
+        currentUserInfo.setRole(roleModel);
 
-        user.setUserId(userUpdateDto.userId());
-        user.setName(userUpdateDto.name());
-        user.setDni(userUpdateDto.dni());
-        user.setAvailable(userUpdateDto.available());
-        user.setPhoneNumber(userUpdateDto.phoneNumber());
-        user.setEmail(userUpdateDto.email());
-        user.setPosition(userUpdateDto.position());
+        currentUserInfo.setUserId(userUpdateDto.userId());
+      
+        currentUserInfo.setName(userUpdateDto.name());
+        currentUserInfo.setDni(userUpdateDto.dni());
+        currentUserInfo.setAvailable(userUpdateDto.available());
+        currentUserInfo.setPhoneNumber(userUpdateDto.phoneNumber());
+        currentUserInfo.setEmail(userUpdateDto.email());
+        currentUserInfo.setPosition(userUpdateDto.position());
 
 
         if (imageFile != null) {
-            user.setImageProfile(this.cloudinaryService.uploadImage(imageFile));
+            currentUserInfo.setImageProfile(this.cloudinaryService.uploadImage(imageFile));
         } else {
-            user.setImageProfile(currentUserInfo.getImageProfile());
+            currentUserInfo.setImageProfile(currentUserInfo.getImageProfile());
         }
 
 
-        return this.userMapper.toResponse(this.userPersistencePort.update(user));
+        return this.userMapper.toResponse(this.userPersistencePort.update(currentUserInfo));
 
     }
 

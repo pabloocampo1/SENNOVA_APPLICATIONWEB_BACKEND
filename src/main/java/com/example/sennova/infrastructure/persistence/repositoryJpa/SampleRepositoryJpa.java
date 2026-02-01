@@ -23,7 +23,7 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
                     WHERE (s.is_delivered = FALSE OR s.is_delivered IS NULL)
                     AND s.status_reception = true
                       AND (s.due_date IS NULL OR s.due_date < current_date())
-                    ORDER BY s.create_at ASC;
+                    ORDER BY s.create_at DESC;
 """, nativeQuery = true)
     List<SampleEntity> findAllExpiredAndNotDelivered(
             @Param("currentDate") LocalDate currentDate

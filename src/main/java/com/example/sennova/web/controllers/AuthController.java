@@ -101,7 +101,7 @@ public class AuthController {
             ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
                     .httpOnly(true)
                     .secure(true)
-                    .path("/api/v1/auth/refresh/token")
+                    .path("/api/v1")
                     .maxAge(0)
                     .sameSite("Strict")
                     .build();

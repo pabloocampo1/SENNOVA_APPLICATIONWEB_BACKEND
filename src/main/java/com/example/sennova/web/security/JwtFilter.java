@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
         if (path.startsWith("/api/v1/auth/logout") || path.startsWith("/api/v1/auth/signIn") || path.startsWith("/api/v1/auth/refresh/token")) {
-            System.out.println("Entro aca.");
+
             filterChain.doFilter(request, response);
 
             return;

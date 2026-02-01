@@ -137,11 +137,19 @@ public class UserAdapterImpl implements UserPersistencePort {
 
     @Override
     public void deleteRefreshToken(String username) {
-        System.out.println("llego");
+        System.out.println("Se elimino el token brou");
+        System.out.println("juannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" +
+                "sdsd" +
+                "sdsdsd" +
+                "sdsdsdsdsd." +
+                "." +
+                "." +
+                "," +
+                ".");
         UserEntity user = this.userRepositoryJpa.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No se encontro el usuario"));
 
-        user.setRefreshToken(null);
+        user.setRefreshToken("");
         this.userRepositoryJpa.save(user);
     }
 
