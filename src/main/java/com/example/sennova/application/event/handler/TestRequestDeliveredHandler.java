@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
@@ -39,6 +40,7 @@ public class TestRequestDeliveredHandler {
         testRequestPersistencePort.findById(event.getTestRequestId())
                 .ifPresent(tr -> {
                     tr.setDeliveryStatus(TestRequestConstants.DELIVERED_AND_FINISHED);
+                    tr.setSubmissionDate(LocalDate.now());          
                     testRequestPersistencePort.save(tr);
                 });
     }

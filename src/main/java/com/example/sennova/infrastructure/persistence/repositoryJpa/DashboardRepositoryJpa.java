@@ -16,16 +16,16 @@ public interface DashboardRepositoryJpa extends JpaRepository<TestRequestEntity,
     @Query( value = "SELECT COUNT(*)\n" +
             "FROM test_request t\n" +
             "WHERE t.delivery_status = 'COMPLETADO Y ENTREGADO'\n" +
-            "  AND YEAR(t.create_at) = YEAR(current_date())\n" +
-            "  AND MONTH(t.create_at) = MONTH(current_date());", nativeQuery = true)
-    Integer countActiveTestRequestCurrentMonth();
+            "  AND YEAR(t.submission_date) = YEAR(current_date())\n" +
+            "  AND MONTH(t.submission_date) = MONTH(current_date());", nativeQuery = true)
+    Integer countDeliveredRequestsCurrentMonth();
 
      @Query(value = "SELECT COUNT(*)\n" +
              "FROM test_request t\n" +
              "WHERE t.delivery_status = 'COMPLETADO Y ENTREGADO'\n" +
-             "  AND YEAR(t.create_at) = YEAR(CURDATE() - INTERVAL 1 MONTH)\n" +
-             "  AND MONTH(t.create_at) = MONTH(CURDATE() - INTERVAL 1 MONTH);" , nativeQuery = true)
-    Integer countActiveTestRequestLastMonth();
+             "  AND YEAR(t.submission_date) = YEAR(CURDATE() - INTERVAL 1 MONTH)\n" +
+             "  AND MONTH(t.submission_date) = MONTH(CURDATE() - INTERVAL 1 MONTH);" , nativeQuery = true)
+    Integer countDeliveredRequestsLastMonth();
 
      @Query(value = "SELECT COUNT(*)\n" +
              "FROM sample s\n" +
@@ -194,5 +194,9 @@ public interface DashboardRepositoryJpa extends JpaRepository<TestRequestEntity,
             "GROUP BY period\n" +
             "ORDER BY period;", nativeQuery = true)
     List<MonthlyTestRequestsProjection> findTestRequestsByMonth();
+
+
+    @Query(value = "SELECT COUNT(*) FROM test_request t  WHERE t.delivery_status = \"En proceso\"" , nativeQuery = true)
+    Integer countTestRequestInProcess();
 
 }

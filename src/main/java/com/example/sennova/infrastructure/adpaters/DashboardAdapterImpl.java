@@ -19,13 +19,13 @@ public class DashboardAdapterImpl implements DashboardPort {
 
 
     @Override
-    public Integer countActiveTestRequestCurrentMonth() {
-        return this.dashboardRepositoryJpa.countActiveTestRequestCurrentMonth() ;
+    public Integer countDeliveredRequestsCurrentMonth() {
+        return this.dashboardRepositoryJpa.countDeliveredRequestsCurrentMonth() ;
     }
 
     @Override
-    public Integer countActiveTestRequestLastMonth() {
-        return this.dashboardRepositoryJpa.countActiveTestRequestLastMonth();
+    public Integer countDeliveredRequestsLastMonth() {
+        return this.dashboardRepositoryJpa.countDeliveredRequestsLastMonth();
     }
 
     @Override
@@ -66,6 +66,11 @@ public class DashboardAdapterImpl implements DashboardPort {
     @Override
     public Integer countQuotationPending() {
         return this.dashboardRepositoryJpa.countQuotationPending();
+    }
+
+    @Override
+    public Integer countTestRequestInProcess() {
+        return this.dashboardRepositoryJpa.countTestRequestInProcess();
     }
 
     @Override

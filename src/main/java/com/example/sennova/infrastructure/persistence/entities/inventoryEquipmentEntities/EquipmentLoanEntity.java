@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor   // 👈 genera el constructor vacío requerido por JPA
-@AllArgsConstructor  // 👈 genera el constructor con todos los args
+@NoArgsConstructor
+@AllArgsConstructor  
 @Builder
 public class EquipmentLoanEntity {
 

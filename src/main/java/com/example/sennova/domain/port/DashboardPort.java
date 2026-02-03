@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DashboardPort {
-     Integer countActiveTestRequestCurrentMonth();
-     Integer countActiveTestRequestLastMonth();
+     Integer countDeliveredRequestsCurrentMonth();
+     Integer countDeliveredRequestsLastMonth();
 
      Integer countTestRequestCreatedCurrentMonth();
      Integer countTestRequestCreatedLastMonth();
@@ -21,6 +21,7 @@ public interface DashboardPort {
      Integer countSamplesToExecute();
      Integer  countQuotationPending();
 
+     Integer countTestRequestInProcess();
 
      Integer countReagentExpired();
 

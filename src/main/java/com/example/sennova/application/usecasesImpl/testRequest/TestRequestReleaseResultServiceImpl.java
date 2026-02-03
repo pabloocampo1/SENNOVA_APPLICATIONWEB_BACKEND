@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -182,6 +183,7 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
             this.reportDeliveryStatusRepositoryJpa.saveAll(history);
 
             testRequest.setDeliveryStatus(TestRequestConstants.DELIVERED_AND_FINISHED);
+            testRequest.setSubmissionDate(LocalDate.now());
 
             // update the samples, mark as a delivered
             LocalDateTime currentTime = LocalDateTime.now();

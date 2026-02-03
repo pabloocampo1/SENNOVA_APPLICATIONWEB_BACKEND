@@ -11,6 +11,7 @@ public class KPISDto {
     private Integer expiredSamples;
     private Integer maintenanceEquipments;
     private Integer expiredReagent;
+    private Integer countTestRequestInProcess;
 
     private Integer samplesToExecute;
 

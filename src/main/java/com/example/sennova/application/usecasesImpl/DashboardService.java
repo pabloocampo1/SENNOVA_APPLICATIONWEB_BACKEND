@@ -29,8 +29,8 @@ public class DashboardService {
 
         // test request active
         KPISValueDto kpisValueTestRequest = this.buildKpi(
-                this.dashboardPort.countActiveTestRequestCurrentMonth(),
-                this.dashboardPort.countActiveTestRequestLastMonth()
+                this.dashboardPort.countDeliveredRequestsCurrentMonth(),
+                this.dashboardPort.countDeliveredRequestsLastMonth()
         );
          kpisDto.setTestRequestActive(kpisValueTestRequest);
 
@@ -52,6 +52,7 @@ public class DashboardService {
         kpisDto.setExpiredSamples(this.dashboardPort.countSamplesExpired());
         kpisDto.setSamplesToExecute(this.dashboardPort.countSamplesToExecute());
         kpisDto.setQuotationPending(this.dashboardPort.countQuotationPending());
+        kpisDto.setCountTestRequestInProcess(this.dashboardPort.countTestRequestInProcess());
 
 
         // inventory data
