@@ -9,6 +9,7 @@ import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.*;
 import com.example.sennova.application.usecases.TestRequest.TestRequestUseCase;
 import com.example.sennova.application.usecasesImpl.NotificationsService;
+import com.example.sennova.application.utils.DateUtils;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.constants.TypeNotifications;
@@ -543,7 +544,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
             if(allReadyReception){
                 // if all samples are ready in reception, generate the due date.
-                testRequest.setDueDate(LocalDate.now().plusDays(15));
+                testRequest.setDueDate(DateUtils.addBusinessDays(LocalDate.now(), 15));
                 // change the status
                 testRequest.setDeliveryStatus(TestRequestConstants.IN_PROGRESS);
 

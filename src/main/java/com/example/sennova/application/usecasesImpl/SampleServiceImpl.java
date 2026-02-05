@@ -6,6 +6,7 @@ import com.example.sennova.application.dto.testeRequest.SampleInfoExecutionDto;
 import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SampleWithoutReceptionResponse;
 import com.example.sennova.application.usecases.SampleUseCase;
+import com.example.sennova.application.utils.DateUtils;
 import com.example.sennova.domain.event.AnalysisResultSavedEvent;
 import com.example.sennova.domain.event.DomainEventPublisher;
 import com.example.sennova.domain.event.SampleReceptionUpdateEvent;
@@ -176,7 +177,7 @@ public class SampleServiceImpl implements SampleUseCase {
         sample.setSampleImage(imageUrl);
 
         // generate the due date for this sample
-        sample.setDueDate(LocalDate.now().plusDays(15));
+        sample.setDueDate(DateUtils.addBusinessDays(LocalDate.now(), 15));
 
 
         SampleModel sampleSaved =  this.samplePersistencePort.save(sample);
