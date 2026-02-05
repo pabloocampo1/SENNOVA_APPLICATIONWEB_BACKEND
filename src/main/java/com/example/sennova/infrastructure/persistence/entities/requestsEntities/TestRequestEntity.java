@@ -1,4 +1,4 @@
-package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
+package com.example.sennova.infrastructure.persistence.entities.requestsEntities;
 
 
 import com.example.sennova.infrastructure.persistence.entities.CustomerEntity;
@@ -37,7 +37,7 @@ public class TestRequestEntity {
     @Column(name = "test_request_id")
     private Long testRequestId;
 
-    @Column(nullable = false, unique = true, length = 100, name = "request_code")
+    @Column( unique = true, length = 100, name = "request_code")
     private String requestCode;
 
    // private LocalDate testDate;

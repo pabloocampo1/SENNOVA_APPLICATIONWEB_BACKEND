@@ -1,8 +1,6 @@
 package com.example.sennova.domain.event;
 
 import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoResponsiblePersonReleaseResult;
-import com.example.sennova.domain.model.testRequest.SampleModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
 
 public class SampleSendReportEvent {
     private Long sampleId;

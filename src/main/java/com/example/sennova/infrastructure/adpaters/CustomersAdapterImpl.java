@@ -6,7 +6,7 @@ import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.port.CustomerPersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.CustomerMapperDbo;
 import com.example.sennova.infrastructure.persistence.entities.CustomerEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.CustomersRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

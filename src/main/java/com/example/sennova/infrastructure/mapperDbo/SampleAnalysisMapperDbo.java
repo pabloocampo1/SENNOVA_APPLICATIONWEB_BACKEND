@@ -1,10 +1,9 @@
 package com.example.sennova.infrastructure.mapperDbo;
 
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleAnalysisEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.context.annotation.Lazy;
 
 @Mapper(componentModel = "spring", uses = { ProductMapperDbo.class})
 public interface SampleAnalysisMapperDbo {

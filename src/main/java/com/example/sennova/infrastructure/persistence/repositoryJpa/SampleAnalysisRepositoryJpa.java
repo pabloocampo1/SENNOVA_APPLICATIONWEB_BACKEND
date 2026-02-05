@@ -1,7 +1,6 @@
 package com.example.sennova.infrastructure.persistence.repositoryJpa;
 
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleAnalysisEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

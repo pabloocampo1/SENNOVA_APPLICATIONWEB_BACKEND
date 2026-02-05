@@ -11,6 +11,7 @@ import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface TestRequestUseCase {
     List<TestRequestModel> getAllTestRequest();
@@ -28,7 +29,7 @@ public interface TestRequestUseCase {
     List<TestRequestModel> getTestRequestByCode();
     Map<String, List<SamplesByTestRequestDto>> getSamplesByTestRequest(Long testRequestId);
     void deleteById(Long testRequestId);
-    TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer);
+    TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, MultipartFile file);
     List<TestRequestModel> getAllByOptionAndParam(String option, String param);
     void assignResponsible(List<Long> usersId, Long testRequestId);
     Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable);

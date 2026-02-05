@@ -1,6 +1,6 @@
 package com.example.sennova.application.dto.dashboard;
 
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.ReportDeliverySample;
 import lombok.Data;
 
 import java.util.List;

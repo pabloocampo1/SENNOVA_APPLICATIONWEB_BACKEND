@@ -1,7 +1,6 @@
 package com.example.sennova.infrastructure.persistence.repositoryJpa;
 
-import com.example.sennova.infrastructure.persistence.entities.UserEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,16 +21,16 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
 
     @Query(nativeQuery = true, value = "SELECT \n" +
             "    s.matrix AS sample,\n" +
-            "    p.analysis AS analysis,\n" +
-            "    p.price AS priceByAnalysis,\n" +
+            "    a.analysis_name AS analysis,\n" +
+            "    a.price AS priceByAnalysis,\n" +
             "    COUNT(*) AS quantityAnalysisBySample,\n" +
-            "    (p.price * COUNT(*)) AS total\n" +
+            "    (a.price * COUNT(*)) AS total\n" +
             "FROM sample s\n" +
             "INNER JOIN sample_product_analysis spa ON spa.sample_id = s.sample_id\n" +
-            "INNER JOIN product p ON p.product_id = spa.product_id\n" +
+            "INNER JOIN analysis a ON a.analysis_id = spa.analysis_id\n" +
             "WHERE s.test_request_id = :testRequestId\n" +
-            "GROUP BY s.matrix, p.analysis, p.price\n" +
-            "ORDER BY s.matrix, p.analysis;")
+            "GROUP BY s.matrix, a.analysis_name, a.price\n" +
+            "ORDER BY s.matrix, a.analysis_name;")
     List<SampleInfoSummaryTestRequestProjection> findSamplesByTestRequest(@Param("testRequestId") Long testRequestId);
 
     List<TestRequestEntity> findAllByState(String param);
@@ -77,5 +77,11 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
             "WHERE YEAR(t.create_at) = :year AND t.state = \"ACEPTADA\"\n" +
             "ORDER BY t.create_at asc; ", nativeQuery = true)
     List<TestRequestEntity> findAllByYear(@Param("year") String year);
+
+    @Query(value = "SELECT MAX(CAST(SUBSTRING_INDEX(request_code, '-', -1) AS UNSIGNED)) AS max_sequence\n" +
+            "FROM test_request \n" +
+            "WHERE request_code LIKE CONCAT(:year, '%');",
+            nativeQuery = true) 
+    Integer findMaxSequenceForYear(@Param("year") String year);
 
 }

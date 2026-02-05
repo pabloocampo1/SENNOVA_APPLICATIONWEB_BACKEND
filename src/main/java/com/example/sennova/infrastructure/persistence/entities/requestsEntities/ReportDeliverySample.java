@@ -1,8 +1,7 @@
-package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
+package com.example.sennova.infrastructure.persistence.entities.requestsEntities;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

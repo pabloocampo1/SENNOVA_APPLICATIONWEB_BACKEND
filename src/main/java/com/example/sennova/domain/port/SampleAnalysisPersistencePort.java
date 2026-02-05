@@ -1,11 +1,8 @@
 package com.example.sennova.domain.port;
 
-import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
-import com.example.sennova.domain.model.testRequest.SampleModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleProductDocumentResult;
 
 import java.util.List;
 import java.util.Optional;

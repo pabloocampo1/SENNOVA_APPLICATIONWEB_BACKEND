@@ -6,7 +6,7 @@ import com.example.sennova.application.dto.testeRequest.ReleaaseResult.InfoRespo
 import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
 import com.example.sennova.application.dto.testeRequest.sample.SamplesByTestRequestDto;
 import com.example.sennova.application.usecases.TestRequest.TestRequestReleaseResultUseCase;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.ReportDeliverySample;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,14 +96,29 @@ public class TestRequestController {
         return new ResponseEntity<>(this.testRequestUseCase.getAllByOptionAndParam(option, param), HttpStatus.OK);
     }
 
-    @PutMapping("/accept-or-reject-test-request")
-    public ResponseEntity<TestRequestModel> acceptOrRejectTestRequest(@RequestBody AcceptOrRejectTestRequestDto dto)  {
-            return new ResponseEntity<>(this.testRequestUseCase.acceptOrRejectTestRequest(dto.testRequestId(), dto.isApproved(), dto.message(), dto.emailCustomer()),HttpStatus.OK);
+    @PutMapping(value = "/accept-or-reject-test-request", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<TestRequestModel> acceptOrRejectTestRequest(
+            @RequestPart("dto") AcceptOrRejectTestRequestDto dto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+
+        return new ResponseEntity<>(
+                this.testRequestUseCase.acceptOrRejectTestRequest(
+                        dto.testRequestId(),
+                        dto.isApproved(),
+                        dto.message(),
+                        dto.emailCustomer(),
+
+                        file
+                ),
+                HttpStatus.OK
+        );
     }
     
     @PostMapping("/quotation")
     public ResponseEntity<TestRequestModel> saveQuotation(@RequestBody TestRequestRecord testRequestRecord) {
-        
+        System.out.println("JAJAJ");
+        System.out.println(testRequestRecord);
         TestRequestModel testRequestModel = this.testRequestUseCase.save(testRequestRecord);
         return new ResponseEntity<>(testRequestModel, HttpStatus.CREATED);
     }

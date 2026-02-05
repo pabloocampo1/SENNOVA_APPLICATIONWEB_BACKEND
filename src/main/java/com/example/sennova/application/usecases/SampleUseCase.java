@@ -7,11 +7,12 @@ import com.example.sennova.application.dto.testeRequest.sample.SampleDeliveredRe
 import com.example.sennova.application.dto.testeRequest.sample.SampleWithoutReceptionResponse;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleProductDocumentResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SampleUseCase {
@@ -31,4 +32,5 @@ public interface SampleUseCase {
     Page<SampleWithoutReceptionResponse> getAllSamplesWithoutReception(Pageable pageable);
     List<SampleModel> getAllSamplesById(List<Long> samples);
     boolean checkIfAllAnalyisisAreFinished(SampleModel sampleModel);
+    Integer findMaxSampleSequenceByYear(String shortYear);
 }

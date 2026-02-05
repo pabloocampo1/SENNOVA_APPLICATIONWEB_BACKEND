@@ -4,11 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.sennova.domain.model.ProductModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import com.example.sennova.domain.model.AnalysisModel;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleProductDocumentResult;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class SampleAnalysisModel {
@@ -32,7 +30,7 @@ public class SampleAnalysisModel {
 
     private String code;
 
-    private ProductModel product;
+    private AnalysisModel product;
 
     private SampleModel sample;
 

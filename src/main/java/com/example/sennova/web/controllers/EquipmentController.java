@@ -4,6 +4,7 @@ import com.example.sennova.application.dto.inventory.EquipmentInventory.request.
 import com.example.sennova.application.dto.inventory.EquipmentInventory.response.EquipmentResponseDto;
 import com.example.sennova.application.mapper.EquipmentMapper;
 import com.example.sennova.application.usecases.EquipmentUseCase;
+import com.example.sennova.application.utils.ExcelImportService;
 import com.example.sennova.domain.model.EquipmentModel;
 import com.example.sennova.infrastructure.persistence.entities.inventoryEquipmentEntities.EquipmentEntity;
 import com.example.sennova.infrastructure.persistence.entities.inventoryEquipmentEntities.EquipmentMediaEntity;
@@ -30,12 +31,14 @@ public class EquipmentController {
     private final EquipmentMapper equipmentMapper;
     private final EquipmentUseCase equipmentUseCase;
     private final CloudinaryService cloudinaryService;
+    private final ExcelImportService excelImportService;
 
     @Autowired
-    public EquipmentController(EquipmentMapper equipmentMapper, EquipmentUseCase equipmentUseCase, CloudinaryService cloudinaryService) {
+    public EquipmentController(EquipmentMapper equipmentMapper, EquipmentUseCase equipmentUseCase, CloudinaryService cloudinaryService, ExcelImportService excelImportService) {
         this.equipmentMapper = equipmentMapper;
         this.equipmentUseCase = equipmentUseCase;
         this.cloudinaryService = cloudinaryService;
+        this.excelImportService = excelImportService;
     }
 
     @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -339,6 +342,8 @@ public class EquipmentController {
             throw new RuntimeException(e);
         }
     }
+
+
 
 
 }

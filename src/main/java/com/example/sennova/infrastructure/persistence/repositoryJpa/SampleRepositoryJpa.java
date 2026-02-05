@@ -1,6 +1,6 @@
 package com.example.sennova.infrastructure.persistence.repositoryJpa;
 
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,5 +46,11 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
             nativeQuery = true
     )
    Optional<SampleEntity>  findSampleByAnalysisId(@Param("id") Long id);
+
+
+    @Query(value = "SELECT MAX(CAST(SUBSTRING_INDEX(sample_code, '-', -1) AS UNSIGNED)) " +
+            "FROM sample " +
+            "WHERE sample_code LIKE CONCAT('M', :shortYear, '-%')", nativeQuery = true)
+    Integer findMaxSampleSequenceByYear(@Param("shortYear") String shortYear);
 
 }

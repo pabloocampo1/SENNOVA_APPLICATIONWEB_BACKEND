@@ -12,7 +12,7 @@ import com.example.sennova.domain.event.SampleSendReportEvent;
 import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ReportDeliverySample;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.ReportDeliverySample;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.ReportDeliveryStatusRepositoryJpa;
 import com.example.sennova.infrastructure.restTemplate.TestRequestEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +78,11 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
         }
        }
 
+    @Override
+    public void sendEmailWhenAcceptTestRequest(String email, String message) {
 
-       
+    }
+
 
     @Override
     @Transactional

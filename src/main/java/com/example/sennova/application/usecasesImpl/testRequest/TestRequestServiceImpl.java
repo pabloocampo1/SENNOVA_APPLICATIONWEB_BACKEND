@@ -12,7 +12,7 @@ import com.example.sennova.application.usecasesImpl.NotificationsService;
 import com.example.sennova.domain.constants.RoleConstantsNotification;
 import com.example.sennova.domain.constants.TestRequestConstants;
 import com.example.sennova.domain.constants.TypeNotifications;
-import com.example.sennova.domain.model.ProductModel;
+import com.example.sennova.domain.model.AnalysisModel;
 import com.example.sennova.domain.model.UserModel;
 import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
@@ -29,7 +29,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -115,6 +118,8 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     @Transactional
     public TestRequestModel save(TestRequestRecord testRequestRecord) {
 
+        // here, product is equal to analysis entity
+
         TestRequestModel testRequestModel = new TestRequestModel();
         testRequestModel.setIsApproved(false);
 
@@ -126,28 +131,23 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
         testRequestModel.setCustomer(customer);
 
-        int currentYear = LocalDate.now().getYear();
-        int randomNum = (int) (Math.random() * 9000) + 1000;
-        String code = currentYear + "-" + randomNum ;
 
-        testRequestModel.setRequestCode(code);
 
 
         // create the list of the sample with products.
         // calculte the final price
 
         AtomicReference<Double> finalPrice = new AtomicReference<>((double) 0);
-        AtomicInteger countSampleCode = new AtomicInteger(1)  ;
+
 
         TestRequestModel testRequestSaved =  this.testRequestPersistencePort.save(testRequestModel);
 
         List<SampleModel> samples = new ArrayList<>();
         List<SampleRequestRecord> sampleRequestRecords = testRequestRecord.samples();
         sampleRequestRecords.forEach(sampleRequestRecord -> {
-                SampleModel sampleModel = new SampleModel();
-                 sampleModel.setMatrix(sampleRequestRecord.matrix());
+            SampleModel sampleModel = new SampleModel();
+                 sampleModel.setMatrix(sampleRequestRecord.matrixName());
                  sampleModel.setDescription(sampleRequestRecord.description());
-                 sampleModel.setSampleCode("M"+countSampleCode.getAndIncrement() + " - " + randomNum);
                  sampleModel.setTestRequest(testRequestSaved);
                  sampleModel.setStatusReception(false);
                  sampleModel.setIsDelivered(false);
@@ -164,13 +164,12 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                  // create the entity to result
                  List<ProductQuantityQuote> analysisAndQuantity = sampleRequestRecord.analysis();
                  analysisAndQuantity.forEach(analysis -> {
-                     ProductModel product = this.productUseCase.getById(analysis.getProductId());
+                     AnalysisModel product = this.productUseCase.getById(analysis.getAnalysisId());
 
                      for (int i = 0; i < analysis.getQuantity() ; i++) {
                          SampleAnalysisModel sampleAnalysisModel = new SampleAnalysisModel();
                          sampleAnalysisModel.setStateResult(false);
                          sampleAnalysisModel.setProduct(product);
-                         sampleAnalysisModel.setCode("Code-MR/ "+sampleModel.getSampleCode() + "-" + (i+1));
                          sampleAnalysisModel.setSample(sampleSaved);
                          this.sampleAnalysisUseCase.save(sampleAnalysisModel);
                      }
@@ -326,7 +325,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
     @Override
     @Transactional
-    public TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer) {
+    public TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, MultipartFile file) {
          TestRequestModel testRequest = this.testRequestPersistencePort.findById(testRequestId)
                  .orElseThrow(() -> new EntityNotFoundException("no se encontro el ensayo en la base de datos."));
 
@@ -338,8 +337,48 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
          testRequest.setState(isApproved ? TestRequestConstants.ACCEPTED : TestRequestConstants.REJECTED);
          testRequest.setIsFinished( isApproved ?  false : null);
          testRequest.setDeliveryStatus( isApproved ? TestRequestConstants.WAITING_FOR_SAMPLE : null);
-         
-         // TO DO : if accepted send email to the customer
+
+
+         if(isApproved){
+
+             // create the code of the test request
+             int currentYear = LocalDateTime.now().getYear();
+
+
+             Integer lastSequence = this.testRequestPersistencePort.findMaxSequenceForYear(currentYear + "-");
+             int nextSequence = (lastSequence == null) ? 1 : lastSequence + 1;
+
+             String code = currentYear + "-" + nextSequence;
+
+             testRequest.setRequestCode(code);
+
+             String yearLastTwo = String.valueOf(LocalDate.now().getYear()).substring(2);
+
+             // create code for the samples
+             Integer lastMax = this.sampleUseCase.findMaxSampleSequenceByYear(yearLastTwo);
+             int startNumber = (lastMax == null) ? 1 : lastMax + 1;
+             AtomicReference<Integer> nextNumber = new AtomicReference<>(startNumber);
+             
+            testRequest.getSamples().forEach(s -> {
+                String sampleCode = "M" + yearLastTwo + "-" + nextNumber.get();
+                s.setSampleCode(sampleCode);
+
+                
+                nextNumber.set(nextNumber.get() + 1);
+                    
+            });
+
+
+             this.testRequestEmailService.sendEmailWithAttachmentAndList(
+                     emailCustomer,
+                     "Usuario"     ,
+                     message,
+                     testRequest.getSamples().stream().map(SampleModel::getMatrix).toList() ,
+                     file
+             );
+
+         }
+
         return this.testRequestPersistencePort.save(testRequest);
     }
 

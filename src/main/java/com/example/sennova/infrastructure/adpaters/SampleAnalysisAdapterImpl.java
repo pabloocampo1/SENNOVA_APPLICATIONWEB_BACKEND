@@ -1,13 +1,10 @@
 package com.example.sennova.infrastructure.adpaters;
 
-import com.example.sennova.application.dto.testeRequest.SampleAnalysisRequestRecord;
 import com.example.sennova.domain.model.testRequest.SampleAnalysisModel;
 import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.SampleAnalysisMapperDbo;
-import com.example.sennova.infrastructure.mapperDbo.SampleMapperDbo;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleProductDocumentResult;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.AnalysisDocumentRepositoryJpa;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.SampleAnalysisRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
+package com.example.sennova.infrastructure.persistence.entities.requestsEntities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

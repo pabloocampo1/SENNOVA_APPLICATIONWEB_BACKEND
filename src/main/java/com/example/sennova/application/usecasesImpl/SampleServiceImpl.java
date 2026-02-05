@@ -15,9 +15,8 @@ import com.example.sennova.domain.model.testRequest.SampleResults;
 import com.example.sennova.domain.port.SampleAnalysisPersistencePort;
 import com.example.sennova.domain.port.SamplePersistencePort;
 
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleProductDocumentResult;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleProductDocumentResult;
 import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -29,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -316,13 +316,18 @@ public class SampleServiceImpl implements SampleUseCase {
         return sampleModel.getAnalysisEntities().stream().allMatch(SampleAnalysisModel::getStateResult);
     }
 
+    @Override
+    public  Integer findMaxSampleSequenceByYear(String shortYear) {
+        return this.samplePersistencePort.findMaxSampleSequenceByYear(shortYear);
+    }
+
     public Integer countAnalysisMade(List<SampleAnalysisModel> analysisModels) {
         return (int) analysisModels.stream().filter(SampleAnalysisModel::getStateResult).count();
     }
 
     public  List<SampleResults> getResults(List<SampleAnalysisModel> analysisModels) {
         List<SampleResults> results = new ArrayList<>();
-        analysisModels.forEach(a -> results.add(new SampleResults(a.getProduct().getAnalysis(), a.getResultFinal())));
+        analysisModels.forEach(a -> results.add(new SampleResults(a.getProduct().getAnalysisName(), a.getResultFinal())));
 
         return results;
     }

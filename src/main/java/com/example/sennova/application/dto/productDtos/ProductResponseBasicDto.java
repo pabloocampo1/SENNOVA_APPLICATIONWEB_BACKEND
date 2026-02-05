@@ -4,9 +4,8 @@ package com.example.sennova.application.dto.productDtos;
 import java.time.LocalDate;
 
 public record ProductResponseBasicDto(
-        Long productId,
-        String analysis,
-        String matrix,
+        Long analysisId,
+        String analysisName,
         String method,
         String equipment,
         String units,

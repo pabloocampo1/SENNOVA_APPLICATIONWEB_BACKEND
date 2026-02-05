@@ -1,5 +1,6 @@
-package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
+package com.example.sennova.infrastructure.persistence.entities.requestsEntities;
 
+import com.example.sennova.infrastructure.persistence.entities.Analisys.AnalysisEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -30,8 +31,8 @@ public class SampleAnalysisEntity {
     private SampleEntity sample;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    private ProductEntity product;
+    @JoinColumn(name = "analysis_id", referencedColumnName = "analysis_id")
+    private AnalysisEntity product;
 
     private String resultFinal;
 

@@ -3,6 +3,7 @@ package com.example.sennova.infrastructure.persistence.entities.inventoryReagent
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
+@NoArgsConstructor
 public class UsageReagentsEntity {
 
     @Id

@@ -2,8 +2,7 @@ package com.example.sennova.domain.port;
 
 import com.example.sennova.application.dto.customer.CustomerResponseDto;
 import com.example.sennova.domain.model.testRequest.CustomerModel;
-import com.example.sennova.infrastructure.persistence.entities.CustomerEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

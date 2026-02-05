@@ -76,11 +76,11 @@ public class SecurityConfig {
 //
 //
 //                            // products
-//                            request.requestMatchers(HttpMethod.DELETE, "/api/v1/product/delete").hasAnyRole(ROLE_SUPERADMIN);
-//                            request.requestMatchers(HttpMethod.GET, "/api/v1/product/getAll").hasAnyRole(ROLE_SUPERADMIN, ROLE_ANALYST);
-//                            request.requestMatchers(HttpMethod.PUT, "/api/v1/product/update").hasAnyRole(ROLE_SUPERADMIN, ROLE_ANALYST);
-//                            request.requestMatchers(HttpMethod.POST, "/api/v1/product/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN);
-//                            request.requestMatchers(HttpMethod.GET, "/api/v1/product/**").permitAll();
+//                            request.requestMatchers(HttpMethod.DELETE, "/api/v1/analysis/delete").hasAnyRole(ROLE_SUPERADMIN);
+                           request.requestMatchers( "/api/v1/analysis/**").permitAll();
+//                            request.requestMatchers(HttpMethod.PUT, "/api/v1/analysis/update").hasAnyRole(ROLE_SUPERADMIN, ROLE_ANALYST);
+//                            request.requestMatchers(HttpMethod.POST, "/api/v1/analysis/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN);
+//                            request.requestMatchers(HttpMethod.GET, "/api/v1/analysis/**").permitAll();
 //
 //                            // location and usages
 //                            request.requestMatchers(HttpMethod.DELETE, "/api/v1/location/**").hasRole(ROLE_SUPERADMIN);
@@ -97,9 +97,9 @@ public class SecurityConfig {
 //
 //
 //                            // test request
-//                            request.requestMatchers(HttpMethod.GET, "/api/v1/testRequest/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN, ROLE_ANALYST);
+//                              request.requestMatchers(HttpMethod.GET, "/api/v1/testRequest/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN, ROLE_ANALYST);
 //                             request.requestMatchers(HttpMethod.DELETE, "/api/v1/testRequest/**").hasRole(ROLE_SUPERADMIN);
-//
+                            request.requestMatchers(HttpMethod.POST, "/api/v1/testRequest/quotation").permitAll();
 //
 //                             request.requestMatchers(HttpMethod.DELETE, "/api/v1/samples/**").hasRole(ROLE_SUPERADMIN);
 //

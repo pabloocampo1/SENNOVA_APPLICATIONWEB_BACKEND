@@ -41,7 +41,7 @@ public class ReleaseResultGeneratePdfService {
         for (SampleAnalysisModel a : sampleModel.getAnalysisEntities()) {
             sbResultados.append("<tr>")
                     .append("<td class='center'>").append(counter++).append("</td>")
-                    .append("<td>").append(escapeHtml(a.getProduct().getAnalysis())).append("</td>")
+                    .append("<td>").append(escapeHtml(a.getProduct().getAnalysisName())).append("</td>")
                     .append("<td class='small-text'>").append(escapeHtml(a.getProduct().getMethod())).append("</td>")
                     .append("<td class='center bold'>").append(escapeHtml(a.getResultFinal())).append("</td>")
                     .append("<td class='center'>").append(escapeHtml("NA")).append("</td>")

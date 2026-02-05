@@ -295,6 +295,114 @@ public class TestRequestEmailService {
 
 
 
+    /**
+     * Envía un correo personalizado con un mensaje adicional, un archivo adjunto
+     * y una lista de puntos clave.
+     *
+     * @param to
+     * @param customerName Nombre del cliente
+     * @param customMessage Mensaje adicional redactado por el usuario
+     * @param itemsList Lista de strings (ej. observaciones o requisitos)
+     * @param attachment Archivo PDF u otro formato
+     */
+    public void sendEmailWithAttachmentAndList(
+            String to,
+            String customerName,
+            String customMessage,
+            List<String> itemsList,
+            MultipartFile attachment
+    ) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("no-reply@sennova.com");
+            helper.setTo(to);
+            helper.setSubject("✅ ACEPTACIÓN COTIZACIÓN - SOLICITUD");
+
+
+            StringBuilder listHtml = new StringBuilder("<ul style='color: #555;'>");
+            if (itemsList != null && !itemsList.isEmpty()) {
+                for (String item : itemsList) {
+                    listHtml.append("<li>").append(item).append("</li>");
+                }
+            }
+            listHtml.append("</ul>");
+
+
+            // 1. Preparamos el aviso del adjunto solo si el archivo existe
+            String attachmentNote = (attachment != null && !attachment.isEmpty())
+                    ? """
+      <div style="margin: 20px 0; padding: 12px; border: 1px dashed #4CAF50; border-radius: 6px; background-color: #f0fdf4;">
+          <p style="margin: 0; font-size: 14px; color: #1e4010;">
+              📎 <strong>Nota:</strong> Se ha adjuntado un documento de apoyo a este correo para su revisión.
+          </p>
+      </div>
+      """
+                    : ""; // Si no hay archivo, no ponemos nada
+
+// 2. Metemos esa variable en el HTML principal
+            String htmlContent = """
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #444; max-width: 600px; border: 1px solid #eee; padding: 20px; border-radius: 8px;">
+        <div style="border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">
+            <span style="font-size: 11px; font-weight: bold; color: #4CAF50; text-transform: uppercase; letter-spacing: 1px;">Notificación Oficial</span>
+            <h2 style="color: #2c3e50; margin: 5px 0;">¡Hola, %s! 👋</h2>
+        </div>
+
+        <p>Le informamos que se ha aceptado la solicitud de ensayo. Siga las indicaciones de este correo para la entrega de muestras.</p>
+        
+        <div style="background-color: #f9fafb; border-left: 4px solid #4CAF50; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;">
+            <p style="margin-top: 0; font-weight: bold; color: #1e4010;">💬 Notas adicionales del laboratorio:</p>
+            <i style="color: #374151;">"%s"</i>
+        </div>
+
+        <div style="margin: 25px 0;">
+            <p style="margin-bottom: 10px;"><strong>🧪 Muestras seleccionadas:</strong></p>
+            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px;">
+                %s
+            </div>
+        </div>
+
+        %s 
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;">
+        <div style="text-align: center;">
+            <p style="font-size: 11px; color: #777; margin-bottom: 5px;">
+                Este mensaje fue emitido automáticamente por el <strong>Sistema de Gestión de Laboratorio SENNOVA</strong>.
+                <br>Centro de los Recursos Naturales Renovables La Salada - SENA.
+            </p>
+            <p style="font-size: 10px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; font-weight: bold;">
+                Powered by LABSYS ONE SOFTWARE 2026 ©
+            </p>
+        </div>
+    </div>
+    """.formatted(
+                    customerName,
+                    (customMessage != null && !customMessage.isBlank()) ? customMessage : "No se registraron notas adicionales.",
+                    listHtml.toString(),
+                    attachmentNote
+            );
+
+            helper.setText(htmlContent, true);
+
+            // Agregar el archivo adjunto
+            if (attachment != null && !attachment.isEmpty()) {
+                helper.addAttachment(
+                        attachment.getOriginalFilename() != null ? attachment.getOriginalFilename() : "documento.pdf",
+                        attachment
+                );
+            }
+
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error enviando el correo con adjunto: " + e.getMessage(), e);
+        }
+    }
+
+
+
 
 
 

@@ -1,17 +1,24 @@
 package com.example.sennova.application.mapper;
 
+import com.example.sennova.application.dto.productDtos.AnalysisInfoDtoResponse;
 import com.example.sennova.application.dto.productDtos.ProductRequestDto;
 import com.example.sennova.application.dto.productDtos.ProductResponseBasicDto;
-import com.example.sennova.domain.model.ProductModel;
+import com.example.sennova.domain.model.AnalysisModel;
+import com.example.sennova.domain.model.MatrixModel;
+import com.example.sennova.infrastructure.mapperDbo.MatrixMapperDbo;
+import com.example.sennova.infrastructure.mapperDbo.UserMapperDbo;
+import com.example.sennova.infrastructure.persistence.entities.Analisys.MatrixEntity;
 import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",  uses = {UserMapperDbo .class, MatrixMapperDbo .class})
 public interface ProductMapper {
 
-    ProductModel toModel(ProductRequestDto productRequestDto);
-    ProductResponseBasicDto toResponse(ProductModel productModel);
+    AnalysisModel toModel(ProductRequestDto productRequestDto);
+    ProductResponseBasicDto toResponse(AnalysisModel analysisModel);
 
-    List<ProductResponseBasicDto> toResponse(Iterable<ProductModel> productModelIterable);
+
+
+    List<ProductResponseBasicDto> toResponse(Iterable<AnalysisModel> productModelIterable);
 }

@@ -1,6 +1,5 @@
 package com.example.sennova.application.usecasesImpl;
 
-import com.example.sennova.application.dto.customer.CustomerEditDto;
 import com.example.sennova.application.dto.customer.CustomerResponseDto;
 import com.example.sennova.application.dto.testeRequest.CustomerRequestRecord;
 import com.example.sennova.application.dto.testeRequest.CustomerResponse;
@@ -8,7 +7,7 @@ import com.example.sennova.application.mapper.CustomerMapper;
 import com.example.sennova.application.usecases.CustomerUseCase;
 import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.port.CustomerPersistencePort;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

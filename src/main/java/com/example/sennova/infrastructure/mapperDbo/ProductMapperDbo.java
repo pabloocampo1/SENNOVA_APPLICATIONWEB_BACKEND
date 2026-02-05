@@ -1,12 +1,12 @@
 package com.example.sennova.infrastructure.mapperDbo;
 
-import com.example.sennova.domain.model.ProductModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ProductEntity;
+import com.example.sennova.domain.model.AnalysisModel;
+import com.example.sennova.infrastructure.persistence.entities.Analisys.AnalysisEntity;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapperDbo.class, MatrixMapperDbo.class})
 public interface ProductMapperDbo {
 
-    ProductEntity toEntity(ProductModel productModel);
-    ProductModel toModel(ProductEntity productEntity);
+    AnalysisEntity toEntity(AnalysisModel analysisModel);
+    AnalysisModel toModel(AnalysisEntity analysisEntity);
 }

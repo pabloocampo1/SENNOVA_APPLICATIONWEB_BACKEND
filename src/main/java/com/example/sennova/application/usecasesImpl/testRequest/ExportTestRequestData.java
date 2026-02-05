@@ -1,9 +1,9 @@
 package com.example.sennova.application.usecasesImpl.testRequest;
 import com.example.sennova.domain.port.TestRequestPersistencePort;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.ProductEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleAnalysisEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.Analisys.AnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleAnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -424,11 +424,11 @@ public class ExportTestRequestData {
 
     private void fillAnalysisData(Row row, SampleAnalysisEntity analysis,
                                   DataStyles styles, int startCol) {
-        ProductEntity product = analysis.getProduct();
+        AnalysisEntity product = analysis.getProduct();
 
 
         createStyledCell(row, startCol,
-                product != null ? product.getAnalysis() : "N/A", styles.normalCell);
+                product != null ? product.getAnalysisName() : "N/A", styles.normalCell);
         createStyledCell(row, startCol + 1,
                 product != null ? product.getMethod() : "N/A", styles.normalCell);
         createStyledCell(row, startCol + 2,

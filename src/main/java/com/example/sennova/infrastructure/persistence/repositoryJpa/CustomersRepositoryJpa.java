@@ -1,15 +1,12 @@
 package com.example.sennova.infrastructure.persistence.repositoryJpa;
 
-import com.example.sennova.application.dto.customer.CustomerResponseDto;
 import com.example.sennova.infrastructure.persistence.entities.CustomerEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.CustomerTestRequestProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;

@@ -1,8 +1,7 @@
 package com.example.sennova.infrastructure.persistence.repositoryJpa;
 
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -115,13 +114,13 @@ public interface DashboardRepositoryJpa extends JpaRepository<TestRequestEntity,
 
 
     @Query(value = "SELECT \n" +
-            "p.analysis AS productName,\n" +
+            "a.analysis_name AS productName,\n" +
             " COUNT(*) AS totalAnalysis \n" +
-            "FROM product p \n" +
+            "FROM analysis a \n" +
             "LEFT JOIN \n" +
-            "\tsample_product_analysis s on s.product_id = p.product_id \n" +
+            "\tsample_product_analysis s on s.analysis_id = a.analysis_id \n" +
             "WHERE s.create_at >=  :start AND s.create_at <= :end \n" +
-            "GROUP BY p.analysis, p.product_id \n" +
+            "GROUP BY a.analysis_name, a.analysis_id \n" +
             "ORDER BY totalAnalysis DESC \n" +
             "LIMIT 15;",
             nativeQuery = true)

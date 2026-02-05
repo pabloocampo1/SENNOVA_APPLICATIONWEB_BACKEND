@@ -1,4 +1,4 @@
-package com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities;
+package com.example.sennova.infrastructure.persistence.entities.requestsEntities;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class SampleEntity {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
 
-    @Column(nullable = false, unique = true)
+    @Column( unique = true)
     private String sampleCode;
 
     private LocalDate sampleEntryDate;

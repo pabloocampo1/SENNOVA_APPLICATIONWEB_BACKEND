@@ -1,19 +1,15 @@
 package com.example.sennova.infrastructure.adpaters;
 
-import com.example.sennova.application.dto.testeRequest.CustomerResponse;
 import com.example.sennova.domain.model.UserModel;
-import com.example.sennova.domain.model.testRequest.CustomerModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.domain.port.TestRequestPersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.TestRequestMapperDbo;
 import com.example.sennova.infrastructure.mapperDbo.UserMapperDbo;
 import com.example.sennova.infrastructure.persistence.entities.UserEntity;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.TestRequestRepositoryJpa;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
 import com.example.sennova.web.exception.EntityNotFoundException;
-import org.antlr.v4.runtime.ListTokenSource;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -207,6 +203,11 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
 
 
        return this.testRequestRepositoryJpa.findAllByYear(year);
+    }
+
+    @Override
+    public Integer findMaxSequenceForYear(String year ) {
+        return this.testRequestRepositoryJpa.findMaxSequenceForYear(year);
     }
 
 

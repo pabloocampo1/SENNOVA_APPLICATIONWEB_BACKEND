@@ -2,12 +2,13 @@ package com.example.sennova.domain.port;
 
 import com.example.sennova.domain.model.UserModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.projection.SampleInfoSummaryTestRequestProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public interface TestRequestPersistencePort {
     void removeMember(Long userId, Long testRequestId);
     List<TestRequestEntity> findAllByYear(String year);
 
-    // dashboard function
+    // method to get the count of test requets accepted and create the requets code
+    Integer findMaxSequenceForYear(String year);
 
 }

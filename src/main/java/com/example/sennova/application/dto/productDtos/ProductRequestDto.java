@@ -7,13 +7,12 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record ProductRequestDto(
-        Long productId,
+        Long analysisId,
 
         @NotBlank(message = "El análisis es obligatorio")
-        String analysis,
+        String analysisName,
 
-        @NotBlank(message = "La matriz es obligatoria")
-        String matrix,
+       
 
         @NotBlank(message = "El método es obligatorio")
         String method,

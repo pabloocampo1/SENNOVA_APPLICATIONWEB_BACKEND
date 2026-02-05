@@ -5,17 +5,16 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.List;
 
-public class ProductModel {
+public class AnalysisModel {
 
 
-    private Long productId;
+    private Long analysisId;
 
     @NotBlank(message = "El análisis no puede estar vacío")
-    private String analysis;
+    private String analysisName;
 
-    @NotBlank(message = "La matriz no puede estar vacía")
-    private String matrix;
 
     @NotBlank(message = "El método no puede estar vacío")
     private String method;
@@ -35,14 +34,16 @@ public class ProductModel {
     private LocalDate createAt;
     private LocalDate updateAt;
 
+    List<MatrixModel> matrices;
+    List<UserModel> qualifiedUsers;
 
-    public ProductModel() {
+
+    public AnalysisModel() {
     }
 
-    public ProductModel(Long productId, String analysis, String matrix, String method, String equipment, String units, double price, String notes, LocalDate createAt, LocalDate updateAt) {
-        this.productId = productId;
-        this.analysis = analysis;
-        this.matrix = matrix;
+    public AnalysisModel(Long analysisId, String analysisName, String method, String equipment, String units, double price, String notes, LocalDate createAt, LocalDate updateAt) {
+        this.analysisId = analysisId;
+        this.analysisName = analysisName;
         this.method = method;
         this.equipment = equipment;
         this.units = units;
@@ -52,28 +53,51 @@ public class ProductModel {
         this.updateAt = updateAt;
     }
 
-    public Long getProductId() {
-        return productId;
+    public AnalysisModel(Long analysisId, String analysisName, String method, String equipment, String units, double price, String notes, LocalDate createAt, LocalDate updateAt, List<MatrixModel> matrices, List<UserModel> qualifiedUsers) {
+        this.analysisId = analysisId;
+        this.analysisName = analysisName;
+        this.method = method;
+        this.equipment = equipment;
+        this.units = units;
+        this.price = price;
+        this.notes = notes;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+        this.matrices = matrices;
+        this.qualifiedUsers = qualifiedUsers;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+
+    public List<MatrixModel> getMatrices() {
+        return matrices;
     }
 
-    public String getAnalysis() {
-        return analysis;
+    public void setMatrices(List<MatrixModel> matrices) {
+        this.matrices = matrices;
     }
 
-    public void setAnalysis(String analysis) {
-        this.analysis = analysis;
+    public List<UserModel> getQualifiedUsers() {
+        return qualifiedUsers;
     }
 
-    public String getMatrix() {
-        return matrix;
+    public void setQualifiedUsers(List<UserModel> qualifiedUsers) {
+        this.qualifiedUsers = qualifiedUsers;
     }
 
-    public void setMatrix(String matrix) {
-        this.matrix = matrix;
+    public Long getAnalysisId() {
+        return analysisId;
+    }
+
+    public void setAnalysisId(Long analysisId) {
+        this.analysisId = analysisId;
+    }
+
+    public String getAnalysisName() {
+        return analysisName;
+    }
+
+    public void setAnalysisName(String analysisName) {
+        this.analysisName = analysisName;
     }
 
     public String getMethod() {

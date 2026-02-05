@@ -1,7 +1,7 @@
 package com.example.sennova.infrastructure.mapperDbo;
 
 import com.example.sennova.domain.model.testRequest.SampleModel;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = { SampleAnalysisMapperDbo.class })

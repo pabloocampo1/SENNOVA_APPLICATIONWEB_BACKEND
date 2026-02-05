@@ -1,8 +1,7 @@
 package com.example.sennova.infrastructure.persistence.entities;
 
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.TestRequestEntity;
-import com.example.sennova.infrastructure.persistence.entities.inventoryEquipmentEntities.EquipmentEntity;
-import com.example.sennova.infrastructure.persistence.entities.inventoryReagentsEntities.ReagentsEntity;
+import com.example.sennova.infrastructure.persistence.entities.Analisys.AnalysisEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,7 +19,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "role")
+
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,12 +71,18 @@ public class UserEntity {
     private LocalDate updateAt;
 
     // relationships
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "members")
     private List<TestRequestEntity> testRequestEntities;
+
+    @ToString.Exclude
+    @ManyToMany(mappedBy = "qualifiedUsers")
+    private List<AnalysisEntity> trainedAnalyses;
 
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

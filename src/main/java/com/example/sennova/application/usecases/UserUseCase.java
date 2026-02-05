@@ -37,5 +37,6 @@ public interface UserUseCase {
     Boolean activeAccount(String username);
     Boolean existById(Long userUd);
     List<UserModel> findAllById(List<Long> listOfId);
+
     List<UserResponse> usersAssignedTestRequest(Long testRequestId);
 }

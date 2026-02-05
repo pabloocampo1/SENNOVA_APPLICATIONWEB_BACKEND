@@ -3,7 +3,7 @@ package com.example.sennova.infrastructure.adpaters;
 import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.port.SamplePersistencePort;
 import com.example.sennova.infrastructure.mapperDbo.SampleMapperDbo;
-import com.example.sennova.infrastructure.persistence.entities.analysisRequestsEntities.SampleEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.SampleEntity;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.SampleRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -95,5 +96,10 @@ public class SampleAdapterImpl implements SamplePersistencePort {
 
         Optional<SampleEntity> sampleEntity = this.sampleRepositoryJpa.findSampleByAnalysisId(analysisId);
         return sampleEntity.map(this.sampleMapperDbo::toModel)  ;
+    }
+
+    @Override
+    public Integer findMaxSampleSequenceByYear(String shortYear) {
+        return this.sampleRepositoryJpa.findMaxSampleSequenceByYear(shortYear);
     }
 }

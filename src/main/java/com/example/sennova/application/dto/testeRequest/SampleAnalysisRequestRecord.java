@@ -2,9 +2,6 @@ package com.example.sennova.application.dto.testeRequest;
 
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.example.sennova.domain.model.ProductModel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
