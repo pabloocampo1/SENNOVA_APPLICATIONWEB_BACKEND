@@ -3,9 +3,13 @@ package com.example.sennova.application.usecasesImpl;
 import com.example.sennova.application.dto.UserDtos.*;
 import com.example.sennova.application.mapper.UserMapper;
 import com.example.sennova.application.usecases.UserUseCase;
+import com.example.sennova.domain.model.AnalysisModel;
 import com.example.sennova.domain.model.RoleModel;
 import com.example.sennova.domain.model.UserModel;
+import com.example.sennova.domain.model.testRequest.TestRequestModel;
+import com.example.sennova.domain.port.ProductPersistencePort;
 import com.example.sennova.domain.port.RolePersistencePort;
+import com.example.sennova.domain.port.TestRequestPersistencePort;
 import com.example.sennova.domain.port.UserPersistencePort;
 import com.example.sennova.infrastructure.persistence.entities.UserEntity;
 import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
@@ -24,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserUseCase {
@@ -33,15 +38,19 @@ public class UserServiceImpl implements UserUseCase {
     private final RolePersistencePort rolePersistencePort;
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
+    private final TestRequestPersistencePort testRequestPersistencePort;
+    private final ProductPersistencePort productPersistencePort;
 
 
     @Autowired
-    public UserServiceImpl(UserPersistencePort userPersistencePort, UserMapper userMapper, RolePersistencePort rolePersistencePort, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService) {
+    public UserServiceImpl(UserPersistencePort userPersistencePort, UserMapper userMapper, RolePersistencePort rolePersistencePort, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService, TestRequestPersistencePort testRequestPersistencePort, ProductPersistencePort productPersistencePort) {
         this.userPersistencePort = userPersistencePort;
         this.userMapper = userMapper;
         this.rolePersistencePort = rolePersistencePort;
         this.passwordEncoder = passwordEncoder;
         this.cloudinaryService = cloudinaryService;
+        this.testRequestPersistencePort = testRequestPersistencePort;
+        this.productPersistencePort = productPersistencePort;
     }
 
 
@@ -197,12 +206,53 @@ public class UserServiceImpl implements UserUseCase {
     }
 
     @Override
+    @Transactional
     public void deleteUser(@Valid Long userId) {
         if (!this.userPersistencePort.existsById(userId)) {
             throw new UsernameNotFoundException("No se encontro ese usuario para eliminar");
         }
 
+        UserModel user = this.userPersistencePort.findById(userId);
+
+       
+
+        // check first if there are one o more users with role SUPERADMIN, if no there are more, don't allowed to delete
+        if ("SUPERADMIN".equals(user.getRole().getNameRole())) {
+            List<UserModel> userModels = this.userPersistencePort.findAllByAvailableTrue();
+            boolean thereIsAnotherAdmin = userModels.stream()
+
+                    .filter(u -> !u.getUserId().equals(userId))
+                    .anyMatch(u -> "SUPERADMIN".equals(u.getRole().getNameRole()));
+            if (!thereIsAnotherAdmin) {
+                throw new IllegalArgumentException("Error: Debe existir al menos un SUPERADMIN en el sistema.");
+            }
+        }
+
+
+        // clean relations
+       List<TestRequestModel> testRequestModels = this.userPersistencePort.findAllTestRequestByUser(userId);
+       testRequestModels.forEach(t -> {
+           t.removeMember(userId);
+       });
+        this.testRequestPersistencePort.saveAll(testRequestModels);
+
+       List<AnalysisModel> analysisModels = this.productPersistencePort.findAllAnalysisByUser(userId);
+       analysisModels.forEach(a -> a.removeUser(userId));
+       this.productPersistencePort.saveAll(analysisModels);
+
+
         this.userPersistencePort.deleteUser(userId);
+
+        if (user.getImageProfile() != null && !"NA".equals(user.getImageProfile())) {
+            try {
+                this.cloudinaryService.deleteFileByUrl(user.getImageProfile());
+            } catch (Exception e) {
+
+                System.err.println("No se pudo borrar la imagen, pero el usuario ya fue eliminado: " + e.getMessage());
+            }
+        }
+
+
     }
 
     @Override
@@ -339,5 +389,11 @@ public class UserServiceImpl implements UserUseCase {
     public List<UserResponse> usersAssignedTestRequest(Long testRequestId) {
         List<UserModel> users = this.userPersistencePort.findAllUserByTestRequest(testRequestId);
         return users.stream().map(this.userMapper::toResponse).toList();
+    }
+
+    @Override
+    public List<UserCompetenceDTO> getUsersWithCompetencies() {
+        return this.userPersistencePort.getAvailableUsersWithCompetencies();
+
     }
 }

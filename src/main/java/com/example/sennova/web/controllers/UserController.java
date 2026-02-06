@@ -61,6 +61,13 @@ public class UserController {
         return new ResponseEntity<>(this.userUseCase.findByRole(roleId), HttpStatus.OK);
     }
 
+    @GetMapping("/available-with-competencies")
+    public ResponseEntity<List<UserCompetenceDTO>> getAvailableUsers() {
+        System.out.println("ALMENOS ENTRO");
+        List<UserCompetenceDTO> users = userUseCase.getUsersWithCompetencies();
+        return ResponseEntity.ok(users);
+    }
+
 
     @PostMapping(path = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserResponse> saveUser(@RequestPart("dto") @Valid UserSaveRequest userSaveRequest, @RequestPart(value = "image", required = false) MultipartFile imageFile) {

@@ -31,33 +31,32 @@ public class EquipmentController {
     private final EquipmentMapper equipmentMapper;
     private final EquipmentUseCase equipmentUseCase;
     private final CloudinaryService cloudinaryService;
-    private final ExcelImportService excelImportService;
 
-    @Autowired
-    public EquipmentController(EquipmentMapper equipmentMapper, EquipmentUseCase equipmentUseCase, CloudinaryService cloudinaryService, ExcelImportService excelImportService) {
+    public EquipmentController(EquipmentMapper equipmentMapper, EquipmentUseCase equipmentUseCase, CloudinaryService cloudinaryService) {
         this.equipmentMapper = equipmentMapper;
         this.equipmentUseCase = equipmentUseCase;
         this.cloudinaryService = cloudinaryService;
-        this.excelImportService = excelImportService;
     }
+
 
     @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EquipmentResponseDto> save(@RequestPart("dto") @Valid EquipmentRequestDto equipmentRequestDto,
-                                                     @RequestPart(value = "image", required = false) MultipartFile image) {
+                                                     @RequestPart(value = "image", required = false) MultipartFile image,
+                                                     @RequestPart("userAction") String userAction) {
 
         EquipmentModel equipmentToSave = this.equipmentMapper.toDomain(equipmentRequestDto);
         equipmentToSave.setImageUrl(null);
         EquipmentModel equipmentModelSaved = this.equipmentUseCase.save(
                 equipmentToSave,
-                equipmentRequestDto.responsibleId(),        
                 equipmentRequestDto.locationId(),
-                equipmentRequestDto.usageId()
+                equipmentRequestDto.usageId()  ,
+                userAction
         );
         if (image != null && !image.isEmpty()) {
             try {
                 String responseImage = this.cloudinaryService.uploadImage(image);
                 equipmentModelSaved.setImageUrl(responseImage);
-                this.equipmentUseCase.update(equipmentModelSaved, equipmentModelSaved.getEquipmentId(), equipmentModelSaved.getResponsible().getUserId(), equipmentModelSaved.getLocation().getEquipmentLocationId(), equipmentModelSaved.getUsage().getEquipmentUsageId());
+                this.equipmentUseCase.update(equipmentModelSaved, equipmentModelSaved.getEquipmentId(),  equipmentModelSaved.getLocation().getEquipmentLocationId(), equipmentModelSaved.getUsage().getEquipmentUsageId(), userAction);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
@@ -80,8 +79,7 @@ public class EquipmentController {
                 equipmentModelSaved.getEquipmentCost(),
                 equipmentModelSaved.getState(),
                 equipmentModelSaved.getAvailable(),
-                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible().getUserId() : null,
-                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible().getName() : null,
+                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible() : null,
                 equipmentModelSaved.getLocation() != null ? equipmentModelSaved.getLocation().getEquipmentLocationId() : null,
                 equipmentModelSaved.getLocation() != null ? equipmentModelSaved.getLocation().getLocationName() : null,
                 equipmentModelSaved.getUsage() != null ? equipmentModelSaved.getUsage().getEquipmentUsageId() : null,
@@ -102,7 +100,8 @@ public class EquipmentController {
     public ResponseEntity<EquipmentResponseDto> update(
             @RequestPart("dto") @Valid EquipmentRequestDto equipmentRequestDto,
             @RequestPart(value = "image", required = false) MultipartFile image,
-            @PathVariable("id") Long id) {
+            @PathVariable("id") Long id,
+            @RequestPart("userAction") String userAction) {
 
         EquipmentModel currentEquipment = this.equipmentUseCase.getById(id);
 
@@ -132,9 +131,9 @@ public class EquipmentController {
         EquipmentModel equipmentModelSaved = this.equipmentUseCase.update(
                 equipmentToUpdate,
                 id,
-                equipmentRequestDto.responsibleId(),
                 equipmentRequestDto.locationId(),
-                equipmentRequestDto.usageId()
+                equipmentRequestDto.usageId()    ,
+                userAction
         );
 
 
@@ -154,8 +153,7 @@ public class EquipmentController {
                 equipmentModelSaved.getEquipmentCost(),
                 equipmentModelSaved.getState(),
                 equipmentModelSaved.getAvailable(),
-                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible().getUserId() : null,
-                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible().getName() : null,
+                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible() : null,
                 equipmentModelSaved.getLocation() != null ? equipmentModelSaved.getLocation().getEquipmentLocationId() : null,
                 equipmentModelSaved.getLocation() != null ? equipmentModelSaved.getLocation().getLocationName() : null,
                 equipmentModelSaved.getUsage() != null ? equipmentModelSaved.getUsage().getEquipmentUsageId() : null,
@@ -289,8 +287,7 @@ public class EquipmentController {
                 equipmentModelSaved.getEquipmentCost(),
                 equipmentModelSaved.getState(),
                 equipmentModelSaved.getAvailable(),
-                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible().getUserId() : null,
-                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible().getName() : null,
+                equipmentModelSaved.getResponsible() != null ? equipmentModelSaved.getResponsible() : null,
                 equipmentModelSaved.getLocation() != null ? equipmentModelSaved.getLocation().getEquipmentLocationId() : null,
                 equipmentModelSaved.getLocation() != null ? equipmentModelSaved.getLocation().getLocationName() : null,
                 equipmentModelSaved.getUsage() != null ? equipmentModelSaved.getUsage().getEquipmentUsageId() : null,

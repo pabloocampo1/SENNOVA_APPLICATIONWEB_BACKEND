@@ -66,9 +66,7 @@ public class ReagentsEntity {
     @LastModifiedDate
     private LocalDate updateAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private UserEntity user;
+    private String responsible;
 
     @ManyToOne
     @JoinColumn(name = "usage_id", referencedColumnName = "usage_id")

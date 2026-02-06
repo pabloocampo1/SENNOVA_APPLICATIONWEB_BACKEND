@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface EquipmentUseCase {
-    EquipmentModel save(EquipmentModel equipmentModel,Long responsibleId, Long locationId, Long usageId);
-    EquipmentModel update(EquipmentModel equipmentModel, Long id,Long responsibleId, Long locationId, Long usageId);
+    EquipmentModel save(EquipmentModel equipmentModel, Long locationId, Long usageId, String userAction);
+    EquipmentModel update(EquipmentModel equipmentModel, Long id, Long locationId, Long usageId, String userAction);
     EquipmentModel getById(Long id);
     List<EquipmentModel> getAllByName(String name);
     List<EquipmentModel> getAllByInternalCode(String internalCode);

@@ -19,6 +19,7 @@ public interface UserMapper {
     UserResponse toResponse(UserModel userModel);
     @Mapping(target = "role", source = "role.nameRole")
     UserListResponse toUserListResponse(UserModel userModel);
+
     UserModel toModel(UserSaveRequest userSaveRequest);
     UserModel toModel(UserResponse userResponse);
     List<UserResponse> toResponse(Iterable<UserModel> userModelIterable);

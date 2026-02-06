@@ -49,7 +49,7 @@ public class EquipmentModel {
 
     private Boolean available;
 
-    private UserModel responsible;
+    private String responsible;
 
     private LocationModel location;
 
@@ -189,11 +189,11 @@ public class EquipmentModel {
         this.available = available;
     }
 
-    public UserModel getResponsible() {
+    public String getResponsible() {
         return responsible;
     }
 
-    public void setResponsible(UserModel responsible) {
+    public void setResponsible(String responsible) {
         this.responsible = responsible;
     }
 

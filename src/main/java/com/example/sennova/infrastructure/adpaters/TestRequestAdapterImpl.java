@@ -205,9 +205,16 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
        return this.testRequestRepositoryJpa.findAllByYear(year);
     }
 
+
+
     @Override
     public Integer findMaxSequenceForYear(String year ) {
         return this.testRequestRepositoryJpa.findMaxSequenceForYear(year);
+    }
+
+    @Override
+    public void saveAll(List<TestRequestModel> testRequestModels) {
+        this.testRequestRepositoryJpa.saveAll(testRequestModels.stream().map(this.testRequestMapperDbo::toEntity).toList());
     }
 
 

@@ -38,24 +38,19 @@ import java.util.Map;
 @Service
 public class EquipmentServiceImpl implements EquipmentUseCase {
 
-    private final UserMapper userMapper;
     private final EquipmentPersistencePort equipmentPersistencePort;
     private final LocationUseCase locationUseCase;
     private final UsageUseCase usageUseCase;
-    private final UserUseCase userUseCase;
     private final CloudinaryService cloudinaryService;
     private final EquipmentMediaRepositoryJpa equipmentMediaRepositoryJpa;
     private final MaintenanceEquipmentPersistencePort maintenanceEquipmentPersistencePort;
     private final EquipmentLoanPersistencePort equipmentLoanPersistencePort;
     private final NotificationsService notificationsService;
 
-    @Autowired
-    public EquipmentServiceImpl(@Lazy UserMapper userMapper, EquipmentPersistencePort equipmentPersistencePort, LocationUseCase locationUseCase, UsageUseCase usageUseCase, UserUseCase userUseCase, @Lazy CloudinaryService cloudinaryService, EquipmentMediaRepositoryJpa equipmentMediaRepositoryJpa, MaintenanceEquipmentPersistencePort maintenanceEquipmentPersistencePort, EquipmentLoanPersistencePort equipmentLoanPersistencePort, NotificationsService notificationsService) {
-        this.userMapper = userMapper;
+    public EquipmentServiceImpl(EquipmentPersistencePort equipmentPersistencePort, LocationUseCase locationUseCase, UsageUseCase usageUseCase, CloudinaryService cloudinaryService, EquipmentMediaRepositoryJpa equipmentMediaRepositoryJpa, MaintenanceEquipmentPersistencePort maintenanceEquipmentPersistencePort, EquipmentLoanPersistencePort equipmentLoanPersistencePort, NotificationsService notificationsService) {
         this.equipmentPersistencePort = equipmentPersistencePort;
         this.locationUseCase = locationUseCase;
         this.usageUseCase = usageUseCase;
-        this.userUseCase = userUseCase;
         this.cloudinaryService = cloudinaryService;
         this.equipmentMediaRepositoryJpa = equipmentMediaRepositoryJpa;
         this.maintenanceEquipmentPersistencePort = maintenanceEquipmentPersistencePort;
@@ -63,9 +58,10 @@ public class EquipmentServiceImpl implements EquipmentUseCase {
         this.notificationsService = notificationsService;
     }
 
+
     @Override
     @Transactional
-    public EquipmentModel save(EquipmentModel equipmentModel, Long responsibleId, Long locationId, Long usageId) {
+    public EquipmentModel save(EquipmentModel equipmentModel, Long locationId, Long usageId, String userAction) {
 
         // validate the state
         String state = equipmentModel.getState();
@@ -90,9 +86,6 @@ public class EquipmentServiceImpl implements EquipmentUseCase {
             throw new IllegalArgumentException("El codigo interno del equipo: " + equipmentModel.getEquipmentName() + " debe de ser unico.");
         }
 
-        UserResponse user = this.userUseCase.findById(responsibleId);
-        equipmentModel.setResponsible(this.userMapper.toModel(user));
-
 
         LocationModel locationModel = this.locationUseCase.getById(locationId);
         equipmentModel.setLocation(locationModel);
@@ -107,18 +100,18 @@ public class EquipmentServiceImpl implements EquipmentUseCase {
         EquipmentModel savedEquipment = this.equipmentPersistencePort.save(equipmentModel);
 
 
-        this.saveNotification(savedEquipment, user);
+        this.saveNotification(savedEquipment, userAction);
 
         return savedEquipment;
     }
 
     @Transactional
-    public void saveNotification(EquipmentModel equipmentModel, UserResponse user) {
+    public void saveNotification(EquipmentModel equipmentModel, String userAction) {
         Notifications newNotification = new Notifications();
         newNotification.setMessage("Se agregó un nuevo equipo: " + equipmentModel.getEquipmentName());
         newNotification.setType(TypeNotifications.NEW_EQUIPMENT);
-        newNotification.setActorUser(user.name());
-        newNotification.setImageUser(user.imageProfile());
+        newNotification.setActorUser(userAction);
+        newNotification.setImageUser(null);
         newNotification.setTags(List.of(RoleConstantsNotification.ROLE_ADMIN, RoleConstantsNotification.ROLE_SUPERADMIN));
 
         this.notificationsService.saveNotification(newNotification);
@@ -127,7 +120,7 @@ public class EquipmentServiceImpl implements EquipmentUseCase {
 
     @Override
     @Transactional
-    public EquipmentModel update(@Valid EquipmentModel equipmentModel, @Valid Long id, Long responsibleId, Long locationId, Long usageId) {
+    public EquipmentModel update(@Valid EquipmentModel equipmentModel, @Valid Long id, Long locationId, Long usageId, String userAction) {
 
         if (equipmentModel.getEquipmentId() == null) {
             throw new IllegalArgumentException("Error en el servidor al momento de editar el equipo. Por favor intentalo mas tarde o comunica el error");
@@ -170,9 +163,6 @@ public class EquipmentServiceImpl implements EquipmentUseCase {
                 throw new IllegalArgumentException("El codigo interno del equipo: " + equipmentModel.getEquipmentName() + " Debe de ser unico");
             }
         }
-
-        UserResponse user = this.userUseCase.findById(responsibleId);
-        equipmentModel.setResponsible(this.userMapper.toModel(user));
 
         LocationModel locationModel = this.locationUseCase.getById(locationId);
         equipmentModel.setLocation(locationModel);

@@ -189,4 +189,6 @@ public class EquipmentAdapterImpl implements EquipmentPersistencePort {
         return  entitiesModels ;
     }
 
+
+
 }

@@ -2,6 +2,7 @@ package com.example.sennova.infrastructure.persistence.entities;
 
 import com.example.sennova.infrastructure.persistence.entities.Analisys.AnalysisEntity;
 import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -82,6 +83,7 @@ public class UserEntity {
 
     @ToString.Exclude
     @ManyToMany(mappedBy = "qualifiedUsers")
+    @JsonIgnoreProperties("members")
     private List<AnalysisEntity> trainedAnalyses;
 
 

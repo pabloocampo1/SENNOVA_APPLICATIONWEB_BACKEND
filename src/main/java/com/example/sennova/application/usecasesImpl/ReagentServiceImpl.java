@@ -44,20 +44,15 @@ public class ReagentServiceImpl implements ReagentUseCase {
     private final ReagentPersistencePort reagentPersistencePort;
     private final CloudinaryService cloudinaryService;
     private final LocationUseCase locationUseCase;
-    private final UserUseCase userUseCase;
-    private final UserMapper userMapper;
     private final ReagentMediaFileRepository reagentMediaFileRepository;
     private final UsageUseCase usageUseCase;
     private final UsageReagentRepositoryJpa usageReagentRepositoryJpa;
     private final NotificationsService notificationsService;
 
-    @Autowired
-    public ReagentServiceImpl(ReagentPersistencePort reagentPersistencePort, CloudinaryService cloudinaryService, LocationUseCase locationUseCase, UserUseCase userUseCase, UserMapper userMapper, ReagentMediaFileRepository reagentMediaFileRepository, UsageUseCase usageUseCase, UsageReagentRepositoryJpa usageReagentRepositoryJpa, NotificationsService notificationsService) {
+    public ReagentServiceImpl(ReagentPersistencePort reagentPersistencePort, CloudinaryService cloudinaryService, LocationUseCase locationUseCase, ReagentMediaFileRepository reagentMediaFileRepository, UsageUseCase usageUseCase, UsageReagentRepositoryJpa usageReagentRepositoryJpa, NotificationsService notificationsService) {
         this.reagentPersistencePort = reagentPersistencePort;
         this.cloudinaryService = cloudinaryService;
         this.locationUseCase = locationUseCase;
-        this.userUseCase = userUseCase;
-        this.userMapper = userMapper;
         this.reagentMediaFileRepository = reagentMediaFileRepository;
         this.usageUseCase = usageUseCase;
         this.usageReagentRepositoryJpa = usageReagentRepositoryJpa;
@@ -69,15 +64,9 @@ public class ReagentServiceImpl implements ReagentUseCase {
     public ReagentModel save(
             @Valid ReagentModel reagentModel,
             MultipartFile multipartFile,
-            @Valid String performedBy,
-            @Valid Long responsibleId,
             @Valid Long locationId,
-            @Valid Long usageId) {
+            @Valid Long usageId, String userAction) {
 
-
-        // add  the user responsible
-        UserResponse user = this.userUseCase.findById(responsibleId);
-        reagentModel.setUser(this.userMapper.toModel(user));
 
         // add the location
         LocationModel locationModel = this.locationUseCase.getById(locationId);
@@ -87,16 +76,6 @@ public class ReagentServiceImpl implements ReagentUseCase {
         UsageModel usageModel = this.usageUseCase.getById(usageId);
         reagentModel.setUsage(usageModel);
 
-
-        // validate units
-        // wait if this part are valid for the logic
-        /*
-        if (reagentModel.getUnits() < 1)
-            throw new IllegalArgumentException("La cantidad del reactivo no puede ser menor a 1.");
-        if (reagentModel.getQuantity() < 1)
-            throw new IllegalArgumentException("La cantidad del reactivo no puede ser menor a 1.");
-
-         */
 
         // see the expiration date for change the state
         LocalDate currentDate = LocalDate.now();
@@ -149,7 +128,7 @@ public class ReagentServiceImpl implements ReagentUseCase {
 
     @Override
     @Transactional
-    public ReagentModel update(ReagentModel reagentModel, Long reagentId, MultipartFile multipartFile, Long responsibleId, Long locationId, Long usageId) {
+    public ReagentModel update(ReagentModel reagentModel, Long reagentId, MultipartFile multipartFile, Long locationId, Long usageId, String userAction) {
 
         ReagentModel existing = reagentPersistencePort.findById(reagentId);
 
@@ -164,9 +143,6 @@ public class ReagentServiceImpl implements ReagentUseCase {
         existing.setSenaInventoryTag(reagentModel.getSenaInventoryTag());
 
 
-        // add the relationship
-        UserResponse user = this.userUseCase.findById(responsibleId);
-        existing.setUser(this.userMapper.toModel(user));
 
         LocationModel locationModel = this.locationUseCase.getById(locationId);
         existing.setLocation(locationModel);

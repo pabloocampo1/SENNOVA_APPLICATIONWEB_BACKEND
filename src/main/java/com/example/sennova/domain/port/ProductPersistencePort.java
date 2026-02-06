@@ -15,4 +15,6 @@ public interface ProductPersistencePort {
     AnalysisModel update(AnalysisModel analysisModel, Long id);
     AnalysisModel save(AnalysisModel analysisModel);
     List<AnalysisModel> findAnalysisByMatrix(Long matrixId);
+    List<AnalysisModel> findAllAnalysisByUser(Long userId);
+    void saveAll(List<AnalysisModel> analysisModels);
 }

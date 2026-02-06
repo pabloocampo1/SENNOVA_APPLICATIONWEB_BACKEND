@@ -38,4 +38,6 @@ public interface EquipmentRepositoryJpa extends JpaRepository<EquipmentEntity, L
 
     long countByMarkReportTrue();
 
+
+
 }

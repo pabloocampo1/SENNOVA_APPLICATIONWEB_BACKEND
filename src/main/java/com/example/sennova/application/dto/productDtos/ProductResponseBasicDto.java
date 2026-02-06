@@ -8,6 +8,7 @@ public record ProductResponseBasicDto(
         String analysisName,
         String method,
         String equipment,
+        boolean available,
         String units,
         double price,
         String notes,

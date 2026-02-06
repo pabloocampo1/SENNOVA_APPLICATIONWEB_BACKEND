@@ -15,6 +15,8 @@ public class AnalysisModel {
     @NotBlank(message = "El análisis no puede estar vacío")
     private String analysisName;
 
+    private Boolean available;
+
 
     @NotBlank(message = "El método no puede estar vacío")
     private String method;
@@ -53,9 +55,11 @@ public class AnalysisModel {
         this.updateAt = updateAt;
     }
 
-    public AnalysisModel(Long analysisId, String analysisName, String method, String equipment, String units, double price, String notes, LocalDate createAt, LocalDate updateAt, List<MatrixModel> matrices, List<UserModel> qualifiedUsers) {
+
+    public AnalysisModel(Long analysisId, String analysisName, Boolean available, String method, String equipment, String units, double price, String notes, LocalDate createAt, LocalDate updateAt, List<MatrixModel> matrices, List<UserModel> qualifiedUsers) {
         this.analysisId = analysisId;
         this.analysisName = analysisName;
+        this.available = available;
         this.method = method;
         this.equipment = equipment;
         this.units = units;
@@ -67,6 +71,19 @@ public class AnalysisModel {
         this.qualifiedUsers = qualifiedUsers;
     }
 
+    public void removeUser(Long userId){
+        if(userId != null){
+             this.getQualifiedUsers().removeIf(u -> u.getUserId().equals(userId));
+        }
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
 
     public List<MatrixModel> getMatrices() {
         return matrices;

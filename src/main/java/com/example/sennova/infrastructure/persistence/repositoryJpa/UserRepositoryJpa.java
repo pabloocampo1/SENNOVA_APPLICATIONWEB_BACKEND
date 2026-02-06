@@ -1,7 +1,11 @@
 package com.example.sennova.infrastructure.persistence.repositoryJpa;
 
 import com.example.sennova.domain.model.UserModel;
+import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.infrastructure.persistence.entities.UserEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
+import com.example.sennova.infrastructure.projection.UserWithAnalysisProjection;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
@@ -46,4 +50,28 @@ public interface UserRepositoryJpa extends JpaRepository<UserEntity, Long> {
 
     boolean existsByEmail(String email);
 
+
+    @Query(value = """
+    SELECT a.analysis_name 
+    FROM analysis a
+    INNER JOIN sample_analysis sa ON a.analysis_id = sa.analysis_id
+    INNER JOIN samples s ON sa.sample_id = s.sample_id
+    WHERE s.test_request_id = :requestId
+    AND a.analysis_id NOT IN (
+        SELECT ar.analysis_id 
+        FROM analysis_responsible ar 
+        WHERE ar.user_id = :userId
+    )
+    """, nativeQuery = true)
+    List<String> findUnauthorizedAnalyses(@Param("requestId") Long requestId, @Param("userId") Long userId);
+
+    @EntityGraph(attributePaths = {"trainedAnalyses"})
+    List<UserWithAnalysisProjection> findByAvailableTrue();
+
+
+
+    // get the test requets by user
+    @Query(value = "SELECT t.* FROM test_request t INNER JOIN test_user tu ON tu.test_request_id = t.test_request_id\n" +
+            "WHERE tu.user_id = :userId;", nativeQuery = true)
+    List<TestRequestEntity> findAllTestRequestByUser(@Param("userId") Long userId);
 }

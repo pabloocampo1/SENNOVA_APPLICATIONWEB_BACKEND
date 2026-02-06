@@ -40,7 +40,7 @@ public class MaintenanceEquipmentServiceImpl implements MaintenanceEquipmentUseC
         LocalDate currentDate = LocalDate.now();
         LocalDate nextMaintenanceDate = currentDate.plusYears(1);
         equipmentModel.setMaintenanceDate(nextMaintenanceDate);
-        this.equipmentUseCase.update(equipmentModel, equipmentModel.getEquipmentId(), equipmentModel.getResponsible().getUserId(), equipmentModel.getLocation().getEquipmentLocationId(), equipmentModel.getUsage().getEquipmentUsageId());
+        this.equipmentUseCase.update(equipmentModel, equipmentModel.getEquipmentId(),  equipmentModel.getLocation().getEquipmentLocationId(), equipmentModel.getUsage().getEquipmentUsageId(), "Sistema");
 
         return maintenanceRecordEquipmentModelReturn;
     }

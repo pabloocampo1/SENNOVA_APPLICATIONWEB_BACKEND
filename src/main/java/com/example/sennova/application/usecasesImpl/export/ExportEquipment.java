@@ -149,7 +149,7 @@ public class ExportEquipment {
             costCell.setCellValue(eq.getEquipmentCost());
             costCell.setCellStyle(currencyStyle);
 
-            String resp = (eq.getResponsible() != null) ? eq.getResponsible().getName() : "Sin asignar";
+            String resp = (eq.getResponsible() != null) ? eq.getResponsible() : "Sin asignar";
             createStyledCell(row, 11, resp, bodyStyle);
 
 
@@ -326,7 +326,7 @@ public class ExportEquipment {
                 escapeHtml(eq.getVoltage()),
                 escapeHtml(eq.getAmperage()),
                 eq.getLocation() != null ? escapeHtml(eq.getLocation().getLocationName()) : "Sin ubicación",
-                eq.getResponsible() != null ? escapeHtml(eq.getResponsible().getName()) : "Sin responsable",
+                eq.getResponsible() != null ? escapeHtml(eq.getResponsible()) : "Sin responsable",
                 acquisition,
                 maintenance,
                 escapeHtml(description),

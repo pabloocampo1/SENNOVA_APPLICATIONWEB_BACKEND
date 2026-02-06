@@ -13,9 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ReagentUseCase {
-    ReagentModel save(ReagentModel reagentModel, MultipartFile multipartFile, String performedBy, Long responsibleId, Long locationId, Long usageId);
+    ReagentModel save(ReagentModel reagentModel, MultipartFile multipartFile, Long locationId, Long usageId, String userAction);
     ReagentModel saveDirect(ReagentModel reagentModel);
-    ReagentModel update(ReagentModel reagentModel, Long reagentId, MultipartFile multipartFile,  Long responsibleId, Long locationId, Long usageId);
+    ReagentModel update(ReagentModel reagentModel, Long reagentId, MultipartFile multipartFile,  Long locationId, Long usageId, String userAction);
     ReagentModel getById(Long id);
     ReagentsEntity getEntity(Long id);
     List<ReagentModel> getAll();

@@ -1,9 +1,11 @@
 package com.example.sennova.domain.model;
 
+import com.example.sennova.infrastructure.persistence.entities.Analisys.AnalysisEntity;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -21,6 +23,7 @@ public class UserModel {
     private String password;
     private RoleModel role;
     private LocalDate createAt;
+
 
     // preferences
     private boolean notifyEquipment;

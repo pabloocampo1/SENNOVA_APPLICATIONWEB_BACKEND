@@ -39,5 +39,6 @@ public interface TestRequestPersistencePort {
 
     // method to get the count of test requets accepted and create the requets code
     Integer findMaxSequenceForYear(String year);
+    void saveAll(List<TestRequestModel> testRequestModels);
 
 }

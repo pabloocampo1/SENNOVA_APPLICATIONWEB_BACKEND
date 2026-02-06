@@ -46,9 +46,8 @@ public record EquipmentRequestDto(
         @NotBlank(message = "El estado es obligatorio")
         String state,
 
-
         @NotNull(message = "El ID del responsable es obligatorio")
-        Long responsibleId,
+        String responsible,
 
         @NotNull(message = "El ID de la ubicación del equipo es obligatorio")
         Long locationId,

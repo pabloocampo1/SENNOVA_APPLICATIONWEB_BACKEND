@@ -39,4 +39,5 @@ public interface UserUseCase {
     List<UserModel> findAllById(List<Long> listOfId);
 
     List<UserResponse> usersAssignedTestRequest(Long testRequestId);
+    List<UserCompetenceDTO> getUsersWithCompetencies();
 }

@@ -49,6 +49,8 @@ public class AnalysisEntity {
     @Column(length = 500)
     private String notes;
 
+
+
     @ManyToMany
     @JoinTable(
             name = "analysis_responsible",

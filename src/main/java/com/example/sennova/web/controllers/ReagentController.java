@@ -98,10 +98,9 @@ public class ReagentController {
         ReagentModel reagentSaved = this.reagentUseCase.save(
                 reagentModel,
                 imageFile,
-                performedBy,
-                reagentRequestDto.responsibleId(),
                 reagentRequestDto.locationId(),
-                reagentRequestDto.usageId()
+                reagentRequestDto.usageId()   ,
+                performedBy
         );
 
         return new ResponseEntity<>(this.reagentMapper.toResponse(reagentSaved), HttpStatus.CREATED);
@@ -120,9 +119,10 @@ public class ReagentController {
                 reagentModel,
                 reagentId,
                 imageFile,
-                reagentRequestDto.responsibleId(),
                 reagentRequestDto.locationId(),
-                reagentRequestDto.usageId()
+                reagentRequestDto.usageId() ,
+                "Sistema"
+
         );
 
         return new ResponseEntity<>(this.reagentMapper.toResponse(reagentSaved), HttpStatus.OK);

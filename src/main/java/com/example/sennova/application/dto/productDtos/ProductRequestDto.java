@@ -12,7 +12,7 @@ public record ProductRequestDto(
         @NotBlank(message = "El análisis es obligatorio")
         String analysisName,
 
-       
+         Boolean available,
 
         @NotBlank(message = "El método es obligatorio")
         String method,

@@ -1,11 +1,15 @@
 package com.example.sennova.infrastructure.adpaters;
 
+import com.example.sennova.application.dto.UserDtos.UserCompetenceDTO;
 import com.example.sennova.application.mapper.UserMapper;
 import com.example.sennova.domain.model.UserModel;
+import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.domain.port.UserPersistencePort;
+import com.example.sennova.infrastructure.mapperDbo.TestRequestMapperDbo;
 import com.example.sennova.infrastructure.mapperDbo.UserMapperDbo;
 import com.example.sennova.infrastructure.persistence.entities.RoleEntity;
 import com.example.sennova.infrastructure.persistence.entities.UserEntity;
+import com.example.sennova.infrastructure.persistence.entities.requestsEntities.TestRequestEntity;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.RoleRepositoryJpa;
 import com.example.sennova.infrastructure.persistence.repositoryJpa.UserRepositoryJpa;
 import com.example.sennova.web.exception.ResourceNotFoundException;
@@ -23,12 +27,14 @@ public class UserAdapterImpl implements UserPersistencePort {
     private final UserRepositoryJpa userRepositoryJpa;
     private final UserMapperDbo userMapperDbo;
     private final RoleRepositoryJpa roleRepositoryJpa;
+    private final TestRequestMapperDbo testRequestMapperDbo;
 
     @Autowired
-    public UserAdapterImpl(UserRepositoryJpa userRepositoryJpa, UserMapperDbo userMapperDbo, RoleRepositoryJpa roleRepositoryJpa) {
+    public UserAdapterImpl(UserRepositoryJpa userRepositoryJpa, UserMapperDbo userMapperDbo, RoleRepositoryJpa roleRepositoryJpa, TestRequestMapperDbo testRequestMapperDbo) {
         this.userRepositoryJpa = userRepositoryJpa;
         this.userMapperDbo = userMapperDbo;
         this.roleRepositoryJpa = roleRepositoryJpa;
+        this.testRequestMapperDbo = testRequestMapperDbo;
     }
 
     @Override
@@ -109,6 +115,11 @@ public class UserAdapterImpl implements UserPersistencePort {
     }
 
     @Override
+    public List<String> findUnauthorizedAnalyses(Long requestId, Long userId) {
+        return this.userRepositoryJpa.findUnauthorizedAnalyses(requestId, userId);
+    }
+
+    @Override
     public Boolean existByUserName(String username) {
         return this.userRepositoryJpa.existsByUsername(username);
     }
@@ -133,6 +144,29 @@ public class UserAdapterImpl implements UserPersistencePort {
 
         user.setRefreshToken(refreshToken);
         this.userRepositoryJpa.save(user);
+    }
+
+    @Override
+    public List<UserCompetenceDTO> getAvailableUsersWithCompetencies() {
+        return userRepositoryJpa.findByAvailableTrue().stream()
+                .map(proy -> UserCompetenceDTO.builder()
+                        .userId(proy.getUserId())
+                        .name(proy.getName())
+                        .position(proy.getPosition())
+                        .imageProfile(proy.getImageProfile())
+                        .qualifiedAnalyses(proy.getTrainedAnalyses().stream()
+                                .map(a -> new UserCompetenceDTO.AnalysisDTO(a.getAnalysisId(), a.getAnalysisName()))
+                                .toList())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<TestRequestModel> findAllTestRequestByUser(Long userId) {
+        List<TestRequestEntity> testRequestEntities = this.userRepositoryJpa.findAllTestRequestByUser(userId);
+        return testRequestEntities.stream().map(this.testRequestMapperDbo::toModel).toList();
+
+
     }
 
     @Override

@@ -84,4 +84,7 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
             nativeQuery = true) 
     Integer findMaxSequenceForYear(@Param("year") String year);
 
+
+    
+
 }

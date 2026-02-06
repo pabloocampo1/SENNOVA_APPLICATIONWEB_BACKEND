@@ -43,6 +43,8 @@ public class ReagentModel {
 
     private String state;
 
+    private String responsible;
+
     private String senaInventoryTag;
 
     private String imageUrl;
@@ -58,7 +60,6 @@ public class ReagentModel {
 
     private LocalDate updateAt;
 
-    private UserModel user;
 
     private LocationModel location;
 

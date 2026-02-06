@@ -117,8 +117,7 @@ public class TestRequestController {
     
     @PostMapping("/quotation")
     public ResponseEntity<TestRequestModel> saveQuotation(@RequestBody TestRequestRecord testRequestRecord) {
-        System.out.println("JAJAJ");
-        System.out.println(testRequestRecord);
+
         TestRequestModel testRequestModel = this.testRequestUseCase.save(testRequestRecord);
         return new ResponseEntity<>(testRequestModel, HttpStatus.CREATED);
     }

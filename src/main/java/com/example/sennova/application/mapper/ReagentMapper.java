@@ -9,8 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ReagentMapper {
 
-    @Mapping(target = "responsibleId", source = "user.userId")
-    @Mapping(target = "responsibleName", source = "user.name")
+   
     @Mapping(target = "locationId", source = "location.equipmentLocationId")
     @Mapping(target = "locationName", source = "location.locationName")
     @Mapping(target = "usageId", source = "usage.equipmentUsageId")

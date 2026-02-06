@@ -93,4 +93,15 @@ public class ProductAdapterImpl implements ProductPersistencePort {
          List<AnalysisEntity> entities = this.productRepositoryJpa.findAnalysisByMatrix(matrixId);
         return entities.stream().map(this.productMapperDbo::toModel).toList();
     }
+
+    @Override
+    public List<AnalysisModel> findAllAnalysisByUser(Long userId) {
+         List<AnalysisEntity> entities = this.productRepositoryJpa.findAllAnalysisByUser(userId);
+        return entities.stream().map(this.productMapperDbo::toModel).toList();
+    }
+
+    @Override
+    public void saveAll(List<AnalysisModel> analysisModels) {
+        this.productRepositoryJpa.saveAll(analysisModels.stream().map(this.productMapperDbo::toEntity).toList());
+    }
 }

@@ -50,7 +50,7 @@ public class EquipmentEntity {
 
     private String model;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String serialNumber;
 
     private Boolean markReport;
@@ -87,9 +87,7 @@ public class EquipmentEntity {
     private String description;
 
     // fk with other entities
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private UserEntity responsible;
+    private String responsible;
 
     @ManyToOne
     @JoinColumn(name = "location_id", referencedColumnName = "location_id", nullable = true)

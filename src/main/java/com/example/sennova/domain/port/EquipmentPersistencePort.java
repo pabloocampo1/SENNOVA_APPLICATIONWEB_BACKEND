@@ -35,4 +35,5 @@ public interface EquipmentPersistencePort {
     List<EquipmentModel> findAllByMaintenanceDate(LocalDate currentDate);
     List<EquipmentModel> findAllByIsPresentFalse();
 
+
 }

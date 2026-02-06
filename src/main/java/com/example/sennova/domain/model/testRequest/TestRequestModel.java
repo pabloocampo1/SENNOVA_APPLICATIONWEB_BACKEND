@@ -53,6 +53,12 @@ public class TestRequestModel {
     @JsonIgnore
     private List<UserModel> members;
 
+    public void removeMember(Long userId) {
+        if (this.members != null) {
+            this.members.removeIf(member -> member.getUserId().equals(userId));
+        }
+    }
+
 
 
 }

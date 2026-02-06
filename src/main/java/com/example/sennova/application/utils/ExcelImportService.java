@@ -106,10 +106,8 @@ public class ExcelImportService {
 
                 equipment.setEquipmentCost(parseCost(getCellValue(row.getCell(13))));
 
-                String responsableName = getCellValue(row.getCell(14));
-                List<UserEntity> users = userRepositoryJpa.findAllByNameContainingIgnoreCase(responsableName);
-                UserEntity responsable = users.isEmpty() ? null : users.get(0);
-                equipment.setResponsible(responsable);
+
+                equipment.setResponsible(getCellValue(row.getCell(14)));
 
                 equipment.setMarkReport(false);
                 equipment.setMaintenanceDate(LocalDate.now().plusMonths(11));

@@ -40,8 +40,8 @@ public record ReagentRequestDto(
         @NotNull(message = "La fecha de expiración es obligatoria.")
         LocalDate expirationDate,
 
-        @NotNull(message = "El usuario es obligatorio.")
-        Long responsibleId,
+        @NotBlank(message = "El usuario es obligatorio.")
+        String responsible,
 
         @NotNull(message = "El uso es obligatorio.")
         Long usageId,

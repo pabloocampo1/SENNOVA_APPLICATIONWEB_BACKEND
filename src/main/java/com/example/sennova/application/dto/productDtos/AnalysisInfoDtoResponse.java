@@ -17,6 +17,7 @@ public record AnalysisInfoDtoResponse(
         double price,
         String notes,
         LocalDate createAt,
+        boolean available,
         LocalDate updateAt,
         List<MatrixModel> matrices,
         List<UserListResponse> qualifiedUsers
@@ -32,6 +33,7 @@ public record AnalysisInfoDtoResponse(
                 model.getPrice(),
                 model.getNotes(),
                 model.getCreateAt(),
+                model.getAvailable(),
                 model.getUpdateAt(),
                 model.getMatrices(),
                 usersDto
