@@ -29,7 +29,7 @@ public interface TestRequestUseCase {
     List<TestRequestModel> getTestRequestByCode();
     Map<String, List<SamplesByTestRequestDto>> getSamplesByTestRequest(Long testRequestId);
     void deleteById(Long testRequestId);
-    TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, MultipartFile file);
+    TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, String reviewedBy, MultipartFile file);
     List<TestRequestModel> getAllByOptionAndParam(String option, String param);
     void assignResponsible(List<Long> usersId, Long testRequestId);
     Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable);

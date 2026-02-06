@@ -99,7 +99,8 @@ public class TestRequestController {
     @PutMapping(value = "/accept-or-reject-test-request", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<TestRequestModel> acceptOrRejectTestRequest(
             @RequestPart("dto") AcceptOrRejectTestRequestDto dto,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @RequestPart(value = "file", required = false) MultipartFile file,
+    @RequestPart(value = "reviewedBy", required = true) String reviewedBy ) {
 
         System.out.println(dto);
         return new ResponseEntity<>(
@@ -108,7 +109,7 @@ public class TestRequestController {
                         dto.isApproved(),
                         dto.message(),
                         dto.emailCustomer(),
-
+                        reviewedBy ,
                         file
                 ),
                 HttpStatus.OK

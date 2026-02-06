@@ -44,8 +44,8 @@ public class ReleaseResultGeneratePdfService {
                     .append("<td>").append(escapeHtml(a.getProduct().getAnalysisName())).append("</td>")
                     .append("<td class='small-text'>").append(escapeHtml(a.getProduct().getMethod())).append("</td>")
                     .append("<td class='center bold'>").append(escapeHtml(a.getResultFinal())).append("</td>")
-                    .append("<td class='center'>").append(escapeHtml("NA")).append("</td>")
-                    .append("<td class='center'>").append(escapeHtml("NA")).append("</td>")
+                    .append("<td class='center'>").append(escapeHtml(a.getIncert() )).append("</td>")
+                    .append("<td class='center'>").append(escapeHtml(a.getValueRef())).append("</td>")
                     .append("<td class='center small-text'>").append(escapeHtml(a.getResultDate() != null ? a.getResultDate().toString() : "NA" )).append("</td>")
                     .append("</tr>");
         }
@@ -254,8 +254,7 @@ public class ReleaseResultGeneratePdfService {
                 </div>
             </div>
 
-            <div class="report-number">INFORME DE ENSAYO N ° %s</div>
-
+      
             <table>
                 <tr><th colspan="4" class="section-title">INFORMACIÓN GENERAL</th></tr>
                 <tr><td class="label">Solicitante:</td><td colspan="3">%s</td></tr>
@@ -286,7 +285,7 @@ public class ReleaseResultGeneratePdfService {
                 </tr>
                 <tr>
                     <td class="label">Especificaciones del cliente:</td>
-                    <td class="value-full" colspan="3">Temperatura de recepción: 23,3°C. Muestra entregada por el cliente en condiciones óptimas.</td>
+                    <td class="value-full" colspan="3"><b>%s</b></td>
                 </tr>
             </table>
 
@@ -360,7 +359,7 @@ public class ReleaseResultGeneratePdfService {
         </html>
        """.formatted(
 
-                escapeHtml(testRequestModel.getRequestCode()),
+                
                 escapeHtml(customerModel.getCustomerName()),
                 escapeHtml("NA"),
                 escapeHtml(customerModel.getAddress() + " " + customerModel.getCity() ),
@@ -370,11 +369,12 @@ public class ReleaseResultGeneratePdfService {
                 escapeHtml(String.valueOf(customerModel.getPhoneNumber())),
 
 
-                escapeHtml(sampleModel.getSampleReceptionDate() != null ? sampleModel.getSampleReceptionDate().toString() : "null"),
+                escapeHtml(sampleModel.getSampleReceptionDate() != null ? sampleModel.getSampleReceptionDate().toString() : "Sin dato registrado"),
                 escapeHtml(sampleModel.getMatrix()),
                 escapeHtml(LocalDate.now().toString()),
-                escapeHtml(sampleModel.getSamplingLocation() != null ? sampleModel.getSamplingLocation() : "null" ),
+                escapeHtml(sampleModel.getSamplingLocation() != null ? sampleModel.getSamplingLocation() : "Sin dato registrado" ),
                 escapeHtml(sampleModel.getSampleCode()),
+                escapeHtml(sampleModel.getDescription()),
                 
                 sbResultados.toString(),
                 imgHtml,

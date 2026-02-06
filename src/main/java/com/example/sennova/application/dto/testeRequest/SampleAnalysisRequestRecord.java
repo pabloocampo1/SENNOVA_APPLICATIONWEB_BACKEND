@@ -37,6 +37,10 @@ public record SampleAnalysisRequestRecord(
         @Size(max = 500, message = "Las notas no deben exceder 500 caracteres")
         String notes ,
 
+        String incert,
+
+        String valueRef,
+
 
         String resultGeneratedBy
 

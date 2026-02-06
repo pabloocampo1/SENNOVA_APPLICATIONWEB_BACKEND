@@ -47,6 +47,8 @@ public class TestRequestEntity {
 
     private LocalDate discardDate;
 
+    private String reviewedBy;
+
     private LocalDate  dueDate;
 
     private LocalDate submissionDate;

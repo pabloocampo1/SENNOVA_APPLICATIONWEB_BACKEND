@@ -124,8 +124,7 @@ public class ExportTestRequestData {
                 String.valueOf(totalSamples), styles);
         createKPICard(sheet, startRow - 2, 4, "Total Análisis",
                 String.valueOf(totalAnalysis), styles);
-        createKPICard(sheet, startRow - 2, 6, "Promedio Análisis/Solicitud",
-                String.format("%.1f", (double) totalAnalysis / totalRequests), styles);
+
 
         return startRow;
     }
@@ -265,58 +264,46 @@ public class ExportTestRequestData {
     private void createDetailedDataSheet(Workbook workbook, String year,
                                          List<TestRequestEntity> testRequests) {
         Sheet sheet = workbook.createSheet("📄 Datos Detallados");
-
-
         DataStyles styles = createDataStyles(workbook);
 
         int currentRow = 0;
 
-
+        // 1. TÍTULO PRINCIPAL (Fila 0)
         currentRow = buildDataHeader(sheet, year, styles, currentRow);
-        currentRow += 1; // Espacio reducido
+        currentRow++; // Espacio en blanco opcional
 
+        // 2. ENCABEZADOS DE SECCIÓN (Fila 2)
+        // Usamos currentRow para que sepa en qué fila escribir
+        buildSectionHeader(sheet, "DATOS DE LA SOLICITUD", currentRow, styles, 0, 6);
+        buildSectionHeader(sheet, "DATOS DE MUESTRA", currentRow, styles, 7, 9);
+        buildSectionHeader(sheet, "RESULTADOS TÉCNICOS Y AUDITORÍA", currentRow, styles, 10, 19);
 
-        currentRow = buildSectionHeader(sheet, "📝 INFORMACIÓN DE SOLICITUD",
-                currentRow, styles, 0, 3);
+        // Avanzamos a la siguiente fila para los nombres de columnas
         currentRow++;
 
+        // 3. ENCABEZADOS DE COLUMNAS (Fila 3)
+        String[] h1 = {"Código", "F. Creación", "Cliente", "Estado", "Responsable", "F. Aprobación", "Notas"};
+        String[] h2 = {"Cód. Muestra", "Identificación", "Matriz"};
+        String[] h3 = {"Ensayo", "Método", "Resultado", "Incertidumbre", "Valor Ref.", "Unidad", "Cumplimiento", "Acreditación", "Analista", "F. Resultado"};
 
-        String[] requestHeaders = {"ID Solicitud", "Fecha Creación", "Cliente", "Estado"};
-        currentRow = createSectionHeaders(sheet, requestHeaders, currentRow, styles, 0);
+        createSectionHeaders(sheet, h1, currentRow, styles, 0);
+        createSectionHeaders(sheet, h2, currentRow, styles, 7);
+        createSectionHeaders(sheet, h3, currentRow, styles, 10);
 
-
-        int sampleStartCol = 4;
-        buildSectionHeader(sheet, "🧪 MUESTRA", currentRow - 2, styles, sampleStartCol, 6);
-        String[] sampleHeaders = {"Código Muestra", "Identificación", "Matriz"};
-        createSectionHeaders(sheet, sampleHeaders, currentRow, styles, sampleStartCol);
-
-
-        int analysisStartCol = 7;
-        buildSectionHeader(sheet, "🔬 ANÁLISIS Y RESULTADOS", currentRow - 2, styles,
-                analysisStartCol, 14);
-        String[] analysisHeaders = {"Análisis", "Método", "Equipo", "Resultado",
-                "Unidad", "Cumplimiento", "Analista", "Fecha Resultado"};
-        createSectionHeaders(sheet, analysisHeaders, currentRow, styles, analysisStartCol);
-
+        // Avanzamos a la fila donde empiezan los datos
         currentRow++;
 
+        // 4. LLENADO DE DATOS (Fila 4 en adelante)
         currentRow = fillDetailedData(sheet, testRequests, currentRow, styles);
 
-
+        // 5. FORMATO FINAL
         applyFiltersAndFormatting(sheet, styles);
 
+        // Inmovilizar paneles (hasta la fila 4 para que los encabezados siempre se vean)
         sheet.createFreezePane(0, 4);
     }
 
-    private int buildDataHeader(Sheet sheet, String year, DataStyles styles, int row) {
-        Row titleRow = sheet.createRow(row);
-        titleRow.setHeightInPoints(30);
-        Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("DATOS DETALLADOS DE AUDITORÍA " + year);
-        titleCell.setCellStyle(styles.dataTitle);
-        sheet.addMergedRegion(new CellRangeAddress(row, row, 0, 14));
-        return row + 1;
-    }
+   
 
     private int buildSectionHeader(Sheet sheet, String title, int row,
                                    DataStyles styles, int startCol, int endCol) {
@@ -345,6 +332,17 @@ public class ExportTestRequestData {
         return row + 1;
     }
 
+    private int buildDataHeader(Sheet sheet, String year, DataStyles styles, int row) {
+        Row titleRow = sheet.createRow(row);
+        titleRow.setHeightInPoints(30);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("DATOS DETALLADOS DE AUDITORÍA " + year);
+        titleCell.setCellStyle(styles.dataTitle);
+        // Expandimos el merge hasta la columna 19 (el final real)
+        sheet.addMergedRegion(new CellRangeAddress(row, row, 0, 19));
+        return row + 1;
+    }
+
     private int fillDetailedData(Sheet sheet, List<TestRequestEntity> testRequests,
                                  int startRow, DataStyles styles) {
         int currentRow = startRow;
@@ -357,27 +355,24 @@ public class ExportTestRequestData {
                 List<SampleAnalysisEntity> analysisList = sample.getAnalysisEntities();
 
                 if (analysisList == null || analysisList.isEmpty()) {
-                    // Fila sin análisis
                     Row row = sheet.createRow(currentRow++);
-                    fillRequestData(row, request, clientName, styles, 0);
-                    fillSampleData(row, sample, styles, 4);
-                    // Celdas de análisis vacías con estilo
-                    for (int i = 7; i <= 14; i++) {
+                    fillRequestData(row, request, clientName, styles, 0); // Inicia en 0
+                    fillSampleData(row, sample, styles, 7);              // Inicia en 7
+                    // Celdas vacías del 10 al 19
+                    for (int i = 10; i <= 19; i++) {
                         Cell cell = row.createCell(i);
                         cell.setCellStyle(styles.emptyCell);
                     }
                 } else {
-                    // Filas con análisis
                     for (SampleAnalysisEntity analysis : analysisList) {
                         Row row = sheet.createRow(currentRow++);
-                        fillRequestData(row, request, clientName, styles, 0);
-                        fillSampleData(row, sample, styles, 4);
-                        fillAnalysisData(row, analysis, styles, 7);
+                        fillRequestData(row, request, clientName, styles, 0); // Inicia en 0
+                        fillSampleData(row, sample, styles, 7);              // Inicia en 7
+                        fillAnalysisData(row, analysis, styles, 10);         // Inicia en 10
                     }
                 }
             }
         }
-
         return currentRow;
     }
 
@@ -406,6 +401,18 @@ public class ExportTestRequestData {
         Cell stateCell = row.createCell(startCol + 3);
         stateCell.setCellValue(request.getState());
         stateCell.setCellStyle(styles.statusCell);
+
+        createStyledCell(row, startCol + 4,
+                request.getReviewedBy() != null ? request.getReviewedBy() : "Pendiente", styles.normalCell);
+
+        // Nuevo: Fecha de Aprobación
+        Cell appDateCell = row.createCell(startCol + 5);
+        if (request.getApprovalDate() != null) {
+            appDateCell.setCellValue(request.getApprovalDate());
+            appDateCell.setCellStyle(styles.dateCell);
+        } else {
+            createStyledCell(row, startCol + 5, "N/A", styles.normalCell);
+        }
     }
 
     private void fillSampleData(Row row, SampleEntity sample, DataStyles styles, int startCol) {
@@ -426,52 +433,48 @@ public class ExportTestRequestData {
                                   DataStyles styles, int startCol) {
         AnalysisEntity product = analysis.getProduct();
 
+        createStyledCell(row, startCol, product != null ? product.getAnalysisName() : "N/A", styles.normalCell);
+        createStyledCell(row, startCol + 1, product != null ? product.getMethod() : "N/A", styles.normalCell);
 
-        createStyledCell(row, startCol,
-                product != null ? product.getAnalysisName() : "N/A", styles.normalCell);
-        createStyledCell(row, startCol + 1,
-                product != null ? product.getMethod() : "N/A", styles.normalCell);
-        createStyledCell(row, startCol + 2,
-                product != null ? product.getEquipment() : "N/A", styles.normalCell);
+        // Resultado Final
+        createStyledCell(row, startCol + 2, analysis.getResultFinal(), styles.resultCell);
 
-        // Resultado
-        Cell resultCell = row.createCell(startCol + 3);
-        resultCell.setCellValue(analysis.getResultFinal());
-        resultCell.setCellStyle(styles.resultCell);
+        // --- NUEVOS DATOS TÉCNICOS ---
+        // Incertidumbre
+        createStyledCell(row, startCol + 3, analysis.getIncert() != null ? analysis.getIncert() : "N/D", styles.normalCell);
 
+        // Valor de Referencia
+        createStyledCell(row, startCol + 4, analysis.getValueRef() != null ? analysis.getValueRef() : "N/A", styles.normalCell);
 
-        createStyledCell(row, startCol + 4, analysis.getUnit(), styles.normalCell);
+        // Unidades
+        createStyledCell(row, startCol + 5, analysis.getUnit(), styles.normalCell);
 
-
-        Cell complianceCell = row.createCell(startCol + 5);
+        // Cumplimiento (Pasa/No Pasa)
+        Cell complianceCell = row.createCell(startCol + 6);
         String passStatus = analysis.getPassStatus();
         complianceCell.setCellValue(passStatus);
-        complianceCell.setCellStyle(
-                "NO CUMPLE".equalsIgnoreCase(passStatus) ?
-                        styles.nonCompliantCell : styles.compliantCell
-        );
+        complianceCell.setCellStyle("NO CUMPLE".equalsIgnoreCase(passStatus) ? styles.nonCompliantCell : styles.compliantCell);
 
+        // Acreditación (Importante para auditoría)
+        createStyledCell(row, startCol + 7, analysis.getAccreditationStatus(), styles.normalCell);
 
-        createStyledCell(row, startCol + 6, analysis.getResultGeneratedBy(), styles.normalCell);
+        // Trazabilidad de quién generó el resultado
+        createStyledCell(row, startCol + 8, analysis.getResultGeneratedBy(), styles.normalCell);
 
-
-        Cell resDateCell = row.createCell(startCol + 7);
+        // Fecha de Resultado
+        Cell resDateCell = row.createCell(startCol + 9);
         if (analysis.getResultDate() != null) {
             resDateCell.setCellValue(analysis.getResultDate());
             resDateCell.setCellStyle(styles.dateCell);
-        } else {
-            resDateCell.setCellStyle(styles.normalCell);
         }
     }
-
     private void applyFiltersAndFormatting(Sheet sheet, DataStyles styles) {
+        // Filtro para las 20 columnas (0 a 19)
+        sheet.setAutoFilter(new CellRangeAddress(3, 3, 0, 19));
 
-        sheet.setAutoFilter(new CellRangeAddress(3, 3, 0, 14));
-
-
-        int[] columnWidths = {15, 18, 25, 18, 18, 20, 18, 20, 18, 18, 15, 12, 18, 20, 18};
-        for (int i = 0; i < columnWidths.length; i++) {
-            sheet.setColumnWidth(i, columnWidths[i] * 256);
+        // Forzar que todas tengan un ancho decente
+        for (int i = 0; i <= 19; i++) {
+            sheet.setColumnWidth(i, 20 * 256);
         }
     }
 
@@ -480,6 +483,8 @@ public class ExportTestRequestData {
         cell.setCellValue(value != null ? value : "");
         cell.setCellStyle(style);
     }
+
+
 
 
     private static class DashboardStyles {

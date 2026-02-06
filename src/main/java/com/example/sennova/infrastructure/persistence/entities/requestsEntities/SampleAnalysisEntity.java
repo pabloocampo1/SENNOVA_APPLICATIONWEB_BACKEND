@@ -45,6 +45,10 @@ public class SampleAnalysisEntity {
 
     private String unit;
 
+    private String incert;
+
+    private String valueRef;
+
     private String passStatus;
 
     private String accreditationStatus;

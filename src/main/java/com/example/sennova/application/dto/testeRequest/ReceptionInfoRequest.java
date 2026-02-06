@@ -11,7 +11,7 @@ public record ReceptionInfoRequest(
         String identificationSample,
         String storageConditions,
         String observations,
-         String SamplingLocation
+         String samplingLocation
 ) {
 }
 

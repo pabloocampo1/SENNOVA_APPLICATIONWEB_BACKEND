@@ -27,6 +27,8 @@ public class TestRequestModel {
 
     private LocalDate  dueDate;
 
+    private String reviewedBy;
+
     private LocalDate discardDate;
 
     private LocalDate submissionDate;

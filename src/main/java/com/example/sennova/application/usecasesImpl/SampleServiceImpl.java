@@ -118,6 +118,8 @@ public class SampleServiceImpl implements SampleUseCase {
         analysis.setPassStatus(sampleAnalysisRequestRecord.passStatus());
         analysis.setStandards(sampleAnalysisRequestRecord.standards());
         analysis.setUnit(sampleAnalysisRequestRecord.unit());
+        analysis.setIncert(sampleAnalysisRequestRecord.incert());
+        analysis.setValueRef(sampleAnalysisRequestRecord.valueRef());
         analysis.setNotes(sampleAnalysisRequestRecord.notes());
         analysis.setResultDate(sampleAnalysisRequestRecord.resultDate());
         analysis.setResultGeneratedBy(sampleAnalysisRequestRecord.resultGeneratedBy());
@@ -172,7 +174,7 @@ public class SampleServiceImpl implements SampleUseCase {
         sample.setSampleReceptionDate(receptionInfoRequest.sampleReceptionDate());
         sample.setStorageConditions(receptionInfoRequest.storageConditions());
         sample.setSampleEntryDate(receptionInfoRequest.sampleEntryDate());
-        sample.setSamplingLocation(receptionInfoRequest.SamplingLocation());
+        sample.setSamplingLocation(receptionInfoRequest.samplingLocation());
         sample.setPackageDescription(receptionInfoRequest.packageDescription());
         sample.setSampleImage(imageUrl);
 

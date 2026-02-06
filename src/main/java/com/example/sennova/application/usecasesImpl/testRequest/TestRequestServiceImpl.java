@@ -154,6 +154,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
                  sampleModel.setDescription(sampleRequestRecord.description());
                  sampleModel.setTestRequest(testRequestSaved);
                  sampleModel.setStatusReception(false);
+                 sampleModel.setDescription(sampleRequestRecord.description());
                  sampleModel.setIsDelivered(false);
 
                  // count hoy many anaylis there are for this sample
@@ -350,7 +351,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
     @Override
     @Transactional
-    public TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, MultipartFile file) {
+    public TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, String reviewedBy, MultipartFile file) {
          TestRequestModel testRequest = this.testRequestPersistencePort.findById(testRequestId)
                  .orElseThrow(() -> new EntityNotFoundException("no se encontro el ensayo en la base de datos."));
 
@@ -362,7 +363,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
          testRequest.setState(isApproved ? TestRequestConstants.ACCEPTED : TestRequestConstants.REJECTED);
          testRequest.setIsFinished( isApproved ?  false : null);
          testRequest.setDeliveryStatus( isApproved ? TestRequestConstants.WAITING_FOR_SAMPLE : null);
-
+         testRequest.setReviewedBy(reviewedBy);
 
          if(isApproved){
 

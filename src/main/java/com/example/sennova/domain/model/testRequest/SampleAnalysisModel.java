@@ -34,6 +34,10 @@ public class SampleAnalysisModel {
 
     private SampleModel sample;
 
+    private String incert;
+
+    private String valueRef;
+
     private LocalDateTime updateAt;
 
     private LocalDateTime createAt;
