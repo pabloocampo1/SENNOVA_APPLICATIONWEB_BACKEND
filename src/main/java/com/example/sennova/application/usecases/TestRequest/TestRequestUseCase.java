@@ -32,7 +32,7 @@ public interface TestRequestUseCase {
     TestRequestModel acceptOrRejectTestRequest(Long testRequestId, Boolean isApproved, String message, String emailCustomer, String reviewedBy, MultipartFile file);
     List<TestRequestModel> getAllByOptionAndParam(String option, String param);
     void assignResponsible(List<Long> usersId, Long testRequestId);
-    Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable);
+    Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable, String userEmail);
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByCode(String code);
     List<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfoByDeliveryState(String state);
     List<SampleModel> getSamples();

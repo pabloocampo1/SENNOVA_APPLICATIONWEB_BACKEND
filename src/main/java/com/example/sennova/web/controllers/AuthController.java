@@ -77,11 +77,9 @@ public class AuthController {
 
             Map<String, Object> signInWithGoogle = this.authService.signInWithGoogle(body);
 
-            System.out.println("response 2: " + signInWithGoogle);
+            
             Object response = signInWithGoogle.get("response");
             Object cookie = signInWithGoogle.get("cookie");
-            System.out.println("cookie : " + cookie);
-            System.out.println("response 2: " + response);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, ((ResponseCookie) cookie).toString())
@@ -195,6 +193,8 @@ public class AuthController {
         authService.validateAndGetToken(token);
         return ResponseEntity.ok().build();
     }
+
+   
 
 
 

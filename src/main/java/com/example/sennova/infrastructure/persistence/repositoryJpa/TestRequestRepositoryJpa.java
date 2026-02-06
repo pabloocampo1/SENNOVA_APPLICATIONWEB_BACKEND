@@ -84,6 +84,10 @@ public interface TestRequestRepositoryJpa extends JpaRepository<TestRequestEntit
             nativeQuery = true) 
     Integer findMaxSequenceForYear(@Param("year") String year);
 
+    @Query(value = "SELECT t.* FROM test_request t INNER JOIN test_user tu ON tu.test_request_id = t.test_request_id\n" +
+            "WHERE tu.user_id = :userId;", nativeQuery = true)
+    Page<TestRequestEntity> findAllTestRequestAcceptedUserAssigned( Pageable pageable ,@Param("userId") Long userId);
+
 
     
 

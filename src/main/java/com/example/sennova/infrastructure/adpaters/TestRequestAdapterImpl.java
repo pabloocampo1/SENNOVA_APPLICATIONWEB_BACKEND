@@ -126,6 +126,12 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     }
 
     @Override
+    public Page<TestRequestModel> findAllTestRequestAcceptedByUserId(Pageable pageable, Long userId) {
+        Page<TestRequestEntity> entities = this.testRequestRepositoryJpa.findAllTestRequestAcceptedUserAssigned(pageable, userId);
+        return entities.map(this.testRequestMapperDbo::toModel);
+    }
+
+    @Override
     public long countNotDeliveredSamples(Long testRequestId) {
         return this.testRequestRepositoryJpa.countNotDeliveredSamples(testRequestId);
     }
@@ -216,6 +222,8 @@ public class TestRequestAdapterImpl implements TestRequestPersistencePort {
     public void saveAll(List<TestRequestModel> testRequestModels) {
         this.testRequestRepositoryJpa.saveAll(testRequestModels.stream().map(this.testRequestMapperDbo::toEntity).toList());
     }
+
+
 
 
 }

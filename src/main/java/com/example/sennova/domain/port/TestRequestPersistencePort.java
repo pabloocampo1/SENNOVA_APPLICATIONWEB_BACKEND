@@ -28,6 +28,7 @@ public interface TestRequestPersistencePort {
     List<TestRequestModel> findAllByDueDate(LocalDate today);
     List<TestRequestModel> findAllTestRequestAccepted();
     Page<TestRequestModel> findAllTestRequestAccepted(Pageable pageable);
+    Page<TestRequestModel> findAllTestRequestAcceptedByUserId(Pageable pageable, Long userId);
     long countNotDeliveredSamples(Long testRequestId);
     List<TestRequestModel> findAllByDueDateExpired(LocalDate today);
     List<TestRequestModel> findAllByDeliveryState(String state);
@@ -40,5 +41,6 @@ public interface TestRequestPersistencePort {
     // method to get the count of test requets accepted and create the requets code
     Integer findMaxSequenceForYear(String year);
     void saveAll(List<TestRequestModel> testRequestModels);
+
 
 }

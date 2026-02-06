@@ -71,7 +71,9 @@ public class TestRequestController {
     }
 
     @GetMapping("/get-all/accepted")
-    public ResponseEntity<List<TestRequestModel>> getAllTestRequestAccepted(){
+    public ResponseEntity<List<TestRequestModel>> getAllTestRequestAccepted(
+
+    ){
         return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequestAccepted(), HttpStatus.OK);
     }
 
@@ -131,13 +133,15 @@ public class TestRequestController {
 
     }
 
-    @GetMapping("/get-all-info-summary")
+    @GetMapping("/get-all-info-summary/{userEmail}")
     public ResponseEntity<Page<TestRequestSummaryInfoResponse>> getTestRequestSummaryInfo(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int elements
+            @RequestParam(defaultValue = "10") int elements   ,
+            @PathVariable String userEmail
+
     ){
         Pageable pageable = PageRequest.of(page, elements);
-           return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequestSummaryInfo(pageable), HttpStatus.OK);
+           return new ResponseEntity<>(this.testRequestUseCase.getAllTestRequestSummaryInfo(pageable, userEmail), HttpStatus.OK);
     }
 
     @GetMapping("/get-all-info-summary-by-code/{requestCode}")

@@ -1,5 +1,6 @@
 package com.example.sennova.application.usecasesImpl.testRequest;
 
+import com.example.sennova.application.dto.UserDtos.UserResponse;
 import com.example.sennova.application.dto.UserDtos.UserResponseMembersAssigned;
 import com.example.sennova.application.dto.testeRequest.*;
 import com.example.sennova.application.dto.testeRequest.quotation.QuotationResponse;
@@ -110,7 +111,13 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
 
     @Override
     public List<TestRequestModel> getAllTestRequestAccepted() {
-        return this.testRequestPersistencePort.findAllTestRequestAccepted();
+
+
+
+
+            return this.testRequestPersistencePort.findAllTestRequestAccepted();
+
+
     }
 
     @Override
@@ -441,17 +448,29 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     }
 
     @Override
-    public Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable) {
-        Page<TestRequestModel> testRequests = this.testRequestPersistencePort.findAllTestRequestAccepted(pageable);
+    public Page<TestRequestSummaryInfoResponse> getAllTestRequestSummaryInfo(Pageable pageable, String userEmail ) {
+
+        UserModel userModel = this.userUseCase.getByEmail(userEmail);
+      
+        Page<TestRequestModel> testToReturn;
+
+        if(userModel.getRole().getNameRole().equals("SUPERADMIN") || userModel.getRole().getNameRole().equals("ADMIN")){
+            testToReturn = this.testRequestPersistencePort.findAllTestRequestAccepted(pageable);
+        }  else {
+            testToReturn = this.testRequestPersistencePort.findAllTestRequestAcceptedByUserId(pageable, userModel.getUserId());
+        }
+
+
+
         List<TestRequestSummaryInfoResponse> content =
-                testRequests.getContent().stream()
+                testToReturn.getContent().stream()
                         .map(this::mapSingleTestRequest)
                         .toList();
 
         return new PageImpl<>(
                 content,
                 pageable,
-                testRequests.getTotalElements()
+                testToReturn.getTotalElements()
         );
     }
 

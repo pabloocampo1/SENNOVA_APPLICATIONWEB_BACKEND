@@ -77,7 +77,7 @@ public class SecurityConfig {
 //
 //                            // products
 //                            request.requestMatchers(HttpMethod.DELETE, "/api/v1/analysis/delete").hasAnyRole(ROLE_SUPERADMIN);
-                           request.requestMatchers( "/api/v1/analysis/**").permitAll();
+                            request.requestMatchers( "/api/v1/analysis/**").permitAll();
 //                            request.requestMatchers(HttpMethod.PUT, "/api/v1/analysis/update").hasAnyRole(ROLE_SUPERADMIN, ROLE_ANALYST);
 //                            request.requestMatchers(HttpMethod.POST, "/api/v1/analysis/**").hasAnyRole(ROLE_SUPERADMIN, ROLE_ADMIN);
 //                            request.requestMatchers(HttpMethod.GET, "/api/v1/analysis/**").permitAll();
