@@ -15,6 +15,7 @@ public class CustomerResponseDto {
     private String email;
     private Long phoneNumber;
     private String city;
+    private String dni;
     private String address;
     private LocalDate createAt;
 

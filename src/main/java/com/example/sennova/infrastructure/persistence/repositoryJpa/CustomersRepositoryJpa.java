@@ -21,6 +21,7 @@ public interface CustomersRepositoryJpa extends JpaRepository<CustomerEntity, Lo
       c.phone_number AS phoneNumber,
       c.city AS city,
       c.address AS address,
+      c.dni AS dni
       c.create_at AS createAt,
       tr.test_request_id AS testRequestId,
       tr.request_code AS requestCode,

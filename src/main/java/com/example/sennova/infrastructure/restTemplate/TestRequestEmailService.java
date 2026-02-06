@@ -271,7 +271,7 @@ public class TestRequestEmailService {
             int reportIndex = 1;
             for (byte[] report : generatedReports) {
                 helper.addAttachment(
-                        "Informe_Muestra_" + reportIndex++ + ".pdf",
+                        "Informe"+".pdf",
                         new org.springframework.core.io.ByteArrayResource(report)
                 );
             }

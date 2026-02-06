@@ -13,6 +13,8 @@ public record CustomerRequestRecord(
         @NotNull
         Long phoneNumber,
 
+        String dni,
+
         @NotBlank
         String address,
 

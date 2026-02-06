@@ -37,6 +37,7 @@ public class CustomersAdapterImpl implements CustomerPersistencePort {
                         c.getEmail(),
                         c.getPhoneNumber(),
                         c.getCity(),
+                        c.getDni(),
                         c.getAddress(),
                         c.getCreateAt(),
                         c.getTestRequestId(),

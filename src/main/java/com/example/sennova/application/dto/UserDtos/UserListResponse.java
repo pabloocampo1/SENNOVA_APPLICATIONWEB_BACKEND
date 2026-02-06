@@ -12,6 +12,7 @@ public record UserListResponse (
         boolean available,
         Long phoneNumber,
         String email,
+        Long dni,
         String position,
         String imageProfile,
        String role,

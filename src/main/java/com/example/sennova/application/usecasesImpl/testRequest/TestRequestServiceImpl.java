@@ -136,8 +136,6 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         testRequestModel.setCustomer(customer);
 
 
-
-
         // create the list of the sample with products.
         // calculte the final price
 

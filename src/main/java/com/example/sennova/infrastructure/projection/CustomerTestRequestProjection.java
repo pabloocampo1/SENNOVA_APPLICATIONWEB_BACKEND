@@ -10,7 +10,7 @@ public interface CustomerTestRequestProjection {
     String getCity();
     String getAddress();
     LocalDate getCreateAt();
-
+    String getDni();
     Long getTestRequestId();
     String getRequestCode();
     String getState();

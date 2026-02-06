@@ -72,6 +72,7 @@ public class CustomerServiceImpl implements CustomerUseCase {
         customerModel.setCustomerName(dto.customerName());
         customerModel.setCity(dto.city());
         customerModel.setEmail(dto.email());
+        customerModel.setDni(dto.dni());
         customerModel.setPhoneNumber(dto.phoneNumber());
         customerModel.setAddress(dto.address());
         CustomerModel customerUpdated = this.save(customerModel);
