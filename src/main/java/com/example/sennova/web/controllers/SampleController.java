@@ -53,7 +53,7 @@ public class SampleController {
 
     @GetMapping("/get-all-without-reception")
     public ResponseEntity<Page<SampleWithoutReceptionResponse>> getAllSamplesWithoutReception(@RequestParam(defaultValue = "0") int page, @RequestParam( defaultValue = "20") int elements){
-        Pageable pageable = PageRequest.of(page, elements, Sort.by("dueDate").descending());
+        Pageable pageable = PageRequest.of(page, elements, Sort.by("sample_code").descending());
         return new ResponseEntity<>(this.sampleUseCase.getAllSamplesWithoutReception(pageable), HttpStatus.OK);
     }
 

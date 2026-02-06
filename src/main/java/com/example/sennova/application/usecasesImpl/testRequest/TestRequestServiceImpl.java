@@ -21,6 +21,7 @@ import com.example.sennova.domain.model.testRequest.SampleModel;
 import com.example.sennova.domain.model.testRequest.TestRequestModel;
 import com.example.sennova.domain.port.TestRequestPersistencePort;
 import com.example.sennova.infrastructure.persistence.entities.Notifications;
+import com.example.sennova.infrastructure.restTemplate.CloudinaryService;
 import com.example.sennova.infrastructure.restTemplate.TestRequestEmailService;
 import com.example.sennova.web.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -50,9 +51,10 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     private final NotificationsService notificationsService;
     private final UserUseCase userUseCase;
     private final TestRequestEmailService testRequestEmailService;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public TestRequestServiceImpl(CustomerMapper customerMapper, CustomerUseCase customerUseCase, SampleUseCase sampleUseCase, SampleAnalysisUseCase sampleAnalysisUseCase, ProductUseCase productUseCase, TestRequestPersistencePort testRequestPersistencePort, NotificationsService notificationsService, UserUseCase userUseCase,  TestRequestEmailService testRequestEmailService) {
+    public TestRequestServiceImpl(CustomerMapper customerMapper, CustomerUseCase customerUseCase, SampleUseCase sampleUseCase, SampleAnalysisUseCase sampleAnalysisUseCase, ProductUseCase productUseCase, TestRequestPersistencePort testRequestPersistencePort, NotificationsService notificationsService, UserUseCase userUseCase, TestRequestEmailService testRequestEmailService, CloudinaryService cloudinaryService) {
         this.customerMapper = customerMapper;
         this.customerUseCase = customerUseCase;
         this.sampleUseCase = sampleUseCase;
@@ -63,6 +65,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         this.userUseCase = userUseCase;
 
         this.testRequestEmailService = testRequestEmailService;
+        this.cloudinaryService = cloudinaryService;
     }
 
 
@@ -302,26 +305,47 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
     @Override
     @Transactional
     public void deleteById(@Valid Long testRequestId) {
-
         if(!this.testRequestPersistencePort.existsById(testRequestId)){
             throw new IllegalArgumentException("No se puede eliminar este ensayo ya que no existe en la base de datos.");
         }
 
-        // delete also the samples with that testRequestId and table of result also
+
+        List<String> publicIdToDelete = new ArrayList<>();
         List<SampleModel> samples = this.sampleUseCase.getAllByTestRequest(testRequestId);
+
         samples.forEach(sample -> {
-           List<SampleAnalysisModel> sampleAnalysis =  this.sampleAnalysisUseCase.getSamplesAnalysisBySample(sample.getSampleId());
-           sampleAnalysis.forEach(s -> {
-               this.sampleAnalysisUseCase.deleteById(s.getSampleProductAnalysisId());
-           });
+            List<SampleAnalysisModel> sampleAnalysis = this.sampleAnalysisUseCase.getSamplesAnalysisBySample(sample.getSampleId());
+            sampleAnalysis.forEach(s -> {
+
+                if (s.getSampleProductDocumentResult() != null) {
+                    s.getSampleProductDocumentResult().forEach(doc -> {
+                        if (doc.getUrl() != null && !doc.getUrl().isBlank() && !"NA".equals(doc.getUrl())) {
+                            publicIdToDelete.add(doc.getPublicId());
+                        }
+                    });
+                }
+            });
+        });
 
 
-           this.sampleUseCase.deleteById(sample.getSampleId());
-        } );
-
-        // TO DO : add and delete file in cloudinary bro.
+        samples.forEach(sample -> {
+            List<SampleAnalysisModel> sampleAnalysis = this.sampleAnalysisUseCase.getSamplesAnalysisBySample(sample.getSampleId());
+            sampleAnalysis.forEach(s -> {
+                this.sampleAnalysisUseCase.deleteById(s.getSampleProductAnalysisId());
+            });
+            this.sampleUseCase.deleteById(sample.getSampleId());
+        });
 
         this.testRequestPersistencePort.deleteById(testRequestId);
+
+
+        publicIdToDelete.forEach(url -> {
+            try {
+                this.cloudinaryService.deleteFile(url);
+            } catch (Exception e) {
+                System.err.println("Error borrando de Cloudinary: " + url + " - " + e.getMessage());
+            }
+        });
     }
 
     @Override

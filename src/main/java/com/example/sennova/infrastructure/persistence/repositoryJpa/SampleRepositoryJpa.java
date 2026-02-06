@@ -33,6 +33,7 @@ public interface SampleRepositoryJpa extends JpaRepository<SampleEntity, Long> {
 
     Page<SampleEntity> findAllByIsDeliveredTrue(Pageable pageable);
 
+    @Query(value = "SELECT s.* from sample s INNER JOIN test_request t ON t.test_request_id = s.test_request_id WHERE s.status_reception = false AND t.state = \"ACEPTADA\"", nativeQuery = true)
     Page<SampleEntity> findAllByStatusReceptionFalse(Pageable pageable);
 
    @Query(

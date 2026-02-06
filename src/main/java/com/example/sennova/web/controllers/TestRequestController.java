@@ -101,7 +101,7 @@ public class TestRequestController {
             @RequestPart("dto") AcceptOrRejectTestRequestDto dto,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
-
+        System.out.println(dto);
         return new ResponseEntity<>(
                 this.testRequestUseCase.acceptOrRejectTestRequest(
                         dto.testRequestId(),
