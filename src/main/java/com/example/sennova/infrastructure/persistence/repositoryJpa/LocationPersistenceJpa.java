@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface LocationPersistenceJpa extends JpaRepository<LocationEntity, Long> {
     List<LocationEntity> findAllByLocationNameContainingIgnoreCase(String name);
     List<LocationEntity> findByLocationName(String name);
+    boolean existsByLocationName(String name);
 }

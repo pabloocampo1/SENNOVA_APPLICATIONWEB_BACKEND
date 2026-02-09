@@ -10,4 +10,5 @@ public interface UsageRepositoryJpa extends JpaRepository<UsageEntity, Long> {
 
     List<UsageEntity> findAllByUsageNameContainingIgnoreCase(String name);
     List<UsageEntity> findByUsageName(String name);
+    boolean existsByUsageName(String name);
 }

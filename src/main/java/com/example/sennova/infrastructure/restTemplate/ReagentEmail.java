@@ -93,7 +93,7 @@ public class ReagentEmail {
             helper.setText(htmlContent, true);
             javaMailSender.send(message);
 
-            System.out.println("📧 Correo enviado correctamente a " + to);
+
 
         } catch (MessagingException e) {
             throw new RuntimeException("❌ Error enviando el correo de expiración de reactivos", e);

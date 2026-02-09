@@ -70,6 +70,28 @@ public class AnalysisEntity {
     )
     public List<MatrixEntity> matrices;
 
+
+    public AnalysisEntity(
+            String analysisName,
+            Boolean available,
+            String method,
+            String equipment,
+            String units,
+            double price,
+            String notes
+    ) {
+        this.analysisName = analysisName;
+        this.available = available;
+        this.method = method;
+        this.equipment = equipment;
+        this.units = units;
+        this.price = price;
+        this.notes = notes;
+    }
+
+    public AnalysisEntity() {
+    }
+
     public void addMatrix(MatrixEntity matrix) {
         this.matrices.add(matrix);
         matrix.getAnalysis().add(this);

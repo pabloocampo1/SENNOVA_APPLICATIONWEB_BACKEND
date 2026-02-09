@@ -215,7 +215,7 @@ public class TestRequestServiceImpl implements TestRequestUseCase {
         this.userUseCase.findAllModels()
                 .stream()
                 .filter(UserModel::isNotifyQuotes).toList()
-                .forEach(userModel -> this.testRequestEmailService.sendEmailNewQuotation(userModel.getEmail(), testRequestCode , userModel.getName(), "http://localhost:5173/system/quotes" ));
+                .forEach(userModel -> this.testRequestEmailService.sendEmailNewQuotation(userModel.getEmail(), testRequestCode , userModel.getName(), "https://sennova-weld.vercel.app/system/quotes" ));
 
         Notifications notification = new Notifications();
         notification.setMessage("Llego una nueva cotizacion de ensayo, codigo " + testRequestCode);

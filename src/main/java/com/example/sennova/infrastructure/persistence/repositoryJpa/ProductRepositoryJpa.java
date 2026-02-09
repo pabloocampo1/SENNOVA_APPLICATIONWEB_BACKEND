@@ -18,4 +18,6 @@ public interface ProductRepositoryJpa extends JpaRepository<AnalysisEntity, Long
     @Query(value = "SELECT a.* FROM analysis a INNER JOIN analysis_responsible ar ON ar.analysis_id = a.analysis_id\n" +
             "WHERE ar.user_id = :userId;", nativeQuery = true)
     List<AnalysisEntity> findAllAnalysisByUser(@Param("userId") Long userId);
+
+    boolean existsByAnalysisName(String name);
 }

@@ -124,7 +124,7 @@ public class AuthServiceImpl {
                 .secure(true)
                 .path("/api/v1/auth/refresh/token")
                 .maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         objectMap.put("cookie", refreshCookie);
@@ -164,7 +164,7 @@ public class AuthServiceImpl {
                 .secure(true)
                 .path("/api/v1/auth/refresh/token")
                 .maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         UserPreferenceResponse userPreferenceResponse = new UserPreferenceResponse(userModel.isNotifyEquipment(), userModel.isNotifyReagents(), userModel.isNotifyQuotes(), userModel.isNotifyResults());

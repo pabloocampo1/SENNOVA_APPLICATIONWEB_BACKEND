@@ -55,7 +55,7 @@ public class AuthEmailService {
             helper.setTo(to);
             helper.setSubject("Accede a tu cuenta");
 
-            String frontendUrl = "http://localhost:5173/signIn/change-password/";
+            String frontendUrl = "https://sennova-weld.vercel.app/signIn/change-password/";
             String accessLink = frontendUrl  + token;
 
             String htmlContent = """
