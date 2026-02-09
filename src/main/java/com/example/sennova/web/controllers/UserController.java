@@ -63,7 +63,7 @@ public class UserController {
 
     @GetMapping("/available-with-competencies")
     public ResponseEntity<List<UserCompetenceDTO>> getAvailableUsers() {
-        System.out.println("ALMENOS ENTRO");
+       
         List<UserCompetenceDTO> users = userUseCase.getUsersWithCompetencies();
         return ResponseEntity.ok(users);
     }
@@ -71,6 +71,8 @@ public class UserController {
 
     @PostMapping(path = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserResponse> saveUser(@RequestPart("dto") @Valid UserSaveRequest userSaveRequest, @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+        System.out.println("dto del usuario a crear: ");
+        System.out.println(userSaveRequest.role());
         return new ResponseEntity<>(this.userUseCase.save(userSaveRequest, imageFile), HttpStatus.CREATED);
 
     }

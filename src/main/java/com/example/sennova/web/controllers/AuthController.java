@@ -44,19 +44,23 @@ public class AuthController {
     @PostMapping("/signIn")
     public ResponseEntity<Object> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
 
+
         try {
             Map<String, Object> response = this.authService.login(loginRequestDto);
 
             Object loginResponseDto = response.get("response");
-            System.out.println(loginResponseDto);
+
 
             ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", response.get("refreshToken").toString())
                     .httpOnly(true)
                     .secure(true)
-                    .path("/api/v1/auth/refresh/token")
+                    .path("/")
                     .maxAge(Duration.ofDays(7))
-                    .sameSite("Strict")
+                    .sameSite("None")
                     .build();
+
+
+            System.out.println("Lo que se envia al loguear" + response.get("refreshToken").toString());
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
@@ -103,9 +107,9 @@ public class AuthController {
             ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
                     .httpOnly(true)
                     .secure(true)
-                    .path("/api/v1")
+                    .path("/")
                     .maxAge(0)
-                    .sameSite("Strict")
+                    .sameSite("None")
                     .build();
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
@@ -117,9 +121,13 @@ public class AuthController {
 
     @PostMapping("/refresh/token")
     public ResponseEntity<Object> login(@CookieValue("refreshToken") String refreshToken) {
+
+        System.out.println("lo que llega al reresh tojken" + refreshToken);
         Map<String, Object> objectMap = this.authService.refreshToken(refreshToken);
         Object loginResponseDto = objectMap.get("response");
         Object cookie = objectMap.get("refreshToken");
+
+        System.out.println("Lo que se devuelve al refresh token" + cookie.toString());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())

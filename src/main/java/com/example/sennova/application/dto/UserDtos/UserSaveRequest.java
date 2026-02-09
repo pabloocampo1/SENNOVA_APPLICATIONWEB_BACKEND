@@ -29,8 +29,7 @@ public record UserSaveRequest(
 
         String imageProfile,
 
-
-        @NotBlank(message = "El usuario no puede ser guardado sin especificar su rol.")
-        String roleName
+        
+        String role
 
 ) {}

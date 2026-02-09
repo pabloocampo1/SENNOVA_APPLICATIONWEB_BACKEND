@@ -62,6 +62,8 @@ public class DataInitializer implements CommandLineRunner {
             user.setName("Super Admin - edit");
             user.setEmail("softwaresennovaInfo@gmail.com");
             user.setUsername("root");
+            user.setDni(Long.valueOf(123456));
+            user.setPhoneNumber(Long.valueOf(123456));
             user.setAvailable(true);
             user.setName("SUPER ADMINISTRADOR - EDITAR");
             user.setPassword(passwordEncoder.encode("root"));
@@ -156,23 +158,23 @@ public class DataInitializer implements CommandLineRunner {
         List<AnalysisEntity> analisisBase = List.of(
 
                 new AnalysisEntity("PH", true, "equipo de prueba", "ISO 6222:1999", "producto para analisis", 300000.0, "2"),
-                new AnalysisEntity("Cloro", true, "null", "32323jds iso", "", 300000.0, "3"),
+                new AnalysisEntity("Cloro", true, "null", "32323jds iso", "null", 300000.0, "3"),
                 new AnalysisEntity("Acidez titulable", true, "Titulométrico", "NTC 5247:2004", "null", 47011.78, "mg Ácido clorogénico/g"),
-                new AnalysisEntity("Brix", true, "Refractómetro", "Escala Brix", null, 16507.98, "g sacarosa/g muestra"),
+                new AnalysisEntity("Brix", true, "Refractómetro", "Escala Brix", "null", 16507.98, "g sacarosa/g muestra"),
                 new AnalysisEntity("Alcalinidad total", true, "Titulométrico", "Standard Methods SM-2320", "null", 15008.88, "mg CaCO3/L"),
-                new AnalysisEntity("Aluminio (Al)", true, "ICP-OES", "EPA 3051", null, 94259.2, "mg Al/L"),
-                new AnalysisEntity("Cadmio (Cd)", true, "ICP-OES", "EPA 3051", null, 94259.2, "mg Cd/L"),
+                new AnalysisEntity("Aluminio (Al)", true, "ICP-OES", "EPA 3051", "null", 94259.2, "mg Al/L"),
+                new AnalysisEntity("Cadmio (Cd)", true, "ICP-OES", "EPA 3051", "null", 94259.2, "mg Cd/L"),
                 new AnalysisEntity("Cafeína", true, "HPLC-DAD", "ISO 20481:2010/Modificado", "null", 121506.0, "mg/100g"),
                 new AnalysisEntity("Calcio (Ca)", true, "ICP-OES", "EPA 3051", null, 98029.57, "mg Ca/L"),
                 new AnalysisEntity("Capacidad Antioxidante", true, "UV-VIS", "Método FRAP", "null", 247430.4, "meq Trolox"),
                 new AnalysisEntity("Catequina", true, "HPLC-DAD", "Método propio", "notas de prueba", 123715.2, "mg/100g"),
-                new AnalysisEntity("Ceniza", true, "Gravimétrico", "NTC 4648:2022", null, 31515.82, "% Ceniza"),
+                new AnalysisEntity("Ceniza", true, "Gravimétrico", "NTC 4648:2022", "null", 31515.82, "% Ceniza"),
                 new AnalysisEntity("Cinc (Zn)", true, "ICP-OES", "EPA 3051", "", 94259.2, "mg Zn/L"),
                 new AnalysisEntity("Cloro residual", true, "Fotométrico", "Standard Methods SM-4500", "null", 12990.1, "mg/L"),
                 new AnalysisEntity("Cloruros", true, "Método de Mohr", "Standard Methods SM-4500", "null", 23564.8, "mg Cl-/L"),
-                new AnalysisEntity("Cobre (Cu)", true, "ICP-OES", "EPA 3051", null, 94259.2, "mg Cu/L"),
+                new AnalysisEntity("Cobre (Cu)", true, "ICP-OES", "EPA 3051", "null", 94259.2, "mg Cu/L"),
                 new AnalysisEntity("Coliformes totales y Escherichia Coli", true, "Recuento en placa", "NTC 4458:2018", "null", 41101.64, "UFC/mL ó g"),
-                new AnalysisEntity("Colorimetría", true, "Sensorial", "Escala Pfound", null, 36662.2, "mm Pfound"),
+                new AnalysisEntity("Colorimetría", true, "Sensorial", "Escala Pfound", "null", 36662.2, "mm Pfound"),
                 new AnalysisEntity("Conductividad eléctrica", true, "Potenciométrico", "Standard Methods SM-2510", "null", 18009.19, "µS/cm"),
                 new AnalysisEntity("Cromo (Cr)", true, "ICP-OES", "EPA 3051", "null", 94259.2, "mg Cr/L"),
                 new AnalysisEntity("DQO", true, "Titulométrico", "Standard Methods SM-5220D", "null", 61857.6, "mg oxígeno/L"),

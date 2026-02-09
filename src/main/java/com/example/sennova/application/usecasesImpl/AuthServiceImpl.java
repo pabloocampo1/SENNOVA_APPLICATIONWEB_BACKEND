@@ -122,7 +122,7 @@ public class AuthServiceImpl {
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", jwt.get("refresh-token"))
                 .httpOnly(true)
                 .secure(true)
-                .path("/api/v1/auth/refresh/token")
+                .path("/")
                 .maxAge(Duration.ofDays(7))
                 .sameSite("None")
                 .build();
@@ -150,35 +150,74 @@ public class AuthServiceImpl {
     @Transactional
     public Map<String, Object> refreshToken(String refreshToken) {
 
-        if (!this.jwtUtils.validateJwt(refreshToken)) {
-            throw new RuntimeException();
-        }
-        UserDetails user = this.userServiceSecurity.loadUserByUsername(this.jwtUtils.getUsername(refreshToken));
-        String authority = String.valueOf(user.getAuthorities().stream().iterator().next());
-        String jwt = jwtUtils.generateSingleAccessToken(user.getUsername(), user.getAuthorities().iterator().next().getAuthority());
-        UserModel userModel = this.userUseCase.findByUsername(user.getUsername());
+        System.out.println("🔎 Refresh recibido: " + refreshToken);
 
+        if (!this.jwtUtils.validateJwt(refreshToken)) {
+            System.out.println("❌ Token inválido");
+            throw new RuntimeException("Token inválido");
+        }
+
+        String username = this.jwtUtils.getUsername(refreshToken);
+        System.out.println("👤 Username del token: " + username);
+
+        UserModel userModel = this.userUseCase.findByUsername(username);
+
+        System.out.println("💾 Refresh en DB: " + userModel.getRefreshToken());
+
+        if (userModel.getRefreshToken() == null) {
+            System.out.println("🚨 EL REFRESH EN DB ES NULL");
+            throw new RuntimeException("Refresh en DB es null");
+        }
+
+        if (!userModel.getRefreshToken().equals(refreshToken)) {
+            System.out.println("🚨 EL TOKEN NO COINCIDE CON EL DE DB");
+            throw new RuntimeException("Refresh no coincide");
+        }
+
+        UserDetails user = this.userServiceSecurity.loadUserByUsername(username);
+
+        String jwt = jwtUtils.generateSingleAccessToken(
+                user.getUsername(),
+                user.getAuthorities().iterator().next().getAuthority()
+        );
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", userModel.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
-                .path("/api/v1/auth/refresh/token")
+                .path("/")
                 .maxAge(Duration.ofDays(7))
                 .sameSite("None")
                 .build();
 
-        UserPreferenceResponse userPreferenceResponse = new UserPreferenceResponse(userModel.isNotifyEquipment(), userModel.isNotifyReagents(), userModel.isNotifyQuotes(), userModel.isNotifyResults());
+        Map<String, Object> response = new HashMap<>();
+        response.put("response", new LoginResponseDto(
+                jwt,
+                userModel.getUserId(),
+                true,
+                "Logged success",
+                userModel.getPosition(),
+                userModel.getImageProfile(),
+                LocalDate.now(),
+                user.getAuthorities().iterator().next().getAuthority(),
+                true,
+                userModel.getAvailable(),
+                userModel.getUsername(),
+                userModel.getName(),
+                new UserPreferenceResponse(
+                        userModel.isNotifyEquipment(),
+                        userModel.isNotifyReagents(),
+                        userModel.isNotifyQuotes(),
+                        userModel.isNotifyResults()
+                ),
+                userModel.getEmail(),
+                LocalDateTime.now()
+        ));
 
+        response.put("refreshToken", refreshCookie);
 
-        Map<String, Object> objectMapResponse = new HashMap<>();
-        objectMapResponse.put("response", new LoginResponseDto(jwt, userModel.getUserId(), true, "Logged success", userModel.getPosition(), userModel.getImageProfile(), LocalDate.now(), authority, true, userModel.getAvailable() , userModel.getUsername(), userModel.getName(), userPreferenceResponse, userModel.getEmail(), LocalDateTime.now()));
-
-        objectMapResponse.put("refreshToken", refreshCookie);
-
-        this.userUseCase.saveTheLastSession(LocalDateTime.now(), userModel.getUserId());
-
-        return objectMapResponse;
+        return response;
     }
+
 
 
     @Transactional

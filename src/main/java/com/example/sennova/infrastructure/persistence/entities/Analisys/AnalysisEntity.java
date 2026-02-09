@@ -22,20 +22,20 @@ public class AnalysisEntity {
     @Column(name = "analysis_id")
     private Long analysisId;
 
-    @Column(nullable = false)
+
     private String analysisName;
 
 
-    @Column(nullable = false)
+
     private String method;
 
-    @Column(nullable = false)
+
     private String equipment;
 
-    @Column(nullable = false)
+
     private String units;
 
-    @Column(nullable = false)
+
     private double price;
 
     @CreatedDate
