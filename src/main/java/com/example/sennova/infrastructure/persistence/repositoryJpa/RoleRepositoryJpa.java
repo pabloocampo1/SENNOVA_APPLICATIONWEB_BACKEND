@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface RoleRepositoryJpa extends CrudRepository<RoleEntity, Long> {
 
     Optional<RoleEntity> findByNameRole(String nameRole);
-    boolean existsByName(String name);
+    boolean existsByNameRole(String name);
 }
