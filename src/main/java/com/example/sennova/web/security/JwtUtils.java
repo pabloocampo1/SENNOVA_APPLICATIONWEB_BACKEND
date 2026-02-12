@@ -69,13 +69,13 @@ public class JwtUtils {
                     .verify(jwt);
             return true;
         } catch (JWTVerificationException e) {
-            e.printStackTrace();
+
             return false;
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+
             return false;
         }
     }

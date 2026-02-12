@@ -150,27 +150,27 @@ public class AuthServiceImpl {
     @Transactional
     public Map<String, Object> refreshToken(String refreshToken) {
 
-        System.out.println("🔎 Refresh recibido: " + refreshToken);
+
 
         if (!this.jwtUtils.validateJwt(refreshToken)) {
-            System.out.println("❌ Token inválido");
+
             throw new RuntimeException("Token inválido");
         }
 
         String username = this.jwtUtils.getUsername(refreshToken);
-        System.out.println("👤 Username del token: " + username);
+
 
         UserModel userModel = this.userUseCase.findByUsername(username);
 
-        System.out.println("💾 Refresh en DB: " + userModel.getRefreshToken());
+
 
         if (userModel.getRefreshToken() == null) {
-            System.out.println("🚨 EL REFRESH EN DB ES NULL");
+
             throw new RuntimeException("Refresh en DB es null");
         }
 
         if (!userModel.getRefreshToken().equals(refreshToken)) {
-            System.out.println("🚨 EL TOKEN NO COINCIDE CON EL DE DB");
+
             throw new RuntimeException("Refresh no coincide");
         }
 
