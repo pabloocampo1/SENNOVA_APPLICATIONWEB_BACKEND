@@ -12,9 +12,9 @@ import java.io.InputStream;
  * Una vez completada la importación, puedes eliminarla o comentar @Component.
 // */
 
-// implements CommandLineRunner
-// @Component
-public class InitialExcelDataLoader  {
+
+ //@Component
+//public class InitialExcelDataLoader  implements CommandLineRunner  {
 //
 //    private final ExcelImportService excelImportService;
 //
@@ -43,4 +43,4 @@ public class InitialExcelDataLoader  {
 //            System.err.println("⚠️ No se encontró el archivo equipos.xlsx en resources/data/");
 //        }
 //    }
-}
+//}

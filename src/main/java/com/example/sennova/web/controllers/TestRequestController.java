@@ -222,9 +222,9 @@ public class TestRequestController {
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
-    @GetMapping("/delivery-history/{requestCode}")
-    public ResponseEntity<List<ReportDeliverySample>> getDeliveryHistoryByRequestCode(@PathVariable("requestCode") String requestCode){
-        return new ResponseEntity<>(this.testRequestReleaseResultUseCase.getHistoryDeliveryByRequestCode(requestCode), HttpStatus.OK);
+    @GetMapping("/delivery-history/{testRequestId}")
+    public ResponseEntity<List<ReportDeliverySample>> getDeliveryHistoryByRequestCode(@PathVariable("testRequestId") Long testRequestId){
+        return new ResponseEntity<>(this.testRequestReleaseResultUseCase.getHistoryDeliveryByTestRequestId(testRequestId), HttpStatus.OK);
     }
 
 

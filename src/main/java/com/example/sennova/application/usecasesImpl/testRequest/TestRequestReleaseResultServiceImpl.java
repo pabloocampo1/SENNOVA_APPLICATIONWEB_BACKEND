@@ -209,7 +209,7 @@ public class TestRequestReleaseResultServiceImpl implements TestRequestReleaseRe
     }
 
     @Override
-    public List<ReportDeliverySample> getHistoryDeliveryByRequestCode(String requestCode) {
-        return this.reportDeliveryStatusRepositoryJpa.findAllByRequestCode(requestCode);
+    public List<ReportDeliverySample> getHistoryDeliveryByTestRequestId(Long testRequestId) {
+        return this.reportDeliveryStatusRepositoryJpa.findAllByTestRequestId(testRequestId);
     }
 }

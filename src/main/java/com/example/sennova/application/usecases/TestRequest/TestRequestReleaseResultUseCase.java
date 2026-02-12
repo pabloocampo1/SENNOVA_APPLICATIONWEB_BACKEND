@@ -15,5 +15,5 @@ public interface TestRequestReleaseResultUseCase {
     void generateAndSendSampleReport(List<Long> samples, InfoResponsiblePersonReleaseResult infoResponsiblePersonReleaseResult);
     void generateAndSendTestRequestReport(ResultExecutionFinalTestRequestDto resultExecutionFinalTestRequestDto);
 
-    List<ReportDeliverySample> getHistoryDeliveryByRequestCode(String requestCode);
+    List<ReportDeliverySample> getHistoryDeliveryByTestRequestId(Long testRequestId);
 }

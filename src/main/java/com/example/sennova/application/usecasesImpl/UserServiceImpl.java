@@ -57,12 +57,12 @@ public class UserServiceImpl implements UserUseCase {
     @Override
     @Transactional
     public UserResponse save(UserSaveRequest userSaveRequest, MultipartFile multipartFile) {
-        System.out.println("lo que llego al service de usuario : " + userSaveRequest.role());
+        System.out.println("lo que llego al service de usuario : " + userSaveRequest.roleName());
         try {
             UserModel userModel = this.userMapper.toModel(userSaveRequest);
 
             // search y  validate if the role exist.
-            RoleModel roleModel = this.rolePersistencePort.findByName(userSaveRequest.role());
+            RoleModel roleModel = this.rolePersistencePort.findByName(userSaveRequest.roleName());
 
             // add the role to the user
             userModel.setRole(roleModel);

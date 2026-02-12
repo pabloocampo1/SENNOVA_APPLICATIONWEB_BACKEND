@@ -25,7 +25,6 @@ public class NotificationsController {
 
     @GetMapping("/getAll/{username}")
     public ResponseEntity<List<Notifications>> getNotifications(@PathVariable("username") String username){
-        System.out.println("llego aca 1");
         return new ResponseEntity<>(notificationsService.getAll(username),HttpStatus.OK);
     }
 }
